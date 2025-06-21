@@ -1,0 +1,151 @@
+<!-- Header Section -->
+<div class="header">
+  <div class="header-content">
+    <div class="logo">
+      <h1>BookMyShow</h1>
+    </div>
+    <div class="city-selector">
+      <select [(ngModel)]="selectedCity" class="city-dropdown">
+        <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="search-section">
+  <div class="search-container">
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        placeholder="Search for movies, events, plays, sports and activities"
+        class="search-input">
+      <button class="search-btn" (click)="onSearch()">
+        <i class="search-icon">🔍</i>
+      </button>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <label>Genre:</label>
+        <select [(ngModel)]="selectedGenre" (change)="onFilterChange()" class="filter-select">
+          <option value="">All Genres</option>
+          <option *ngFor="let genre of genres" [value]="genre">{{ genre }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Language:</label>
+        <select [(ngModel)]="selectedLanguage" (change)="onFilterChange()" class="filter-select">
+          <option value="">All Languages</option>
+          <option *ngFor="let language of languages" [value]="language">{{ language }}</option>
+        </select>
+      </div>
+
+      <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Spinner -->
+<div *ngIf="isLoading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Loading movies...</p>
+</div>
+
+<!-- Movies Section -->
+<div *ngIf="!isLoading" class="movies-section">
+  <div class="section-header">
+    <h2>Movies in {{ selectedCity }}</h2>
+    <p class="movie-count">{{ filteredMovies.length }} movies found</p>
+  </div>
+
+  <div class="movies-grid" *ngIf="filteredMovies.length > 0">
+    <div class="movie-card" *ngFor="let movie of filteredMovies">
+      <div class="movie-poster">
+        <img [src]="movie.image" [alt]="movie.title" class="poster-image">
+        <div class="rating-badge">
+          <span class="rating">{{ movie.rating }}/10</span>
+        </div>
+      </div>
+
+      <div class="movie-info">
+        <h3 class="movie-title">{{ movie.title }}</h3>
+        <div class="movie-details">
+          <span class="genre">{{ movie.genre }}</span>
+          <span class="separator">•</span>
+          <span class="language">{{ movie.language }}</span>
+          <span class="separator">•</span>
+          <span class="duration">{{ movie.duration }}</span>
+        </div>
+
+        <div class="star-rating">
+          <span *ngFor="let star of getStarArray(movie.rating)" class="star filled">★</span>
+          <span *ngFor="let star of getEmptyStarArray(movie.rating)" class="star">☆</span>
+        </div>
+
+        <p class="movie-description">{{ movie.description }}</p>
+
+        <div class="movie-actions">
+          <span class="price">₹{{ movie.price }}</span>
+          <button class="book-btn" (click)="openBookingModal(movie)">Book Tickets</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Movies Found -->
+  <div *ngIf="filteredMovies.length === 0" class="no-movies">
+    <div class="no-movies-content">
+      <h3>No movies found</h3>
+      <p>Try adjusting your search criteria or filters</p>
+      <button class="clear-filters-btn" (click)="clearFilters()">Clear All Filters</button>
+    </div>
+  </div>
+</div>
+
+<!-- Booking Modal -->
+<div *ngIf="showBookingModal" class="modal-overlay" (click)="closeBookingModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ selectedMovie?.title }}</h2>
+      <button class="close-btn" (click)="closeBookingModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="movie-booking-info">
+        <img [src]="selectedMovie?.image" [alt]="selectedMovie?.title" class="booking-poster">
+        <div class="booking-details">
+          <h3>{{ selectedMovie?.title }}</h3>
+          <p><strong>Genre:</strong> {{ selectedMovie?.genre }}</p>
+          <p><strong>Language:</strong> {{ selectedMovie?.language }}</p>
+          <p><strong>Duration:</strong> {{ selectedMovie?.duration }}</p>
+          <p><strong>Rating:</strong> {{ selectedMovie?.rating }}/10</p>
+          <p><strong>Price:</strong> ₹{{ selectedMovie?.price }}</p>
+        </div>
+      </div>
+
+      <div class="theaters-section">
+        <h3>Select Theater & Show Time</h3>
+        <div class="theaters-list">
+          <div *ngFor="let theater of selectedMovie?.theaters" class="theater-item">
+            <div class="theater-info">
+              <h4>{{ theater.name }}</h4>
+              <p>{{ theater.location }}</p>
+            </div>
+            <div class="showtimes">
+              <button
+                *ngFor="let showTime of theater.showTimes"
+                class="showtime-btn"
+                (click)="bookTicket(theater, showTime)">
+                {{ showTime }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

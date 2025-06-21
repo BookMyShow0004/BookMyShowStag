@@ -1,0 +1,162 @@
+<div class="signup-container">
+  <div class="signup-card">
+    <div class="signup-header">
+      <h2>Create Account</h2>
+      <p>Join us today and get started</p>
+    </div>
+
+    <form (ngSubmit)="onSignup(signupForm)" #signupForm="ngForm" class="signup-form">
+      <!-- Name Fields -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              [(ngModel)]="firstName"
+              required
+              minlength="2"
+              placeholder="Enter your first name"
+              class="form-input"
+              [class.error]="signupForm.submitted && !firstName"
+            />
+            <span class="input-icon">👤</span>
+          </div>
+          <div class="error-message" *ngIf="signupForm.submitted && !firstName">
+            First name is required
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              [(ngModel)]="lastName"
+              required
+              minlength="2"
+              placeholder="Enter your last name"
+              class="form-input"
+              [class.error]="signupForm.submitted && !lastName"
+            />
+            <span class="input-icon">👤</span>
+          </div>
+          <div class="error-message" *ngIf="signupForm.submitted && !lastName">
+            Last name is required
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <div class="input-wrapper">
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            required
+            email
+            placeholder="Enter your email address"
+            class="form-input"
+            [class.error]="signupForm.submitted && !email"
+          />
+          <span class="input-icon">📧</span>
+        </div>
+        <div class="error-message" *ngIf="signupForm.submitted && !email">
+          Valid email is required
+        </div>
+      </div>
+
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            required
+            minlength="6"
+            placeholder="Create a strong password"
+            class="form-input"
+            [class.error]="signupForm.submitted && !password"
+          />
+          <span class="input-icon">🔒</span>
+          <span class="toggle-password" (click)="togglePassword()">
+            {{ showPassword ? '🙈' : '👁️' }}
+          </span>
+        </div>
+
+        <!-- Password Strength Indicator -->
+        <div class="password-strength" *ngIf="password.length > 0">
+          <div class="strength-bar">
+            <div
+              class="strength-fill"
+              [style.width.%]="getPasswordStrength() === 'weak' ? 33 : getPasswordStrength() === 'medium' ? 66 : getPasswordStrength() === 'strong' ? 100 : 0"
+              [style.background-color]="getPasswordStrengthColor()"
+            ></div>
+          </div>
+          <span class="strength-text" [style.color]="getPasswordStrengthColor()">
+            {{ getPasswordStrength() | titlecase }} Password
+          </span>
+        </div>
+
+        <div class="error-message" *ngIf="signupForm.submitted && !password">
+          Password is required (minimum 6 characters)
+        </div>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <!-- <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="input-wrapper">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            id="confirmPassword"
+            name="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            required
+            placeholder="Confirm your password"
+            class="form-input"
+            [class.error]="signupForm.submitted && (!confirmPassword || !validatePasswords())"
+          />
+          <span class="input-icon">🔒</span>
+          <span class="toggle-password" (click)="toggleConfirmPassword()">
+            {{ showConfirmPassword ? '🙈' : '👁️' }}
+          </span>
+        </div>
+        <div class="error-message" *ngIf="signupForm.submitted && !confirmPassword">
+          Please confirm your password
+        </div>
+        <div class="error-message" *ngIf="signupForm.submitted && confirmPassword && !validatePasswords()">
+          Passwords do not match
+        </div>
+      </div> -->
+
+      <button
+        type="submit"
+        class="signup-button"
+        [disabled]="isLoading"
+        [class.loading]="isLoading"
+      >
+        <span *ngIf="!isLoading">Create Account</span>
+        <span *ngIf="isLoading" class="loading-text">
+          <span class="spinner"></span>
+          Creating Account...
+        </span>
+      </button>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a href="#" routerLink="/login">Sign in here</a>
+    </div>
+  </div>
+</div>
