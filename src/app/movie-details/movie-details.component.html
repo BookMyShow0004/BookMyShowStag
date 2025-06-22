@@ -1,0 +1,59 @@
+<div class="movie-details-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Loading Details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <i class="fas fa-exclamation-triangle"></i>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Details Card -->
+  <div *ngIf="movie && !isLoading" class="details-card">
+    <img [src]="movie.image" [alt]="movie.title" class="movie-poster">
+    
+    <div class="movie-info">
+      <h1 class="movie-title">{{ movie.title }}</h1>
+      <p class="movie-genre">{{ movie.genre }}</p>
+
+      <div class="info-section">
+        <h2 class="section-title">Synopsis</h2>
+        <p class="movie-description">{{ movie.description }}</p>
+      </div>
+
+      <div class="info-section">
+        <h2 class="section-title">Details</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <i class="fas fa-star"></i>
+            <span>{{ movie.rating }}/5 Rating</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-clock"></i>
+            <span>{{ movie.duration }}</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-language"></i>
+            <span>{{ movie.language }}</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Released on {{ movie.releaseDate | date:'longDate' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="bookMovie()">
+            <i class="fas fa-ticket-alt"></i> Book Tickets
+        </button>
+        <button class="btn btn-secondary" routerLink="/dashboard">
+            <i class="fas fa-arrow-left"></i> Back to Movies
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+:host {
+  display: block;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.movie-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.details-card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 400px 1fr;
+}
+
+.movie-poster {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+}
+
+.movie-info {
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.movie-title {
+  font-size: 2.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.movie-genre {
+  font-size: 1.25rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+.info-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  color: #4b5563;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.info-item i {
+  font-size: 1.25rem;
+  color: #a855f7;
+}
+
+.movie-description {
+  line-height: 1.7;
+  color: #4b5563;
+}
+
+.action-buttons {
+  margin-top: auto;
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(to right, #a855f7, #d946ef);
+  color: white;
+}
+.btn-primary:hover {
+  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+}
+
+.btn-secondary {
+  background-color: #e9ecef;
+  color: #374151;
+}
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+@media (max-width: 992px) {
+  .details-card {
+    grid-template-columns: 1fr;
+  }
+  .movie-poster {
+    height: 450px;
+  }
+}
+
+@media (max-width: 768px) {
+  .movie-info {
+    padding: 2rem;
+  }
+  .movie-title {
+    font-size: 2rem;
+  }
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+}

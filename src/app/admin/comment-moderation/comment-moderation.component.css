@@ -1,0 +1,70 @@
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 2rem;
+}
+
+.table-container {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.comments-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.comments-table th, .comments-table td {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.comments-table thead th {
+  background-color: #f7fafc;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3182ce;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.comment-text {
+  max-width: 400px;
+  white-space: normal;
+}
+
+.btn-delete {
+  background-color: #e53e3e;
+  color: white;
+  border: 1px solid #e53e3e;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}

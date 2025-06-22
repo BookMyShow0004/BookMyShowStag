@@ -1,162 +1,103 @@
-<div class="signup-container">
-  <div class="signup-card">
-    <div class="signup-header">
-      <h2>Create Account</h2>
-      <p>Join us today and get started</p>
-    </div>
-
-    <form (ngSubmit)="onSignup(signupForm)" #signupForm="ngForm" class="signup-form">
-      <!-- Name Fields -->
-      <div class="form-row">
-        <div class="form-group">
-          <label for="firstName">First Name</label>
-          <div class="input-wrapper">
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              [(ngModel)]="firstName"
-              required
-              minlength="2"
-              placeholder="Enter your first name"
-              class="form-input"
-              [class.error]="signupForm.submitted && !firstName"
-            />
-            <span class="input-icon">👤</span>
-          </div>
-          <div class="error-message" *ngIf="signupForm.submitted && !firstName">
-            First name is required
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="lastName">Last Name</label>
-          <div class="input-wrapper">
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              [(ngModel)]="lastName"
-              required
-              minlength="2"
-              placeholder="Enter your last name"
-              class="form-input"
-              [class.error]="signupForm.submitted && !lastName"
-            />
-            <span class="input-icon">👤</span>
-          </div>
-          <div class="error-message" *ngIf="signupForm.submitted && !lastName">
-            Last name is required
-          </div>
-        </div>
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
+  <div class="card shadow-sm" style="width: 100%; max-width: 800px;">
+    <div class="card-body p-4 p-md-5">
+      <div class="text-center mb-4">
+        <h2 class="logo-text">book<span>my</span>show</h2>
+        <h1 class="h3 mb-3 fw-normal">Create your Account</h1>
       </div>
 
-      <!-- Email Field -->
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <div class="input-wrapper">
-          <input
-            type="email"
-            id="email"
-            name="email"
-            [(ngModel)]="email"
-            required
-            email
-            placeholder="Enter your email address"
-            class="form-input"
-            [class.error]="signupForm.submitted && !email"
-          />
-          <span class="input-icon">📧</span>
-        </div>
-        <div class="error-message" *ngIf="signupForm.submitted && !email">
-          Valid email is required
-        </div>
-      </div>
+      <p class="text-muted">Welcome back! Please enter your details.</p>
 
-
-      <!-- Password Field -->
-      <div class="form-group">
-        <label for="password">Password</label>
-        <div class="input-wrapper">
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            id="password"
-            name="password"
-            [(ngModel)]="password"
-            required
-            minlength="6"
-            placeholder="Create a strong password"
-            class="form-input"
-            [class.error]="signupForm.submitted && !password"
-          />
-          <span class="input-icon">🔒</span>
-          <span class="toggle-password" (click)="togglePassword()">
-            {{ showPassword ? '🙈' : '👁️' }}
-          </span>
+      <form (ngSubmit)="onRegister()" #signupForm="ngForm">
+        <!-- Error/Success Messages -->
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          {{ errorMessage }}
+        </div>
+        <div *ngIf="successMessage" class="alert alert-success">
+          {{ successMessage }}
         </div>
 
-        <!-- Password Strength Indicator -->
-        <div class="password-strength" *ngIf="password.length > 0">
-          <div class="strength-bar">
-            <div
-              class="strength-fill"
-              [style.width.%]="getPasswordStrength() === 'weak' ? 33 : getPasswordStrength() === 'medium' ? 66 : getPasswordStrength() === 'strong' ? 100 : 0"
-              [style.background-color]="getPasswordStrengthColor()"
-            ></div>
+        <div class="row g-3">
+          <!-- Name -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="text" id="name" name="name" [(ngModel)]="registerData.name" required class="form-control" placeholder="John Doe">
+              <label for="name">Full Name</label>
+            </div>
           </div>
-          <span class="strength-text" [style.color]="getPasswordStrengthColor()">
-            {{ getPasswordStrength() | titlecase }} Password
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="email" id="email" name="email" [(ngModel)]="registerData.email" required email class="form-control" placeholder="name@example.com">
+              <label for="email">Email Address</label>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="password" id="password" name="password" [(ngModel)]="registerData.password" required class="form-control" placeholder="Password">
+              <label for="password">Password</label>
+            </div>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="registerData.confirmPassword" required class="form-control" placeholder="Confirm Password">
+              <label for="confirmPassword">Confirm Password</label>
+            </div>
+          </div>
+
+          <!-- Phone -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <input type="tel" id="phone" name="phone" [(ngModel)]="registerData.phone" required class="form-control" placeholder="Phone Number">
+              <label for="phone">Phone Number</label>
+            </div>
+          </div>
+
+          <!-- City -->
+          <div class="col-md-6">
+            <div class="form-floating">
+              <select id="city" name="city" [(ngModel)]="registerData.city" required class="form-select">
+                <option value="" disabled>Select your city</option>
+                <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+              </select>
+              <label for="city">City</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Captcha -->
+        <div class="mt-4">
+          <label class="form-label">Security Verification</label>
+          <div class="input-group">
+            <span class="input-group-text captcha-image">{{ captchaText }}</span>
+            <button class="btn btn-outline-secondary" type="button" (click)="generateCaptcha()">
+              <i class="fas fa-sync-alt"></i>
+            </button>
+            <div class="form-floating">
+              <input type="text" id="captcha" name="captcha" [(ngModel)]="userCaptcha" required class="form-control" placeholder="Enter code">
+              <label for="captcha">Enter code</label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100 btn-lg mt-4" [disabled]="isLoading || !signupForm.valid">
+          <span *ngIf="!isLoading">Create Account</span>
+          <span *ngIf="isLoading">
+            <i class="fas fa-spinner fa-spin"></i> Creating Account...
           </span>
-        </div>
+        </button>
+      </form>
 
-        <div class="error-message" *ngIf="signupForm.submitted && !password">
-          Password is required (minimum 6 characters)
-        </div>
-      </div>
-
-      <!-- Confirm Password Field -->
-      <!-- <div class="form-group">
-        <label for="confirmPassword">Confirm Password</label>
-        <div class="input-wrapper">
-          <input
-            [type]="showConfirmPassword ? 'text' : 'password'"
-            id="confirmPassword"
-            name="confirmPassword"
-            [(ngModel)]="confirmPassword"
-            required
-            placeholder="Confirm your password"
-            class="form-input"
-            [class.error]="signupForm.submitted && (!confirmPassword || !validatePasswords())"
-          />
-          <span class="input-icon">🔒</span>
-          <span class="toggle-password" (click)="toggleConfirmPassword()">
-            {{ showConfirmPassword ? '🙈' : '👁️' }}
-          </span>
-        </div>
-        <div class="error-message" *ngIf="signupForm.submitted && !confirmPassword">
-          Please confirm your password
-        </div>
-        <div class="error-message" *ngIf="signupForm.submitted && confirmPassword && !validatePasswords()">
-          Passwords do not match
-        </div>
-      </div> -->
-
-      <button
-        type="submit"
-        class="signup-button"
-        [disabled]="isLoading"
-        [class.loading]="isLoading"
-      >
-        <span *ngIf="!isLoading">Create Account</span>
-        <span *ngIf="isLoading" class="loading-text">
-          <span class="spinner"></span>
-          Creating Account...
-        </span>
-      </button>
-    </form>
-
-    <div class="login-link">
-      Already have an account? <a href="#" routerLink="/login">Sign in here</a>
+      <p class="text-center mt-4 mb-0">
+        Already have an account? 
+        <a routerLink="/login" class="text-decoration-none fw-bold">Sign In</a>
+      </p>
     </div>
   </div>
 </div>
