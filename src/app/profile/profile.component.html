@@ -4,9 +4,9 @@
     <aside class="profile-header-container">
       <div class="card profile-header">
         <div class="avatar-circle">
-          {{ getInitials(currentUser?.name || '') }}
+          {{ getInitials(currentUser?.fullName || '') }}
         </div>
-        <h2 class="profile-name">{{ currentUser?.name }}</h2>
+        <h2 class="profile-name">{{ currentUser?.fullName }}</h2>
         <p class="profile-email">{{ currentUser?.email }}</p>
         <p class="member-since">Member since {{ getMemberSince() }}</p>
         <button class="logout-btn" (click)="logout()">
@@ -37,7 +37,7 @@
           <div class="detail-item">
             <i class="fas fa-user"></i>
             <div>
-              <strong>Full Name:</strong> {{ currentUser?.name }}
+              <strong>Full Name:</strong> {{ currentUser?.fullName }}
             </div>
           </div>
           <div class="detail-item">

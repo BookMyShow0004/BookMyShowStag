@@ -18,18 +18,18 @@
         </div>
 
         <div class="row g-3">
-          <!-- Name -->
+          <!-- Full Name -->
           <div class="col-md-6">
             <div class="form-floating">
-              <input type="text" id="name" name="name" [(ngModel)]="registerData.name" required class="form-control" placeholder="John Doe">
-              <label for="name">Full Name</label>
+              <input type="text" id="fullName" name="fullName" [(ngModel)]="registerData.fullName" required class="form-control" placeholder="John Doe">
+              <label for="fullName">Full Name</label>
             </div>
           </div>
 
           <!-- Email -->
           <div class="col-md-6">
             <div class="form-floating">
-              <input type="email" id="email" name="email" [(ngModel)]="registerData.email" required email class="form-control" placeholder="name@example.com">
+              <input type="email" id="email" name="email" [(ngModel)]="registerData.email" required email class="form-control" placeholder="john.doe@example.com">
               <label for="email">Email Address</label>
             </div>
           </div>
@@ -50,48 +50,40 @@
             </div>
           </div>
 
-          <!-- Phone -->
-          <div class="col-md-6">
-            <div class="form-floating">
-              <input type="tel" id="phone" name="phone" [(ngModel)]="registerData.phone" required class="form-control" placeholder="Phone Number">
-              <label for="phone">Phone Number</label>
-            </div>
-          </div>
-
           <!-- City -->
           <div class="col-md-6">
             <div class="form-floating">
-              <select id="city" name="city" [(ngModel)]="registerData.city" required class="form-select">
-                <option value="" disabled>Select your city</option>
-                <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+              <select id="city" name="city" [(ngModel)]="registerData.cityId" required class="form-select">
+                <option [ngValue]="null" disabled>Select your city</option>
+                <option *ngFor="let city of cities" [ngValue]="city.id">{{ city.name }}</option>
               </select>
               <label for="city">City</label>
             </div>
           </div>
-        </div>
 
-        <!-- Captcha -->
-        <div class="mt-4">
-          <label class="form-label">Security Verification</label>
-          <div class="input-group">
-            <span class="input-group-text captcha-image">{{ captchaText }}</span>
-            <button class="btn btn-outline-secondary" type="button" (click)="generateCaptcha()">
-              <i class="fas fa-sync-alt"></i>
-            </button>
-            <div class="form-floating">
+          <!-- Captcha -->
+          <div class="form-group captcha-group">
+            <label for="captcha" class="form-label">Captcha</label>
+            <div class="input-group">
+              <span class="input-group-text captcha-image">{{ captchaText }}</span>
+              <button class="btn btn-outline-secondary" type="button" (click)="generateCaptcha()">
+                <i class="fas fa-sync-alt"></i>
+              </button>
               <input type="text" id="captcha" name="captcha" [(ngModel)]="userCaptcha" required class="form-control" placeholder="Enter code">
-              <label for="captcha">Enter code</label>
             </div>
           </div>
         </div>
-        
-        <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary w-100 btn-lg mt-4" [disabled]="isLoading || !signupForm.valid">
-          <span *ngIf="!isLoading">Create Account</span>
-          <span *ngIf="isLoading">
-            <i class="fas fa-spinner fa-spin"></i> Creating Account...
-          </span>
-        </button>
+
+        <!-- Actions -->
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary w-100 btn-lg mt-4" [disabled]="isLoading || !signupForm.valid">
+            <span *ngIf="!isLoading">Create Account</span>
+            <span *ngIf="isLoading">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Creating...
+            </span>
+          </button>
+        </div>
       </form>
 
       <p class="text-center mt-4 mb-0">

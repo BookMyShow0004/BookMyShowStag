@@ -43,8 +43,8 @@
       <ng-container *ngIf="currentUser$ | async as user">
         <div class="user-menu" (mouseenter)="isDropdownOpen = true" (mouseleave)="isDropdownOpen = false">
           <div class="user-info">
-            <div class="user-avatar">{{ getInitials(user.name) }}</div>
-            <span class="user-name">{{ user.name }}</span>
+            <div class="user-avatar">{{ getInitials(user.fullName) }}</div>
+            <span class="user-name">{{ user.fullName }}</span>
             <i class="fas fa-chevron-down"></i>
           </div>
           <div class="user-dropdown" [class.open]="isDropdownOpen">

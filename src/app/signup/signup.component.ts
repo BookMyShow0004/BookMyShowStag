@@ -9,29 +9,34 @@ import { AuthService, RegisterRequest } from '../services/auth.service';
 })
 export class SignupComponent implements OnInit {
   registerData: RegisterRequest = {
-    name: '',
+    fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
-    city: '',
-    captcha: ''
+    cityId: null as any
   };
 
-  captchaText: string = '';
-  userCaptcha: string = '';
-  showPassword: boolean = false;
-  showConfirmPassword: boolean = false;
-  isLoading: boolean = false;
-  errorMessage: string = '';
-  successMessage: string = '';
-
-  cities: string[] = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Pune', 'Hyderabad', 'Ahmedabad'];
+  isLoading = false;
+  errorMessage = '';
+  successMessage = '';
+  captchaText = '';
+  userCaptcha = '';
+  
+  cities = [
+    { id: 1, name: 'Mumbai' },
+    { id: 2, name: 'Delhi' },
+    { id: 3, name: 'Bangalore' },
+    { id: 4, name: 'Hyderabad' },
+    { id: 5, name: 'Chennai' },
+    { id: 6, name: 'Pune' },
+    { id: 7, name: 'Kolkata' },
+    { id: 8, name: 'Ahmedabad' }
+  ];
 
   constructor(
     private authService: AuthService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.generateCaptcha();
@@ -42,49 +47,45 @@ export class SignupComponent implements OnInit {
   }
 
   onRegister(): void {
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    // Validate form
-    if (!this.validateForm()) {
+    if (this.userCaptcha.toLowerCase() !== this.captchaText.toLowerCase()) {
+      this.errorMessage = 'Invalid captcha';
+      this.generateCaptcha();
+      this.userCaptcha = '';
       return;
     }
 
     this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
 
     this.authService.register(this.registerData).subscribe({
       next: (response) => {
         this.isLoading = false;
         if (response.success) {
           this.successMessage = response.message;
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 2000);
+          setTimeout(() => this.router.navigate(['/login']), 2000);
         } else {
           this.errorMessage = response.message;
+          this.generateCaptcha();
         }
       },
       error: (error) => {
         this.isLoading = false;
         this.errorMessage = 'Registration failed. Please try again.';
+        this.generateCaptcha();
         console.error('Registration error:', error);
       }
     });
   }
 
   validateForm(): boolean {
-    if (!this.registerData.name.trim()) {
+    if (!this.registerData.fullName.trim()) {
       this.errorMessage = 'Name is required';
       return false;
     }
 
     if (!this.registerData.email.trim()) {
       this.errorMessage = 'Email is required';
-      return false;
-    }
-
-    if (!this.isValidEmail(this.registerData.email)) {
-      this.errorMessage = 'Please enter a valid email address';
       return false;
     }
 
@@ -103,45 +104,11 @@ export class SignupComponent implements OnInit {
       return false;
     }
 
-    if (!this.registerData.phone.trim()) {
-      this.errorMessage = 'Phone number is required';
-      return false;
-    }
-
-    if (!this.registerData.city) {
+    if (!this.registerData.cityId) {
       this.errorMessage = 'Please select a city';
       return false;
     }
 
-    if (this.userCaptcha.toLowerCase() !== this.captchaText.toLowerCase()) {
-      this.errorMessage = 'Invalid captcha';
-      this.generateCaptcha();
-      this.userCaptcha = '';
-      return false;
-    }
-
     return true;
-  }
-
-  isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  togglePassword(): void {
-    this.showPassword = !this.showPassword;
-  }
-
-  toggleConfirmPassword(): void {
-    this.showConfirmPassword = !this.showConfirmPassword;
-  }
-
-  onCaptchaInput(): void {
-    this.registerData.captcha = this.userCaptcha;
-  }
-
-  onSocialSignup(provider: string): void {
-    console.log(`Signing up with ${provider}`);
-    // Add your social signup logic here
   }
 }

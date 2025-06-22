@@ -1,19 +1,22 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 
 export interface User {
-  id: number;
+  userId: number;
+  fullName: string;
   email: string;
-  name: string;
-  phone: string;
-  city: string;
+  role: 'admin' | 'user';
+  cityId: number;
+  // Optional fields that may be part of the profile but not login response
+  phone?: string;
+  city?: string;
   avatar?: string;
   dateOfBirth?: string;
   gender?: string;
   preferences?: string[];
-  createdAt: Date;
-  role: 'admin' | 'user';
+  createdAt?: Date;
 }
 
 export interface LoginRequest {
@@ -23,13 +26,11 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
   confirmPassword: string;
-  phone: string;
-  city: string;
-  captcha: string;
+  cityId: number;
 }
 
 export interface ChangePasswordRequest {
@@ -51,42 +52,14 @@ export interface UpdateProfileRequest {
   providedIn: 'root'
 })
 export class AuthService {
+  private apiUrl = 'https://localhost:5001/api/Users'; 
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  // Mock users database
-  private users: User[] = [
-    {
-      id: 1,
-      email: 'user@example.com',
-      name: 'Test User',
-      phone: '+91 9876543210',
-      city: 'Mumbai',
-      createdAt: new Date(),
-      role: 'user'
-    },
-    {
-      id: 2,
-      email: 'admin@example.com',
-      name: 'Admin User',
-      phone: '+91 9876543211',
-      city: 'Mumbai',
-      createdAt: new Date(),
-      role: 'admin'
-    }
-  ];
-
-  // Mock passwords (in real app, these would be hashed)
-  private passwords: { [email: string]: string } = {
-    'user@example.com': 'password123',
-    'admin@example.com': 'password123',
-    'demo@example.com': 'password123'
-  };
-
-  constructor() {
+  constructor(private http: HttpClient) {
     this.checkStoredAuth();
   }
 
@@ -100,58 +73,51 @@ export class AuthService {
   }
 
   login(request: LoginRequest): Observable<{ success: boolean; message: string; user?: User }> {
-    const user = this.users.find(u => u.email === request.email);
-    const password = this.passwords[request.email];
-
-    if (!user || password !== request.password) {
-      return of({ success: false, message: 'Invalid email or password' }).pipe(delay(1000));
-    }
-
-    return of({ success: true, message: 'Login successful', user }).pipe(
-      delay(1000),
-      tap(() => {
-        this.currentUserSubject.next(user);
-        this.isAuthenticatedSubject.next(true);
-        if (request.rememberMe) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-        } else {
-          sessionStorage.setItem('currentUser', JSON.stringify(user));
-        }
-      })
-    );
+    return this.http.post<User>(`${this.apiUrl}/Login`, { email: request.email, password: request.password })
+      .pipe(
+        map(user => {
+          this.currentUserSubject.next(user);
+          this.isAuthenticatedSubject.next(true);
+          if (request.rememberMe) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+          } else {
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+          }
+          return { success: true, message: 'Login successful', user };
+        }),
+        catchError(error => {
+          const message = error.error?.title || (typeof error.error === 'string' ? error.error : 'Invalid email or password');
+          return of({ success: false, message });
+        })
+      );
   }
 
-  register(request: RegisterRequest): Observable<{ success: boolean; message: string; user?: User }> {
-    // Validate captcha (in real app, this would be server-side validation)
-    if (request.captcha.toLowerCase() !== 'bookmyshow') {
-      return of({ success: false, message: 'Invalid captcha' }).pipe(delay(1000));
-    }
-
-    // Check if user already exists
-    if (this.users.find(u => u.email === request.email)) {
-      return of({ success: false, message: 'User with this email already exists' }).pipe(delay(1000));
-    }
-
-    // Validate password match
+  register(request: RegisterRequest): Observable<{ success: boolean; message: string }> {
     if (request.password !== request.confirmPassword) {
-      return of({ success: false, message: 'Passwords do not match' }).pipe(delay(1000));
+      return of({ success: false, message: 'Passwords do not match' });
     }
 
-    // Create new user
-    const newUser: User = {
-      id: this.users.length + 1,
-      email: request.email,
-      name: request.name,
-      phone: request.phone,
-      city: request.city,
-      createdAt: new Date(),
-      role: 'user'
+    const registrationData = {
+      FullName: request.fullName,
+      Email: request.email,
+      PasswordHash: request.password, 
+      CityId: request.cityId
     };
 
-    this.users.push(newUser);
-    this.passwords[request.email] = request.password;
-
-    return of({ success: true, message: 'Registration successful', user: newUser }).pipe(delay(1000));
+    return this.http.post(`${this.apiUrl}/Register`, registrationData, { responseType: 'text' }).pipe(
+      map(response => ({ success: true, message: response })),
+      catchError(error => {
+        let message = 'Registration failed';
+        if (typeof error.error === 'string') {
+            message = error.error;
+        } else if (error.error && error.error.errors) {
+            message = Object.values(error.error.errors).flat().join(' ');
+        } else if (error.error) {
+            message = error.error;
+        }
+        return of({ success: false, message });
+      })
+    );
   }
 
   logout(): void {
@@ -164,31 +130,27 @@ export class AuthService {
   changePassword(request: ChangePasswordRequest): Observable<{ success: boolean; message: string }> {
     const currentUser = this.currentUserSubject.value;
     if (!currentUser) {
-      return of({ success: false, message: 'User not authenticated' }).pipe(delay(1000));
+      return of({ success: false, message: 'User not authenticated' });
     }
 
-    const currentPassword = this.passwords[currentUser.email];
-    if (currentPassword !== request.currentPassword) {
-      return of({ success: false, message: 'Current password is incorrect' }).pipe(delay(1000));
-    }
-
-    if (request.newPassword !== request.confirmPassword) {
-      return of({ success: false, message: 'New passwords do not match' }).pipe(delay(1000));
-    }
-
-    this.passwords[currentUser.email] = request.newPassword;
-    return of({ success: true, message: 'Password changed successfully' }).pipe(delay(1000));
+    // This functionality should ideally be handled by a dedicated backend endpoint.
+    // The logic below is a placeholder and may not work without a backend implementation.
+    console.warn('changePassword is a mock implementation.');
+    return of({ success: false, message: 'Password change not implemented on the backend.'});
   }
 
   updateProfile(request: UpdateProfileRequest): Observable<{ success: boolean; message: string; user?: User }> {
     const currentUser = this.currentUserSubject.value;
     if (!currentUser) {
-      return of({ success: false, message: 'User not authenticated' }).pipe(delay(1000));
+      return of({ success: false, message: 'User not authenticated' });
     }
-
+    
+    // This functionality should ideally be handled by a dedicated backend endpoint.
+    // The logic below is a placeholder and may not work without a backend implementation.
+    console.warn('updateProfile is a mock implementation.');
     const updatedUser: User = {
       ...currentUser,
-      name: request.name,
+      fullName: request.name,
       phone: request.phone,
       city: request.city,
       dateOfBirth: request.dateOfBirth,
@@ -196,14 +158,7 @@ export class AuthService {
       avatar: request.avatar
     };
 
-    // Update user in the array
-    const userIndex = this.users.findIndex(u => u.id === currentUser.id);
-    if (userIndex !== -1) {
-      this.users[userIndex] = updatedUser;
-    }
-
-    return of({ success: true, message: 'Profile updated successfully', user: updatedUser }).pipe(
-      delay(1000),
+    return of({ success: true, message: 'Profile updated successfully (mock)', user: updatedUser }).pipe(
       tap(() => {
         this.currentUserSubject.next(updatedUser);
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
@@ -221,7 +176,7 @@ export class AuthService {
   }
 
   generateCaptcha(): string {
-    // Simple captcha generation (in real app, this would be more complex)
+    // This is a mock. Real captcha should be handled with a backend service.
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < 6; i++) {

@@ -47,11 +47,11 @@ export class ProfileComponent implements OnInit {
     this.currentUser = this.authService.getCurrentUser();
     if (this.currentUser) {
       this.profileData = {
-        name: this.currentUser.name,
-        phone: this.currentUser.phone,
-        city: this.currentUser.city,
-        dateOfBirth: this.currentUser.dateOfBirth || '',
-        gender: this.currentUser.gender || ''
+        name: this.currentUser.fullName,
+        phone: this.currentUser.phone || '',
+        city: this.currentUser.city || '',
+        dateOfBirth: this.currentUser.dateOfBirth ? new Date(this.currentUser.dateOfBirth).toISOString().split('T')[0] : '',
+        gender: this.currentUser.gender || 'Not specified'
       };
     }
   }
