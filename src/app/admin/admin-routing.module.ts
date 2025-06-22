@@ -1,0 +1,28 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { AdminAuthGuard } from './admin-auth.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { LayoutComponent } from './layout/layout.component';
+import { MovieManagementComponent } from './movie-management/movie-management.component';
+import { CommentModerationComponent } from './comment-moderation/comment-moderation.component';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: LayoutComponent,
+    canActivate: [AdminAuthGuard],
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'movies', component: MovieManagementComponent },
+      { path: 'comments', component: CommentModerationComponent }
+      // Future admin components will be added here
+    ]
+  }
+];
+
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
+})
+export class AdminRoutingModule { }

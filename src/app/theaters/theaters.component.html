@@ -1,0 +1,62 @@
+<div class="theaters-container">
+  <header class="theaters-header">
+    <h1 class="header-title">Find a Theater Near You</h1>
+    <div class="search-bar">
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search by theater name or location..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()">
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading theaters...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <i class="fas fa-exclamation-triangle"></i>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <!-- Theaters Grid -->
+  <div *ngIf="!isLoading && !errorMessage && filteredTheaters.length > 0; else noTheaters" class="theaters-grid">
+    <div class="theater-card" *ngFor="let theater of filteredTheaters">
+      <div class="theater-card-header">
+        <h2 class="theater-name">{{ theater.name }}</h2>
+        <p class="theater-location">
+            <i class="fas fa-map-marker-alt"></i> {{ theater.location }}
+        </p>
+      </div>
+      <div class="theater-card-body">
+        <h3 class="section-title">Amenities</h3>
+        <div class="amenities-list">
+          <span class="amenity-badge" *ngFor="let amenity of theater.amenities">
+            <i [class]="getAmenityIcon(amenity)"></i> {{ amenity }}
+          </span>
+        </div>
+
+        <h3 class="section-title">Today's Showtimes</h3>
+        <div class="showtimes-grid">
+          <button class="showtime-btn" *ngFor="let time of theater.showTimes">
+            {{ time }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <ng-template #noTheaters>
+    <div class="empty-state" *ngIf="!isLoading">
+      <i class="fas fa-video-slash"></i>
+      <h3>No Theaters Found</h3>
+      <p>Try a different search term or check back later.</p>
+    </div>
+  </ng-template>
+
+</div>

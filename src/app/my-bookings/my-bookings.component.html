@@ -1,0 +1,76 @@
+<div class="bookings-container">
+  <header class="bookings-header">
+    <h1 class="header-title">My Bookings</h1>
+  </header>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading your bookings...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage && !isLoading" class="error-state">
+    <i class="fas fa-exclamation-triangle"></i>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage">
+    <!-- Tabs -->
+    <nav class="tabs-nav">
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'upcoming'" 
+        (click)="setActiveTab('upcoming')">
+        Upcoming
+      </button>
+      <button 
+        class="tab-btn" 
+        [class.active]="activeTab === 'past'" 
+        (click)="setActiveTab('past')">
+        Past Bookings
+      </button>
+    </nav>
+
+    <!-- Bookings Grid -->
+    <div *ngIf="getActiveBookings().length > 0; else noBookings" class="bookings-grid">
+      <div class="booking-card" *ngFor="let booking of getActiveBookings()">
+        <div class="booking-card-header">
+          <h3 class="movie-title">{{ booking.movieTitle }}</h3>
+          <p class="booking-date">Booked on {{ booking.createdAt | date:'longDate' }}</p>
+        </div>
+        <div class="booking-card-body">
+          <div class="detail-item">
+            <span>Theater:</span>
+            <strong>{{ booking.theaterName }}</strong>
+          </div>
+          <div class="detail-item">
+            <span>Date & Time:</span>
+            <strong>{{ booking.bookingDate | date:'fullDate' }} at {{ booking.showTime }}</strong>
+          </div>
+          <div class="detail-item">
+            <span>Seats:</span>
+            <strong>{{ booking.selectedSeats.join(', ') }}</strong>
+          </div>
+          <div class="detail-item">
+            <span>Total Amount:</span>
+            <strong>₹{{ booking.totalAmount }}</strong>
+          </div>
+          <div class="qr-code">
+            <img [src]="booking.qrCodeUrl" alt="Booking QR Code">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <ng-template #noBookings>
+        <div class="empty-state">
+            <i class="fas fa-ticket-alt"></i>
+            <h3>No {{ activeTab }} bookings found.</h3>
+            <p *ngIf="activeTab === 'upcoming'">Why not book a new movie?</p>
+            <a routerLink="/dashboard" class="btn-explore">Explore Movies</a>
+        </div>
+    </ng-template>
+  </div>
+</div>

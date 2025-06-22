@@ -1,0 +1,28 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2 class="sidebar-title">Admin Portal</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/movies" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-film"></i>
+        <span>Movie Management</span>
+      </a>
+      <a routerLink="/admin/comments" routerLinkActive="active" class="nav-link">
+        <i class="fas fa-comments"></i>
+        <span>Comment Moderation</span>
+      </a>
+      <a routerLink="/" class="nav-link return-link">
+        <i class="fas fa-arrow-left"></i>
+        <span>Return to Site</span>
+      </a>
+    </nav>
+  </aside>
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

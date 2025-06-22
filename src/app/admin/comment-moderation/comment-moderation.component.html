@@ -1,0 +1,45 @@
+<div class="page-header">
+  <h1>Comment Moderation</h1>
+</div>
+
+<div class="table-container">
+  <table class="comments-table">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Comment</th>
+        <th>Movie</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody *ngIf="!isLoading">
+      <tr *ngFor="let comment of comments">
+        <td>
+          <div class="user-info">
+            <div class="user-avatar">{{ comment.userName.charAt(0) }}</div>
+            <span>{{ comment.userName }}</span>
+          </div>
+        </td>
+        <td class="comment-text">{{ comment.comment }}</td>
+        <td>{{ getMovieTitle(comment.movieId) }}</td>
+        <td>{{ comment.createdAt | date:'medium' }}</td>
+        <td>
+          <button class="btn-delete" (click)="deleteComment(comment.id)">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center p-5">
+    <i class="fas fa-spinner fa-spin fa-3x"></i>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && comments.length === 0" class="text-center p-5">
+    <h4>No comments to moderate.</h4>
+  </div>
+</div>

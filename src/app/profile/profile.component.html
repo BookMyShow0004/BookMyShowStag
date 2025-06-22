@@ -1,0 +1,164 @@
+<div class="profile-container">
+  <div class="profile-layout">
+    <!-- Left Column: Profile Header -->
+    <aside class="profile-header-container">
+      <div class="card profile-header">
+        <div class="avatar-circle">
+          {{ getInitials(currentUser?.name || '') }}
+        </div>
+        <h2 class="profile-name">{{ currentUser?.name }}</h2>
+        <p class="profile-email">{{ currentUser?.email }}</p>
+        <p class="member-since">Member since {{ getMemberSince() }}</p>
+        <button class="logout-btn" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Right Column: Profile Content -->
+    <main class="profile-content">
+      <!-- Error/Success Messages -->
+      <div *ngIf="errorMessage" class="alert alert-danger mb-4">
+        {{ errorMessage }}
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success mb-4">
+        {{ successMessage }}
+      </div>
+      
+      <!-- Profile Information Card -->
+      <div class="card mb-4">
+        <div class="content-header">
+          <i class="fas fa-user-edit"></i>
+          Profile Information
+        </div>
+
+        <!-- Viewing Profile -->
+        <div *ngIf="!isEditingProfile">
+          <div class="detail-item">
+            <i class="fas fa-user"></i>
+            <div>
+              <strong>Full Name:</strong> {{ currentUser?.name }}
+            </div>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-phone"></i>
+            <div>
+              <strong>Phone Number:</strong> {{ currentUser?.phone }}
+            </div>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <strong>City:</strong> {{ currentUser?.city }}
+            </div>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-venus-mars"></i>
+            <div>
+              <strong>Gender:</strong> {{ currentUser?.gender || 'Not specified' }}
+            </div>
+          </div>
+          <div class="detail-item">
+            <i class="fas fa-birthday-cake"></i>
+            <div>
+              <strong>Date of Birth:</strong> {{ currentUser?.dateOfBirth | date:'longDate' || 'Not specified' }}
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" (click)="startEditProfile()">Edit Profile</button>
+          </div>
+        </div>
+
+        <!-- Editing Profile Form -->
+        <form *ngIf="isEditingProfile" (ngSubmit)="updateProfile()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="name">Full Name</label>
+              <input type="text" id="name" class="form-control" [(ngModel)]="profileData.name" name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" class="form-control" [(ngModel)]="profileData.phone" name="phone" required>
+            </div>
+            <div class="form-group">
+              <label for="city">City</label>
+              <select id="city" class="form-control" [(ngModel)]="profileData.city" name="city" required>
+                <option value="">Select your city</option>
+                <option *ngFor="let city of cities" [value]="city">{{ city }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender" class="form-control" [(ngModel)]="profileData.gender" name="gender">
+                    <option value="">Select gender</option>
+                    <option *ngFor="let gender of genders" [value]="gender">{{ gender }}</option>
+                </select>
+            </div>
+            <div class="form-group">
+              <label for="dateOfBirth">Date of Birth</label>
+              <input type="date" id="dateOfBirth" class="form-control" [(ngModel)]="profileData.dateOfBirth" name="dateOfBirth">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="cancelEditProfile()">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+              {{ isLoading ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Security Settings Card -->
+      <div class="card mb-4">
+        <div class="content-header">
+          <i class="fas fa-shield-alt"></i>
+          Security Settings
+        </div>
+        
+        <!-- Viewing Security -->
+        <div *ngIf="!isChangingPassword">
+            <p>Update your password for enhanced security.</p>
+            <div class="form-actions">
+                <button class="btn btn-primary" (click)="startChangePassword()">Change Password</button>
+            </div>
+        </div>
+
+        <!-- Change Password Form -->
+        <form *ngIf="isChangingPassword" (ngSubmit)="changePassword()">
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" class="form-control" [(ngModel)]="passwordData.currentPassword" name="currentPassword" required>
+          </div>
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" class="form-control" [(ngModel)]="passwordData.newPassword" name="newPassword" required>
+          </div>
+           <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" class="form-control" [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" required>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="cancelChangePassword()">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+             {{ isLoading ? 'Updating...' : 'Update Password' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Account Statistics Card -->
+      <div class="card">
+        <div class="content-header">
+          <i class="fas fa-chart-line"></i>
+          Account Statistics
+        </div>
+        <div class="detail-item">
+            <i class="fas fa-ticket-alt"></i>
+            <div>
+              <strong>Total Bookings:</strong> 12
+            </div>
+          </div>
+      </div>
+    </main>
+  </div>
+</div>

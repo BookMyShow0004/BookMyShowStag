@@ -1,0 +1,108 @@
+<div class="page-header">
+  <h1>Movie Management</h1>
+  <button class="btn-primary" (click)="showMovieForm()">
+    <i class="fas fa-plus"></i> Add New Movie
+  </button>
+</div>
+
+<!-- Movie Form (for Add/Edit) -->
+<div class="form-container" *ngIf="isFormVisible">
+  <h2>{{ editMode ? 'Edit Movie' : 'Add a New Movie' }}</h2>
+  <form [formGroup]="movieForm" (ngSubmit)="onFormSubmit()">
+    
+    <div class="form-grid">
+      <!-- Title -->
+      <div class="form-group">
+        <label for="title">Title</label>
+        <input id="title" formControlName="title" placeholder="e.g., Avengers: Endgame">
+      </div>
+
+      <!-- Genre -->
+      <div class="form-group">
+        <label for="genre">Genre</label>
+        <input id="genre" formControlName="genre" placeholder="e.g., Action">
+      </div>
+
+      <!-- Language -->
+      <div class="form-group">
+        <label for="language">Language</label>
+        <input id="language" formControlName="language" placeholder="e.g., English">
+      </div>
+
+      <!-- Duration -->
+      <div class="form-group">
+        <label for="duration">Duration</label>
+        <input id="duration" formControlName="duration" placeholder="e.g., 3h 1m">
+      </div>
+
+      <!-- Rating -->
+      <div class="form-group">
+        <label for="rating">Rating</label>
+        <input id="rating" type="number" formControlName="rating" placeholder="e.g., 8.4">
+      </div>
+
+      <!-- Price -->
+      <div class="form-group">
+        <label for="price">Price</label>
+        <input id="price" type="number" formControlName="price" placeholder="e.g., 200">
+      </div>
+    </div>
+    
+    <!-- Image URL -->
+    <div class="form-group">
+      <label for="image">Image URL</label>
+      <input id="image" formControlName="image" placeholder="https://...">
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" rows="4"></textarea>
+    </div>
+
+    <!-- Suggested Movie -->
+    <div class="form-check">
+      <input id="isSuggested" type="checkbox" formControlName="isSuggested">
+      <label for="isSuggested">Suggest this movie to users</label>
+    </div>
+    
+    <div class="form-actions">
+      <button type="submit" class="btn-primary" [disabled]="movieForm.invalid || isLoading">
+        {{ isLoading ? 'Saving...' : (editMode ? 'Update Movie' : 'Add Movie') }}
+      </button>
+      <button type="button" class="btn-secondary" (click)="hideMovieForm()">Cancel</button>
+    </div>
+  </form>
+</div>
+
+
+<!-- Movies Table -->
+<div class="table-container">
+  <table class="movies-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Genre</th>
+        <th>Rating</th>
+        <th>Price</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let movie of movies">
+        <td>{{ movie.title }}</td>
+        <td>{{ movie.genre }}</td>
+        <td>{{ movie.rating }}</td>
+        <td>{{ movie.price | currency:'INR' }}</td>
+        <td class="action-buttons">
+          <button class="btn-edit" (click)="editMovie(movie)">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="btn-delete" (click)="deleteMovie(movie.id)">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

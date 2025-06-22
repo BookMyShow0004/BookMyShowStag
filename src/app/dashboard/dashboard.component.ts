@@ -1,152 +1,81 @@
-import { Component, OnInit } from '@angular/core';
-
-export interface Movie {
-  id: number;
-  title: string;
-  genre: string;
-  language: string;
-  duration: string;
-  rating: number;
-  image: string;
-  releaseDate: string;
-  description: string;
-  price: number;
-  theaters: Theater[];
-}
-
-export interface Theater {
-  id: number;
-  name: string;
-  location: string;
-  showTimes: string[];
-}
+import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { MovieService, Movie } from '../services/movie.service';
+import { AuthService, User } from '../services/auth.service';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { Modal } from 'bootstrap';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   movies: Movie[] = [];
+  suggestedMovies: Movie[] = [];
   filteredMovies: Movie[] = [];
-  searchTerm: string = '';
+  isLoading: boolean = true;
+  currentUser: User | null = null;
+  private userSubscription: Subscription | undefined;
+
+  // Search and Filter
+  searchQuery: string = '';
   selectedGenre: string = '';
   selectedLanguage: string = '';
-  selectedCity: string = 'Mumbai';
-  genres: string[] = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Thriller', 'Sci-Fi'];
-  languages: string[] = ['Hindi', 'English', 'Tamil', 'Telugu', 'Marathi'];
-  cities: string[] = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Pune'];
+  selectedRating: number = 0;
+  sortBy: 'name' | 'rating' | 'releaseDate' | 'price' = 'name';
+  showFilters: boolean = false;
 
-  isLoading: boolean = true;
+  // Booking Modal
   selectedMovie: Movie | null = null;
-  showBookingModal: boolean = false;
+  private bookingModal: Modal | undefined;
 
-  constructor() { }
+  // Filter options
+  genres: string[] = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Thriller', 'Sci-Fi'];
+  languages: string[] = ['English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada'];
+
+  constructor(
+    private movieService: MovieService,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private elementRef: ElementRef
+  ) { }
 
   ngOnInit(): void {
+    this.userSubscription = this.authService.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+
     this.loadMovies();
+
+    this.route.queryParams.subscribe(params => {
+      const movieId = params['openBookingFor'];
+      if (movieId && this.currentUser) {
+        this.handlePostLoginBooking(movieId);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.userSubscription?.unsubscribe();
   }
 
   loadMovies(): void {
-    // Simulating API call
-    setTimeout(() => {
-      this.movies = [
-        {
-          id: 1,
-          title: 'Avengers: Endgame',
-          genre: 'Action',
-          language: 'English',
-          duration: '3h 1m',
-          rating: 8.4,
-          image: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@like_202006280402.png,lx-24,ly-617,w-29,l-end/et00444869-lsvhahcatz-portrait.jpg',
-          releaseDate: '2023-04-26',
-          description: 'The grave course of events set in motion by Thanos that wiped out half the universe...',
-          price: 200,
-          theaters: [
-            { id: 1, name: 'PVR Cinemas', location: 'Phoenix Mall', showTimes: ['10:00 AM', '1:30 PM', '5:00 PM', '8:30 PM'] },
-            { id: 2, name: 'INOX', location: 'R-City Mall', showTimes: ['11:00 AM', '2:30 PM', '6:00 PM', '9:30 PM'] }
-          ]
-        },
-        {
-          id: 2,
-          title: 'RRR',
-          genre: 'Action',
-          language: 'Hindi',
-          duration: '3h 7m',
-          rating: 7.9,
-          image: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@like_202006280402.png,lx-24,ly-617,w-29,l-end/et00444869-lsvhahcatz-portrait.jpg',
-          releaseDate: '2023-03-25',
-          description: 'A fictional story about two legendary revolutionaries...',
-          price: 180,
-          theaters: [
-            { id: 3, name: 'Cinepolis', location: 'Viviana Mall', showTimes: ['12:00 PM', '4:00 PM', '8:00 PM'] }
-          ]
-        },
-        {
-          id: 3,
-          title: 'The Batman',
-          genre: 'Action',
-          language: 'English',
-          duration: '2h 56m',
-          rating: 7.8,
-          image: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@like_202006280402.png,lx-24,ly-617,w-29,l-end/et00444869-lsvhahcatz-portrait.jpg',
-          releaseDate: '2023-03-04',
-          description: 'Batman ventures into Gotham City\'s underworld...',
-          price: 220,
-          theaters: [
-            { id: 1, name: 'PVR Cinemas', location: 'Phoenix Mall', showTimes: ['1:00 PM', '4:30 PM', '8:00 PM'] }
-          ]
-        },
-        {
-          id: 4,
-          title: 'Gehraiyaan',
-          genre: 'Drama',
-          language: 'Hindi',
-          duration: '2h 20m',
-          rating: 6.5,
-          image: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@like_202006280402.png,lx-24,ly-617,w-29,l-end/et00444869-lsvhahcatz-portrait.jpg',
-          releaseDate: '2023-02-11',
-          description: 'A story about relationships, love, and betrayal...',
-          price: 150,
-          theaters: [
-            { id: 2, name: 'INOX', location: 'R-City Mall', showTimes: ['2:00 PM', '5:30 PM', '9:00 PM'] }
-          ]
-        },
-        {
-          id: 5,
-          title: 'Spider-Man: No Way Home',
-          genre: 'Action',
-          language: 'English',
-          duration: '2h 28m',
-          rating: 8.2,
-          image: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@like_202006280402.png,lx-24,ly-617,w-29,l-end/et00444869-lsvhahcatz-portrait.jpg',
-          releaseDate: '2023-12-17',
-          description: 'Spider-Man\'s identity is revealed and he asks for help...',
-          price: 250,
-          theaters: [
-            { id: 3, name: 'Cinepolis', location: 'Viviana Mall', showTimes: ['10:30 AM', '2:00 PM', '5:30 PM', '9:00 PM'] }
-          ]
-        },
-        {
-          id: 6,
-          title: 'Scream',
-          genre: 'Horror',
-          language: 'English',
-          duration: '1h 54m',
-          rating: 6.3,
-          image: 'https://assets-in.bmscdn.com/discovery-catalog/events/tr:w-400,h-600,bg-CCCCCC:w-400.0,h-660.0,cm-pad_resize,bg-000000,fo-top:l-image,i-discovery-catalog@@icons@@like_202006280402.png,lx-24,ly-617,w-29,l-end/et00444869-lsvhahcatz-portrait.jpg',
-          releaseDate: '2023-01-14',
-          description: 'Twenty-five years after the original series of murders...',
-          price: 180,
-          theaters: [
-            { id: 1, name: 'PVR Cinemas', location: 'Phoenix Mall', showTimes: ['7:00 PM', '10:00 PM'] }
-          ]
-        }
-      ];
-
-      this.filteredMovies = [...this.movies];
-      this.isLoading = false;
-    }, 1000);
+    this.isLoading = true;
+    
+    this.movieService.getMovies().subscribe({
+      next: (movies) => {
+        this.movies = movies;
+        this.suggestedMovies = movies.filter(movie => movie.isSuggested);
+        this.filteredMovies = movies;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading movies:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   onSearch(): void {
@@ -157,37 +86,140 @@ export class DashboardComponent implements OnInit {
     this.applyFilters();
   }
 
-  applyFilters(): void {
-    this.filteredMovies = this.movies.filter(movie => {
-      const matchesSearch = movie.title.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                           movie.genre.toLowerCase().includes(this.searchTerm.toLowerCase());
-      const matchesGenre = !this.selectedGenre || movie.genre === this.selectedGenre;
-      const matchesLanguage = !this.selectedLanguage || movie.language === this.selectedLanguage;
+  onSortChange(): void {
+    this.applySorting();
+  }
 
-      return matchesSearch && matchesGenre && matchesLanguage;
+  applyFilters(): void {
+    let filtered = [...this.movies];
+
+    // Search filter
+    if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase();
+      filtered = filtered.filter(movie =>
+        movie.title.toLowerCase().includes(query) ||
+        movie.description.toLowerCase().includes(query) ||
+        movie.genre.toLowerCase().includes(query)
+      );
+    }
+
+    // Genre filter
+    if (this.selectedGenre) {
+      filtered = filtered.filter(movie => movie.genre === this.selectedGenre);
+    }
+
+    // Language filter
+    if (this.selectedLanguage) {
+      filtered = filtered.filter(movie => movie.language === this.selectedLanguage);
+    }
+
+    // Rating filter
+    if (this.selectedRating > 0) {
+      filtered = filtered.filter(movie => movie.rating >= this.selectedRating);
+    }
+
+    this.filteredMovies = filtered;
+    this.applySorting();
+  }
+
+  applySorting(): void {
+    this.filteredMovies.sort((a, b) => {
+      let comparison = 0;
+
+      switch (this.sortBy) {
+        case 'name':
+          comparison = a.title.localeCompare(b.title);
+          break;
+        case 'rating':
+          comparison = b.rating - a.rating;
+          break;
+        case 'releaseDate':
+          comparison = new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
+          break;
+        case 'price':
+          comparison = a.price - b.price;
+          break;
+      }
+
+      return comparison;
     });
   }
 
   clearFilters(): void {
-    this.searchTerm = '';
+    this.searchQuery = '';
     this.selectedGenre = '';
     this.selectedLanguage = '';
+    this.selectedRating = 0;
     this.filteredMovies = [...this.movies];
+    this.applySorting();
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
   }
 
   openBookingModal(movie: Movie): void {
+    if (!this.currentUser) {
+      // Redirect to login if user is not authenticated, passing return URL
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url, openBookingFor: movie.id } });
+      return;
+    }
+    
     this.selectedMovie = movie;
-    this.showBookingModal = true;
+    const modalElement = this.elementRef.nativeElement.querySelector('#bookingModal');
+    if (modalElement) {
+      this.bookingModal = new Modal(modalElement);
+      this.bookingModal.show();
+    }
   }
 
   closeBookingModal(): void {
-    this.showBookingModal = false;
+    if (this.bookingModal) {
+      this.bookingModal.hide();
+    }
     this.selectedMovie = null;
+    // Clear query params after closing modal
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { openBookingFor: null },
+      queryParamsHandling: 'merge',
+    });
   }
 
-  bookTicket(theater: Theater, showTime: string): void {
-    alert(`Booking confirmed for ${this.selectedMovie?.title} at ${theater.name} (${theater.location}) for ${showTime}`);
+  onBookingComplete(): void {
     this.closeBookingModal();
+    // Optionally refresh movies or show success message
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  getInitials(name: string): string {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  }
+
+  trackByMovieId(index: number, movie: Movie): number {
+    return movie.id;
+  }
+
+  getFilteredCount(): number {
+    return this.filteredMovies.length;
+  }
+
+  getTotalCount(): number {
+    return this.movies.length;
+  }
+
+  private handlePostLoginBooking(movieId: string): void {
+    const movieToBook = this.movies.find(m => m.id === +movieId);
+    if (movieToBook) {
+      // Use a timeout to ensure the view is stable before opening the modal
+      setTimeout(() => {
+        this.openBookingModal(movieToBook);
+      }, 0);
+    }
   }
 
   getStarArray(rating: number): number[] {
