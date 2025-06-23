@@ -63,7 +63,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadMovies(): void {
     this.isLoading = true;
-    
+
     this.movieService.getMovies().subscribe({
       next: (movies) => {
         this.movies = movies;
@@ -161,10 +161,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   openBookingModal(movie: Movie): void {
     if (!this.currentUser) {
       // Redirect to login if user is not authenticated, passing return URL
-      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url, openBookingFor: movie.id } });
+      this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url, openBookingFor: movie.movieId } });
       return;
     }
-    
+
     this.selectedMovie = movie;
     const modalElement = this.elementRef.nativeElement.querySelector('#bookingModal');
     if (modalElement) {
@@ -200,8 +200,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   }
 
-  trackByMovieId(index: number, movie: Movie): number {
-    return movie.id;
+  trackBymovieId(index: number, movie: Movie): number {
+    return movie.movieId;
   }
 
   getFilteredCount(): number {
@@ -213,7 +213,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private handlePostLoginBooking(movieId: string): void {
-    const movieToBook = this.movies.find(m => m.id === +movieId);
+    const movieToBook = this.movies.find(m => m.movieId === +movieId);
     if (movieToBook) {
       // Use a timeout to ensure the view is stable before opening the modal
       setTimeout(() => {

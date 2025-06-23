@@ -23,7 +23,7 @@ export class CommentModerationComponent implements OnInit {
     // First get movies to create a title map
     this.movieService.getMovies().subscribe(movies => {
       this.movies = movies;
-      this.movies.forEach(movie => this.movieTitleMap.set(movie.id, movie.title));
+      this.movies.forEach(movie => this.movieTitleMap.set(movie.movieId, movie.title));
 
       // Then get comments
       this.movieService.getAllComments().subscribe(comments => {

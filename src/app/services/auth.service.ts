@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
@@ -7,7 +7,7 @@ export interface User {
   userId: number;
   fullName: string;
   email: string;
-  role: 'admin' | 'user';
+  role: 'Admin' | 'User';
   cityId: number;
   // Optional fields that may be part of the profile but not login response
   phone?: string;
@@ -25,18 +25,24 @@ export interface LoginRequest {
   rememberMe?: boolean;
 }
 
+export interface City {
+  cityId: number;
+  cityName: string;
+}
+
 export interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
   confirmPassword: string;
   cityId: number;
+  role: string;
 }
 
 export interface ChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
-  confirmPassword: string;
+  confirmPassword?: string; // Used only for UI validation
 }
 
 export interface UpdateProfileRequest {
@@ -49,12 +55,13 @@ export interface UpdateProfileRequest {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://localhost:5001/api/Users'; 
+  private apiUrl = 'http://localhost:5069/api';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  public getCurrentUsers = localStorage.getItem('currentUser');
 
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
@@ -72,27 +79,42 @@ export class AuthService {
     }
   }
 
-  login(request: LoginRequest): Observable<{ success: boolean; message: string; user?: User }> {
-    return this.http.post<User>(`${this.apiUrl}/Login`, { email: request.email, password: request.password })
+  login(
+    request: LoginRequest
+  ): Observable<{ success: boolean; message: string; user?: User }> {
+    return this.http
+      .post<User>(`${this.apiUrl}/Users/Login`, request, {
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }), // Important!
+      })
       .pipe(
-        map(user => {
+        map((user) => {
+          console.log('Inside User', user);
           this.currentUserSubject.next(user);
           this.isAuthenticatedSubject.next(true);
-          if (request.rememberMe) {
-            localStorage.setItem('currentUser', JSON.stringify(user));
-          } else {
-            sessionStorage.setItem('currentUser', JSON.stringify(user));
-          }
+
+          const storage = request.rememberMe ? localStorage : localStorage;
+          storage.setItem('currentUser', JSON.stringify(user));
+
           return { success: true, message: 'Login successful', user };
         }),
-        catchError(error => {
-          const message = error.error?.title || (typeof error.error === 'string' ? error.error : 'Invalid email or password');
+        catchError((error) => {
+          const message =
+            error.error?.title ||
+            (typeof error.error === 'string'
+              ? error.error
+              : 'Invalid email or password');
           return of({ success: false, message });
         })
       );
   }
 
-  register(request: RegisterRequest): Observable<{ success: boolean; message: string }> {
+  getcityData(): Observable<any> {
+    return this.http.get<City>(`${this.apiUrl}/Cities`).pipe();
+  }
+
+  register(
+    request: RegisterRequest
+  ): Observable<{ success: boolean; message: string }> {
     if (request.password !== request.confirmPassword) {
       return of({ success: false, message: 'Passwords do not match' });
     }
@@ -100,24 +122,29 @@ export class AuthService {
     const registrationData = {
       FullName: request.fullName,
       Email: request.email,
-      PasswordHash: request.password, 
-      CityId: request.cityId
+      PasswordHash: request.password,
+      CityId: request.cityId,
+      Role: request.role,
     };
 
-    return this.http.post(`${this.apiUrl}/Register`, registrationData, { responseType: 'text' }).pipe(
-      map(response => ({ success: true, message: response })),
-      catchError(error => {
-        let message = 'Registration failed';
-        if (typeof error.error === 'string') {
-            message = error.error;
-        } else if (error.error && error.error.errors) {
-            message = Object.values(error.error.errors).flat().join(' ');
-        } else if (error.error) {
-            message = error.error;
-        }
-        return of({ success: false, message });
+    return this.http
+      .post(`${this.apiUrl}/Users/Register`, registrationData, {
+        responseType: 'text',
       })
-    );
+      .pipe(
+        map((response) => ({ success: true, message: response })),
+        catchError((error) => {
+          let message = 'Registration failed';
+          if (typeof error.error === 'string') {
+            message = error.error;
+          } else if (error.error && error.error.errors) {
+            message = Object.values(error.error.errors).flat().join(' ');
+          } else if (error.error) {
+            message = error.error;
+          }
+          return of({ success: false, message });
+        })
+      );
   }
 
   logout(): void {
@@ -127,24 +154,53 @@ export class AuthService {
     sessionStorage.removeItem('currentUser');
   }
 
-  changePassword(request: ChangePasswordRequest): Observable<{ success: boolean; message: string }> {
-    const currentUser = this.currentUserSubject.value;
-    if (!currentUser) {
+  changePassword(
+    request: ChangePasswordRequest
+  ): Observable<{ success: boolean; message: string }> {
+    const currentUserRaw = localStorage.getItem('currentUser');
+    const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+
+    if (!currentUser || !currentUser.userId) {
       return of({ success: false, message: 'User not authenticated' });
     }
 
-    // This functionality should ideally be handled by a dedicated backend endpoint.
-    // The logic below is a placeholder and may not work without a backend implementation.
-    console.warn('changePassword is a mock implementation.');
-    return of({ success: false, message: 'Password change not implemented on the backend.'});
+    const body = {
+      oldPassword: request.currentPassword,
+      newPassword: request.newPassword,
+    };
+
+    // ✅ Set responseType to 'text'
+    return this.http
+      .post(
+        `${this.apiUrl}/Users/ChangePassword?userId=${currentUser.userId}`,
+        body,
+        {
+          responseType: 'text', // 👈 This prevents the JSON parsing error
+        }
+      )
+      .pipe(
+        map((responseText: string) => ({
+          success: true,
+          message: responseText,
+        })),
+        catchError((error) => {
+          const message =
+            typeof error.error === 'string'
+              ? error.error
+              : error.error?.message || 'Password change failed.';
+          return of({ success: false, message });
+        })
+      );
   }
 
-  updateProfile(request: UpdateProfileRequest): Observable<{ success: boolean; message: string; user?: User }> {
+  updateProfile(
+    request: UpdateProfileRequest
+  ): Observable<{ success: boolean; message: string; user?: User }> {
     const currentUser = this.currentUserSubject.value;
     if (!currentUser) {
       return of({ success: false, message: 'User not authenticated' });
     }
-    
+
     // This functionality should ideally be handled by a dedicated backend endpoint.
     // The logic below is a placeholder and may not work without a backend implementation.
     console.warn('updateProfile is a mock implementation.');
@@ -155,10 +211,14 @@ export class AuthService {
       city: request.city,
       dateOfBirth: request.dateOfBirth,
       gender: request.gender,
-      avatar: request.avatar
+      avatar: request.avatar,
     };
 
-    return of({ success: true, message: 'Profile updated successfully (mock)', user: updatedUser }).pipe(
+    return of({
+      success: true,
+      message: 'Profile updated successfully (mock)',
+      user: updatedUser,
+    }).pipe(
       tap(() => {
         this.currentUserSubject.next(updatedUser);
         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
@@ -177,7 +237,8 @@ export class AuthService {
 
   generateCaptcha(): string {
     // This is a mock. Real captcha should be handled with a backend service.
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     for (let i = 0; i < 6; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));

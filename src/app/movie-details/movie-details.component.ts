@@ -44,7 +44,7 @@ export class MovieDetailsComponent implements OnInit {
 
   loadMovieDetails(): void {
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
-    
+
     this.movieService.getMovieById(movieId).subscribe({
       next: (movie) => {
         this.movie = movie;
@@ -107,7 +107,7 @@ export class MovieDetailsComponent implements OnInit {
     this.errorMessage = '';
 
     const ratingRequest: RatingRequest = {
-      movieId: this.movie.id,
+      movieId: this.movie.movieId,
       rating: this.userRating,
       review: this.userReview
     };
@@ -119,7 +119,7 @@ export class MovieDetailsComponent implements OnInit {
           this.showRatingForm = false;
           this.userRating = 0;
           this.userReview = '';
-          this.loadReviews(this.movie!.id);
+          this.loadReviews(this.movie!.movieId);
           this.loadMovieDetails(); // Refresh movie data to update average rating
         } else {
           this.errorMessage = response.message;
@@ -148,7 +148,7 @@ export class MovieDetailsComponent implements OnInit {
     this.errorMessage = '';
 
     const commentRequest: CommentRequest = {
-      movieId: this.movie.id,
+      movieId: this.movie.movieId,
       comment: this.newComment.trim()
     };
 
@@ -158,7 +158,7 @@ export class MovieDetailsComponent implements OnInit {
         if (response.success) {
           this.showCommentForm = false;
           this.newComment = '';
-          this.loadComments(this.movie!.id);
+          this.loadComments(this.movie!.movieId);
         } else {
           this.errorMessage = response.message;
         }
@@ -180,7 +180,7 @@ export class MovieDetailsComponent implements OnInit {
     this.movieService.likeReview(reviewId).subscribe({
       next: (response) => {
         if (response.success) {
-          this.loadReviews(this.movie!.id);
+          this.loadReviews(this.movie!.movieId);
         }
       },
       error: (error) => {
@@ -198,7 +198,7 @@ export class MovieDetailsComponent implements OnInit {
     this.movieService.likeComment(commentId).subscribe({
       next: (response) => {
         if (response.success) {
-          this.loadComments(this.movie!.id);
+          this.loadComments(this.movie!.movieId);
         }
       },
       error: (error) => {
@@ -214,8 +214,8 @@ export class MovieDetailsComponent implements OnInit {
     }
 
     if (this.movie) {
-      this.router.navigate(['/book-tickets'], { 
-        queryParams: { movieId: this.movie.id } 
+      this.router.navigate(['/book-tickets'], {
+        queryParams: { movieId: this.movie.movieId }
       });
     }
   }
