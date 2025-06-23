@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, RegisterRequest } from '../services/auth.service';
+import { AuthService, City, RegisterRequest } from '../services/auth.service';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css']
+  styleUrls: ['./signup.component.css'],
 })
 export class SignupComponent implements OnInit {
   registerData: RegisterRequest = {
@@ -13,7 +13,8 @@ export class SignupComponent implements OnInit {
     email: '',
     password: '',
     confirmPassword: '',
-    cityId: null as any
+    role: 'User',
+    cityId: null as any,
   };
 
   isLoading = false;
@@ -21,29 +22,29 @@ export class SignupComponent implements OnInit {
   successMessage = '';
   captchaText = '';
   userCaptcha = '';
-  
-  cities = [
-    { id: 1, name: 'Mumbai' },
-    { id: 2, name: 'Delhi' },
-    { id: 3, name: 'Bangalore' },
-    { id: 4, name: 'Hyderabad' },
-    { id: 5, name: 'Chennai' },
-    { id: 6, name: 'Pune' },
-    { id: 7, name: 'Kolkata' },
-    { id: 8, name: 'Ahmedabad' }
-  ];
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  cities : City[] = [];
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.generateCaptcha();
+    this.getCities();
   }
 
   generateCaptcha(): void {
     this.captchaText = this.authService.generateCaptcha();
+  }
+
+  getCities(): void {
+    this.authService.getcityData().subscribe({
+      next: (response) => {
+        this.cities = response; // Correct way: assign the whole array
+      },
+      error: (err) => {
+        console.error('Failed to load cities:', err);
+      },
+    });
   }
 
   onRegister(): void {
@@ -74,7 +75,7 @@ export class SignupComponent implements OnInit {
         this.errorMessage = 'Registration failed. Please try again.';
         this.generateCaptcha();
         console.error('Registration error:', error);
-      }
+      },
     });
   }
 

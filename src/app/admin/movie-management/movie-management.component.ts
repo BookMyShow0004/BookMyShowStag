@@ -13,7 +13,7 @@ export class MovieManagementComponent implements OnInit {
   isFormVisible = false;
   editMode = false;
   isLoading = false;
-  selectedMovieId: number | null = null;
+  selectedmovieId: number | null = null;
 
   constructor(
     private movieService: MovieService,
@@ -27,6 +27,7 @@ export class MovieManagementComponent implements OnInit {
       rating: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
       price: [0, [Validators.required, Validators.min(0)]],
       image: ['', Validators.required],
+      date: ['', Validators.required],
       description: ['', Validators.required],
       isSuggested: [false]
     });
@@ -39,6 +40,7 @@ export class MovieManagementComponent implements OnInit {
   loadMovies(): void {
     this.movieService.getMovies().subscribe(movies => {
       this.movies = movies;
+      console.log(movies)
     });
   }
 
@@ -50,12 +52,12 @@ export class MovieManagementComponent implements OnInit {
 
   hideMovieForm(): void {
     this.isFormVisible = false;
-    this.selectedMovieId = null;
+    this.selectedmovieId = null;
   }
 
   editMovie(movie: Movie): void {
     this.editMode = true;
-    this.selectedMovieId = movie.id;
+    this.selectedmovieId = movie.movieId;
     // Omit fields that are not in the form
     const { theaters, averageRating, totalRatings, totalReviews, totalLikes, totalComments, releaseDate, ...formValues } = movie;
     this.movieForm.setValue(formValues);
@@ -82,7 +84,7 @@ export class MovieManagementComponent implements OnInit {
       // Re-add properties not in the form but required by the Movie interface
       const fullMovieData: Movie = {
         ...movieData,
-        id: this.selectedMovieId!,
+        id: this.selectedmovieId!,
         releaseDate: new Date().toISOString(), // Placeholder, consider adding to form
         theaters: [], // Placeholder
         averageRating: 0,

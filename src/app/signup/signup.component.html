@@ -55,7 +55,7 @@
             <div class="form-floating">
               <select id="city" name="city" [(ngModel)]="registerData.cityId" required class="form-select">
                 <option [ngValue]="null" disabled>Select your city</option>
-                <option *ngFor="let city of cities" [ngValue]="city.id">{{ city.name }}</option>
+                <option *ngFor="let city of cities" [ngValue]="city.cityId">{{ city.cityName }}</option>
               </select>
               <label for="city">City</label>
             </div>
@@ -87,7 +87,7 @@
       </form>
 
       <p class="text-center mt-4 mb-0">
-        Already have an account? 
+        Already have an account?
         <a routerLink="/login" class="text-decoration-none fw-bold">Sign In</a>
       </p>
     </div>

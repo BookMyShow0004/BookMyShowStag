@@ -17,7 +17,7 @@ export class AdminAuthGuard implements CanActivate {
     return this.authService.currentUser$.pipe(
       take(1),
       map(user => {
-        if (user && user.role === 'admin') {
+        if (user && user.role === 'Admin') {
           return true;
         }
         // Redirect to home page if not an admin

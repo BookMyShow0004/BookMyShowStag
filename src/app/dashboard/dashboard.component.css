@@ -1,8 +1,7 @@
 /* Reset and Base Styles */
 * {
-  padding: 0;
+  padding: 5px;
   box-sizing: border-box;
-  margin: initial;
 }
 
 .dashboard-container {
@@ -129,6 +128,16 @@
 .user-name {
   font-weight: 600;
   color: #212529;
+}
+
+@media(max-width:767px){
+.mob-all{
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
 }
 
 .user-dropdown {
@@ -580,7 +589,7 @@
   .header-actions .auth-btn, .user-info {
     padding: 0.5rem;
   }
-  
+
   .header-actions .auth-btn i, .user-avatar {
     margin-right: 0;
   }
@@ -592,7 +601,7 @@
   .header-brand h1 {
     font-size: 1.3rem;
   }
-  
+
   .auth-buttons {
     gap: 0.5rem;
   }

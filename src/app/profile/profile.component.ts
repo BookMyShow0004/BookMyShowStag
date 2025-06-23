@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, User, ChangePasswordRequest, UpdateProfileRequest } from '../services/auth.service';
+import { City } from '../services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -30,7 +31,7 @@ export class ProfileComponent implements OnInit {
     confirmPassword: ''
   };
 
-  cities: string[] = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Pune', 'Hyderabad', 'Ahmedabad'];
+  cities : City[] = [];
   genders: string[] = ['Male', 'Female', 'Other'];
 
   showCurrentPassword: boolean = false;
@@ -41,6 +42,7 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUserProfile();
+    this.getCities();
   }
 
   loadUserProfile(): void {
@@ -54,6 +56,17 @@ export class ProfileComponent implements OnInit {
         gender: this.currentUser.gender || 'Not specified'
       };
     }
+  }
+
+   getCities(): void {
+    this.authService.getcityData().subscribe({
+      next: (response) => {
+        this.cities = response; // Correct way: assign the whole array
+      },
+      error: (err) => {
+        console.error('Failed to load cities:', err);
+      },
+    });
   }
 
   startEditProfile(): void {
@@ -116,36 +129,37 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword(): void {
-    if (!this.validatePasswordForm()) {
-      return;
-    }
-
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.authService.changePassword(this.passwordData).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        if (response.success) {
-          this.successMessage = response.message;
-          this.isChangingPassword = false;
-          this.passwordData = {
-            currentPassword: '',
-            newPassword: '',
-            confirmPassword: ''
-          };
-        } else {
-          this.errorMessage = response.message;
-        }
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = 'Password change failed. Please try again.';
-        console.error('Password change error:', error);
-      }
-    });
+  if (!this.validatePasswordForm()) {
+    return;
   }
+
+  this.isLoading = true;
+  this.errorMessage = '';
+  this.successMessage = '';
+
+  this.authService.changePassword(this.passwordData).subscribe({
+    next: (response) => {
+      this.isLoading = false;
+      if (response.success) {
+        this.successMessage = response.message;
+        this.isChangingPassword = false;
+        this.passwordData = {
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        };
+      } else {
+        this.errorMessage = response.message;
+      }
+    },
+    error: (error) => {
+      this.isLoading = false;
+      this.errorMessage = 'Password change failed. Please try again.';
+      console.error('Password change error:', error);
+    }
+  });
+}
+
 
   validateProfileForm(): boolean {
     if (!this.profileData.name.trim()) {

@@ -14,7 +14,7 @@
   <!-- Details Card -->
   <div *ngIf="movie && !isLoading" class="details-card">
     <img [src]="movie.image" [alt]="movie.title" class="movie-poster">
-    
+
     <div class="movie-info">
       <h1 class="movie-title">{{ movie.title }}</h1>
       <p class="movie-genre">{{ movie.genre }}</p>
@@ -33,7 +33,7 @@
           </div>
           <div class="info-item">
             <i class="fas fa-clock"></i>
-            <span>{{ movie.duration }}</span>
+            <span>{{ movie.durationMins }}</span>
           </div>
           <div class="info-item">
             <i class="fas fa-language"></i>
@@ -45,7 +45,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="action-buttons">
         <button class="btn btn-primary" (click)="bookMovie()">
             <i class="fas fa-ticket-alt"></i> Book Tickets

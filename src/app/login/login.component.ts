@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
         if (response.success && response.user) {
           // Check user role for redirection
-          const targetUrl = response.user.role === 'admin' ? '/admin' : this.returnUrl;
+          const targetUrl = response.user.role === 'Admin' ? '/admin' : this.returnUrl;
           const queryParams = this.openBookingFor ? { openBookingFor: this.openBookingFor } : {};
           this.router.navigate([targetUrl], { queryParams });
         } else {
