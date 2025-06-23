@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MovieService, Movie, MovieReview, MovieComment, RatingRequest, CommentRequest } from '../services/movie.service';
+import { MovieService, Movie, MovieReview, MovieComment } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -106,14 +106,14 @@ export class MovieDetailsComponent implements OnInit {
     this.isSubmittingRating = true;
     this.errorMessage = '';
 
-    const ratingRequest: RatingRequest = {
+    const ratingRequest = {
       movieId: this.movie.movieId,
       rating: this.userRating,
       review: this.userReview
     };
 
     this.movieService.addRating(ratingRequest).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.isSubmittingRating = false;
         if (response.success) {
           this.showRatingForm = false;
@@ -125,7 +125,7 @@ export class MovieDetailsComponent implements OnInit {
           this.errorMessage = response.message;
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         this.isSubmittingRating = false;
         this.errorMessage = 'Failed to submit rating';
         console.error('Error submitting rating:', error);
@@ -147,13 +147,13 @@ export class MovieDetailsComponent implements OnInit {
     this.isSubmittingComment = true;
     this.errorMessage = '';
 
-    const commentRequest: CommentRequest = {
+    const commentRequest = {
       movieId: this.movie.movieId,
       comment: this.newComment.trim()
     };
 
     this.movieService.addComment(commentRequest).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.isSubmittingComment = false;
         if (response.success) {
           this.showCommentForm = false;
@@ -163,7 +163,7 @@ export class MovieDetailsComponent implements OnInit {
           this.errorMessage = response.message;
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         this.isSubmittingComment = false;
         this.errorMessage = 'Failed to submit comment';
         console.error('Error submitting comment:', error);
@@ -178,12 +178,12 @@ export class MovieDetailsComponent implements OnInit {
     }
 
     this.movieService.likeReview(reviewId).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         if (response.success) {
           this.loadReviews(this.movie!.movieId);
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error liking review:', error);
       }
     });
@@ -196,12 +196,12 @@ export class MovieDetailsComponent implements OnInit {
     }
 
     this.movieService.likeComment(commentId).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         if (response.success) {
           this.loadComments(this.movie!.movieId);
         }
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error liking comment:', error);
       }
     });
@@ -222,11 +222,6 @@ export class MovieDetailsComponent implements OnInit {
 
   getStarRating(rating: number): number[] {
     return Array.from({ length: 5 }, (_, i) => i < rating ? 1 : 0);
-  }
-
-  getAverageRating(): number {
-    if (!this.movie) return 0;
-    return Math.round(this.movie.averageRating * 10) / 10;
   }
 
   formatDate(date: Date): string {

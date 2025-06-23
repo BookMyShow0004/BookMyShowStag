@@ -48,10 +48,30 @@ h4, h5 {
 
 .seats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
-  gap: 0.75rem;
-  max-width: 600px;
-  margin: 0 auto;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+  justify-items: center;
+}
+
+.seats-grid button {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  background: #e0f7e9;
+  transition: background 0.2s;
+}
+
+.seats-grid button.selected {
+  background: #1976d2;
+  color: #fff;
+}
+
+.seats-grid button.booked {
+  background: #aaa;
+  color: #fff;
+  cursor: not-allowed;
 }
 
 .seat {
@@ -661,4 +681,9 @@ h4, h5 {
   .showtimes {
     justify-content: center;
   }
+}
+
+.selected {
+  background-color: #1976d2;
+  color: #fff;
 }

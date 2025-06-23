@@ -21,11 +21,11 @@
             <span>{{ comment.userName }}</span>
           </div>
         </td>
-        <td class="comment-text">{{ comment.comment }}</td>
-        <td>{{ getMovieTitle(comment.movieId) }}</td>
+        <td class="comment-text">{{ comment.content }}</td>
+        <td>{{ comment.movieTitle }}</td>
         <td>{{ comment.createdAt | date:'medium' }}</td>
         <td>
-          <button class="btn-delete" (click)="deleteComment(comment.id)">
+          <button class="btn-delete" (click)="deleteComment(comment.commentId)">
             <i class="fas fa-trash"></i> Delete
           </button>
         </td>

@@ -60,18 +60,6 @@
               <label for="city">City</label>
             </div>
           </div>
-
-          <!-- Captcha -->
-          <div class="form-group captcha-group">
-            <label for="captcha" class="form-label">Captcha</label>
-            <div class="input-group">
-              <span class="input-group-text captcha-image">{{ captchaText }}</span>
-              <button class="btn btn-outline-secondary" type="button" (click)="generateCaptcha()">
-                <i class="fas fa-sync-alt"></i>
-              </button>
-              <input type="text" id="captcha" name="captcha" [(ngModel)]="userCaptcha" required class="form-control" placeholder="Enter code">
-            </div>
-          </div>
         </div>
 
         <!-- Actions -->

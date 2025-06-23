@@ -14,7 +14,7 @@ export class MyBookingsComponent implements OnInit {
   isLoading: boolean = true;
   errorMessage: string = '';
   successMessage: string = '';
-  currentUser: any = null;
+  currentUser: any = localStorage.getItem('currentUser');
 
   // Filter and Search
   searchQuery: string = '';
@@ -41,8 +41,9 @@ export class MyBookingsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.currentUser = this.authService.getCurrentUser();
+    // this.currentUser = this.authService.getCurrentUser();
     this.loadBookings();
+    console.log(this.currentUser);
   }
 
   setActiveTab(tab: string): void {
@@ -52,12 +53,7 @@ export class MyBookingsComponent implements OnInit {
   getActiveBookings(): Booking[] {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
-    if (this.activeTab === 'upcoming') {
-      return this.filteredBookings.filter(b => new Date(b.bookingDate) >= today && b.status !== 'cancelled');
-    } else { // past
-      return this.filteredBookings.filter(b => new Date(b.bookingDate) < today || b.status === 'cancelled');
-    }
+    return this.filteredBookings.filter(b => new Date(b.bookingTime) >= today);
   }
 
   loadBookings(): void {
@@ -69,8 +65,8 @@ export class MyBookingsComponent implements OnInit {
 
     this.isLoading = true;
     this.errorMessage = '';
-
-    this.movieService.getUserBookings(this.currentUser.id).subscribe({
+    const user = JSON.parse(this.currentUser);
+    this.movieService.getUserBookings(user.userId).subscribe({
       next: (bookings) => {
         this.bookings = bookings;
         this.filteredBookings = bookings;
@@ -94,41 +90,30 @@ export class MyBookingsComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.bookings];
-
     // Search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(booking =>
         booking.movieTitle.toLowerCase().includes(query) ||
-        booking.theaterName.toLowerCase().includes(query) ||
-        booking.bookingCode.toLowerCase().includes(query)
+        booking.theatreName.toLowerCase().includes(query) ||
+        booking.bookingId.toString().toLowerCase().includes(query)
       );
     }
-
-    // Status filter
-    if (this.selectedStatus) {
-      filtered = filtered.filter(booking => booking.status === this.selectedStatus);
-    }
-
     // Date filter
     if (this.selectedDate) {
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
       const thisWeekStart = new Date(today);
       thisWeekStart.setDate(today.getDate() - today.getDay());
       const thisWeekEnd = new Date(thisWeekStart);
       thisWeekEnd.setDate(thisWeekStart.getDate() + 6);
-      
       const nextWeekStart = new Date(thisWeekStart);
       nextWeekStart.setDate(thisWeekStart.getDate() + 7);
       const nextWeekEnd = new Date(nextWeekStart);
       nextWeekEnd.setDate(nextWeekStart.getDate() + 6);
-
       filtered = filtered.filter(booking => {
-        const bookingDate = new Date(booking.bookingDate);
-        
+        const bookingDate = new Date(booking.bookingTime);
         switch (this.selectedDate) {
           case 'today':
             return bookingDate.toDateString() === today.toDateString();
@@ -143,7 +128,6 @@ export class MyBookingsComponent implements OnInit {
         }
       });
     }
-
     this.filteredBookings = filtered;
   }
 
@@ -166,8 +150,8 @@ export class MyBookingsComponent implements OnInit {
 
   openRescheduleModal(booking: Booking): void {
     this.selectedBooking = booking;
-    this.newShowTime = booking.showTime;
-    this.newDate = booking.bookingDate;
+    this.newShowTime = booking.bookingTime;
+    this.newDate = booking.bookingTime;
     this.showRescheduleModal = true;
   }
 
@@ -180,18 +164,16 @@ export class MyBookingsComponent implements OnInit {
 
   cancelBooking(): void {
     if (!this.selectedBooking) return;
-
     this.isProcessing = true;
     this.errorMessage = '';
     this.successMessage = '';
-
-    this.movieService.cancelBooking(this.selectedBooking.id).subscribe({
+    this.movieService.cancelBooking(this.selectedBooking.bookingId).subscribe({
       next: (response) => {
         this.isProcessing = false;
         if (response.success) {
           this.successMessage = response.message;
           this.closeCancelModal();
-          this.loadBookings(); // Refresh bookings
+          this.loadBookings();
         } else {
           this.errorMessage = response.message;
         }
@@ -209,13 +191,11 @@ export class MyBookingsComponent implements OnInit {
       this.errorMessage = 'Please select new show time and date';
       return;
     }
-
     this.isProcessing = true;
     this.errorMessage = '';
     this.successMessage = '';
-
     this.movieService.rescheduleBooking(
-      this.selectedBooking.id,
+      this.selectedBooking.bookingId,
       this.newShowTime,
       this.newDate
     ).subscribe({
@@ -224,7 +204,7 @@ export class MyBookingsComponent implements OnInit {
         if (response.success) {
           this.successMessage = response.message;
           this.closeRescheduleModal();
-          this.loadBookings(); // Refresh bookings
+          this.loadBookings();
         } else {
           this.errorMessage = response.message;
         }
@@ -237,50 +217,11 @@ export class MyBookingsComponent implements OnInit {
     });
   }
 
-  getStatusColor(status: string): string {
-    const colors: { [key: string]: string } = {
-      'confirmed': '#4caf50',
-      'cancelled': '#f44336',
-      'completed': '#2196f3'
-    };
-    return colors[status] || '#666';
-  }
-
-  getStatusIcon(status: string): string {
-    const icons: { [key: string]: string } = {
-      'confirmed': 'fas fa-check-circle',
-      'cancelled': 'fas fa-times-circle',
-      'completed': 'fas fa-flag-checkered'
-    };
-    return icons[status] || 'fas fa-circle';
-  }
-
-  formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }
-
-  formatTime(time: string): string {
-    return time;
-  }
-
   getSeatsText(seats: string[]): string {
     if (seats.length === 1) {
       return `Seat ${seats[0]}`;
     }
     return `Seats ${seats.join(', ')}`;
-  }
-
-  canCancel(booking: Booking): boolean {
-    return booking.status === 'confirmed';
-  }
-
-  canReschedule(booking: Booking): boolean {
-    return booking.status === 'confirmed';
   }
 
   getFilteredCount(): number {
@@ -289,9 +230,5 @@ export class MyBookingsComponent implements OnInit {
 
   getTotalCount(): number {
     return this.bookings.length;
-  }
-
-  getStatusCount(status: string): number {
-    return this.bookings.filter(booking => booking.status === status).length;
   }
 }

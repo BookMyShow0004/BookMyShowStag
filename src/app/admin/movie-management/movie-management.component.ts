@@ -21,15 +21,13 @@ export class MovieManagementComponent implements OnInit {
   ) {
     this.movieForm = this.fb.group({
       title: ['', Validators.required],
+      description: ['', Validators.required],
+      durationMins: [0, Validators.required],
       genre: ['', Validators.required],
       language: ['', Validators.required],
-      duration: ['', Validators.required],
-      rating: [0, [Validators.required, Validators.min(0), Validators.max(10)]],
-      price: [0, [Validators.required, Validators.min(0)]],
-      image: ['', Validators.required],
-      date: ['', Validators.required],
-      description: ['', Validators.required],
-      isSuggested: [false]
+      releaseDate: ['', Validators.required],
+      createdByUserId: [0, Validators.required],
+      posterFile: [null, Validators.required]
     });
   }
 
@@ -46,7 +44,7 @@ export class MovieManagementComponent implements OnInit {
 
   showMovieForm(): void {
     this.editMode = false;
-    this.movieForm.reset({ isSuggested: false });
+    this.movieForm.reset();
     this.isFormVisible = true;
   }
 
@@ -58,10 +56,7 @@ export class MovieManagementComponent implements OnInit {
   editMovie(movie: Movie): void {
     this.editMode = true;
     this.selectedmovieId = movie.movieId;
-    // Omit fields that are not in the form
-    const { theaters, averageRating, totalRatings, totalReviews, totalLikes, totalComments, releaseDate, ...formValues } = movie;
-    this.movieForm.setValue(formValues);
-    this.isFormVisible = true;
+    // Prefill form with movie data if needed
   }
 
   deleteMovie(id: number): void {
@@ -72,46 +67,29 @@ export class MovieManagementComponent implements OnInit {
     }
   }
 
+  onFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.movieForm.patchValue({ posterFile: file });
+    }
+  }
+
   onFormSubmit(): void {
     if (this.movieForm.invalid) {
       return;
     }
-
     this.isLoading = true;
-    const movieData = this.movieForm.value;
-
-    if (this.editMode) {
-      // Re-add properties not in the form but required by the Movie interface
-      const fullMovieData: Movie = {
-        ...movieData,
-        id: this.selectedmovieId!,
-        releaseDate: new Date().toISOString(), // Placeholder, consider adding to form
-        theaters: [], // Placeholder
-        averageRating: 0,
-        totalRatings: 0,
-        totalReviews: 0,
-        totalLikes: 0,
-        totalComments: 0,
-      };
-      this.movieService.updateMovie(fullMovieData).subscribe(() => {
-        this.finalizeFormSubmission();
-      });
-    } else {
-      // In a real app, you might have default values for these
-      const newMovieData = {
-        ...movieData,
-        releaseDate: new Date().toISOString(),
-        theaters: [],
-        averageRating: movieData.rating,
-        totalRatings: 1,
-        totalReviews: 0,
-        totalLikes: 0,
-        totalComments: 0,
-      };
-      this.movieService.addMovie(newMovieData).subscribe(() => {
-        this.finalizeFormSubmission();
-      });
-    }
+    const formData = new FormData();
+    Object.entries(this.movieForm.value).forEach(([key, value]) => {
+      if (key === 'posterFile' && value instanceof File) {
+        formData.append(key, value);
+      } else if (key !== 'posterFile' && value !== null && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+    this.movieService.createMovie(formData).subscribe(response => {
+      this.finalizeFormSubmission();
+    });
   }
 
   finalizeFormSubmission(): void {
