@@ -1,0 +1,152 @@
+<div class="theater-management">
+  <div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="page-title">
+          <i class="fas fa-building"></i>
+          Theater Management
+        </h2>
+        <p class="text-muted">Add and manage theaters across different cities</p>
+      </div>
+    </div>
+
+    <!-- Error/Success Messages -->
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ successMessage }}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+
+    <div class="row">
+      <!-- Add Theater Form -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-plus-circle"></i>
+              Add New Theater
+            </h5>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="onSubmit()" #theaterForm="ngForm">
+              <!-- Theater Name -->
+              <div class="mb-3">
+                <label for="theaterName" class="form-label">Theater Name</label>
+                <input 
+                  type="text" 
+                  id="theaterName" 
+                  name="theaterName" 
+                  [(ngModel)]="theaterData.name" 
+                  required 
+                  class="form-control" 
+                  placeholder="Enter theater name">
+              </div>
+
+              <!-- Theater Address -->
+              <div class="mb-3">
+                <label for="theaterAddress" class="form-label">Address</label>
+                <textarea 
+                  id="theaterAddress" 
+                  name="theaterAddress" 
+                  [(ngModel)]="theaterData.address" 
+                  required 
+                  class="form-control" 
+                  rows="3"
+                  placeholder="Enter theater address"></textarea>
+              </div>
+
+              <!-- City Selection -->
+              <div class="mb-3">
+                <label for="city" class="form-label">City</label>
+                <select 
+                  id="city" 
+                  name="city" 
+                  [(ngModel)]="theaterData.cityId" 
+                  required 
+                  class="form-select">
+                  <option [ngValue]="0" disabled>Select a city</option>
+                  <option *ngFor="let city of cities" [ngValue]="city.cityId">
+                    {{ city.cityName }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary" 
+                  [disabled]="isLoading || !theaterForm.valid">
+                  <span *ngIf="!isLoading">
+                    <i class="fas fa-plus"></i>
+                    Add Theater
+                  </span>
+                  <span *ngIf="isLoading">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Adding...
+                  </span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theaters List -->
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-list"></i>
+              Existing Theaters
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="theaters.length === 0" class="text-center py-4">
+              <i class="fas fa-building fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No theaters found. Add your first theater using the form.</p>
+            </div>
+            
+            <div *ngIf="theaters.length > 0" class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>Theater Name</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let theater of theaters">
+                    <td>{{ theater.theaterId }}</td>
+                    <td>
+                      <strong>{{ theater.name }}</strong>
+                    </td>
+                    <td>{{ theater.address }}</td>
+                    <td>
+                      <span class="badge bg-info">{{ getCityName(theater.cityId) }}</span>
+                    </td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-primary me-2" title="Edit">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" title="Delete">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

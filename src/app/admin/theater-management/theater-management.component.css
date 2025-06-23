@@ -1,0 +1,150 @@
+.theater-management {
+  padding: 20px;
+}
+
+.page-title {
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.page-title i {
+  color: #007bff;
+  margin-right: 10px;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px 10px 0 0 !important;
+  border: none;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.card-title i {
+  margin-right: 8px;
+}
+
+.form-label {
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.form-control, .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px 16px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+  background: #6c757d;
+  transform: none;
+  box-shadow: none;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  border-top: none;
+  font-weight: 600;
+  color: #555;
+  background-color: #f8f9fa;
+}
+
+.table td {
+  vertical-align: middle;
+  border-top: 1px solid #e9ecef;
+}
+
+.badge {
+  font-size: 0.8em;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  border-radius: 6px;
+}
+
+.alert {
+  border: none;
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+
+.alert-dismissible .btn-close {
+  padding: 0.75rem 1rem;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .theater-management {
+    padding: 15px;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation for new theaters */
+.table tbody tr {
+  transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+  transform: translateX(5px);
+}
+
+/* Empty state styling */
+.text-center.py-4 {
+  color: #6c757d;
+}
+
+.text-center.py-4 i {
+  opacity: 0.5;
+} 

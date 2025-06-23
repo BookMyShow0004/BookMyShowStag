@@ -1,0 +1,86 @@
+<div class="show-management">
+  <div class="container-fluid">
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="page-title">
+          <i class="fas fa-ticket-alt"></i>
+          Show Management
+        </h2>
+        <p class="text-muted">Add new shows by selecting a movie, theater, date/time, and ticket price.</p>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ successMessage }}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-plus-circle"></i>
+              Add New Show
+            </h5>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="onSubmit()" #showForm="ngForm">
+              <!-- Movie Dropdown -->
+              <div class="mb-3">
+                <label for="movie" class="form-label">Movie</label>
+                <select id="movie" name="movie" [(ngModel)]="showData.movieId" [ngModelOptions]="{standalone: true}" required class="form-select">
+                  <option [ngValue]="0" disabled>Select a movie</option>
+                  <option *ngFor="let movie of movies" [ngValue]="movie.movieId">{{ movie.title }}</option>
+                </select>
+              </div>
+
+              <!-- Theater Dropdown -->
+              <div class="mb-3">
+                <label for="theater" class="form-label">Theater</label>
+                <select id="theater" name="theater" [(ngModel)]="showData.theatreId" [ngModelOptions]="{standalone: true}" required class="form-select">
+                  <option [ngValue]="0" disabled>Select a theater</option>
+                  <option *ngFor="let theater of theaters" [ngValue]="+theater.theatreId">{{ theater.name }}</option>
+                </select>
+              </div>
+
+              <!-- DateTime Picker -->
+              <div class="mb-3">
+                <label for="showDateTime" class="form-label">Show Date & Time</label>
+                <input type="datetime-local" id="showDateTime" name="showDateTime" [(ngModel)]="showData.showDateTime" [ngModelOptions]="{standalone: true}" required class="form-control">
+              </div>
+
+              <!-- Ticket Price -->
+              <div class="mb-3">
+                <label for="ticketPrice" class="form-label">Ticket Price</label>
+                <input type="number" id="ticketPrice" name="ticketPrice" [(ngModel)]="showData.ticketPrice" [ngModelOptions]="{standalone: true}" required min="1" step="0.01" class="form-control" placeholder="Enter ticket price">
+              </div>
+
+              <!-- Debug Output -->
+              <pre>{{ showData | json }}</pre>
+              <pre>Form valid: {{ showForm.valid }}</pre>
+
+              <!-- Submit Button -->
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary" [disabled]="isLoading || !showForm.valid">
+                  <span *ngIf="!isLoading">
+                    <i class="fas fa-plus"></i>
+                    Add Show
+                  </span>
+                  <span *ngIf="isLoading">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Adding...
+                  </span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 
