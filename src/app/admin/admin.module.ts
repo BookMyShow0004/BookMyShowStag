@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
@@ -8,7 +8,8 @@ import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { MovieManagementComponent } from './movie-management/movie-management.component';
 import { CommentModerationComponent } from './comment-moderation/comment-moderation.component';
-
+import { TheaterManagementComponent } from './theater-management/theater-management.component';
+import { ShowManagementComponent } from './show-management/show-management.component';
 
 @NgModule({
   declarations: [
@@ -16,12 +17,15 @@ import { CommentModerationComponent } from './comment-moderation/comment-moderat
     LayoutComponent,
     DashboardComponent,
     MovieManagementComponent,
-    CommentModerationComponent
+    CommentModerationComponent,
+    TheaterManagementComponent,
+    ShowManagementComponent
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class AdminModule { }
