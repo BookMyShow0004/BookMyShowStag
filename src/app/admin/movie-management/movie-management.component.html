@@ -15,56 +15,63 @@
       <div class="form-group">
         <label for="title">Title</label>
         <input id="title" formControlName="title" placeholder="e.g., Avengers: Endgame">
+        <div *ngIf="movieForm.get('title')?.invalid && movieForm.get('title')?.touched" class="error">Title is required.</div>
       </div>
 
       <!-- Genre -->
       <div class="form-group">
         <label for="genre">Genre</label>
         <input id="genre" formControlName="genre" placeholder="e.g., Action">
+        <div *ngIf="movieForm.get('genre')?.invalid && movieForm.get('genre')?.touched" class="error">Genre is required.</div>
       </div>
 
       <!-- Language -->
       <div class="form-group">
         <label for="language">Language</label>
         <input id="language" formControlName="language" placeholder="e.g., English">
+        <div *ngIf="movieForm.get('language')?.invalid && movieForm.get('language')?.touched" class="error">Language is required.</div>
       </div>
 
       <!-- Duration -->
       <div class="form-group">
-        <label for="duration">Duration</label>
-        <input id="duration" formControlName="duration" placeholder="e.g., 3h 1m">
+        <label for="durationMins">Duration (minutes)</label>
+        <input id="durationMins" formControlName="durationMins" placeholder="e.g., 120" type="number">
+        <div *ngIf="movieForm.get('durationMins')?.invalid && movieForm.get('durationMins')?.touched" class="error">Duration is required and must be a positive number.</div>
       </div>
 
-      <!-- Rating -->
+      <!-- Release Date -->
       <div class="form-group">
-        <label for="rating">Rating</label>
-        <input id="rating" type="number" formControlName="rating" placeholder="e.g., 8.4">
+        <label for="releaseDate">Release Date</label>
+        <input id="releaseDate" type="datetime-local" formControlName="releaseDate">
+        <div *ngIf="movieForm.get('releaseDate')?.invalid && movieForm.get('releaseDate')?.touched" class="error">Release date is required.</div>
       </div>
 
-      <!-- Price -->
+      <!-- Created By User ID -->
       <div class="form-group">
-        <label for="price">Price</label>
-        <input id="price" type="number" formControlName="price" placeholder="e.g., 200">
+        <label for="createdByUserId">Created By User ID</label>
+        <input id="createdByUserId" type="number" formControlName="createdByUserId">
+        <div *ngIf="movieForm.get('createdByUserId')?.invalid && movieForm.get('createdByUserId')?.touched" class="error">User ID is required and must be a positive number.</div>
       </div>
-    </div>
 
-    <!-- Image URL -->
-    <div class="form-group">
-      <label for="image">Image URL</label>
-      <input id="image" formControlName="image" placeholder="https://...">
+      <!-- Poster File -->
+      <div class="form-group">
+        <label for="posterFile">Poster Image</label>
+        <input id="posterFile" type="file" (change)="onFileChange($event)">
+        <div *ngIf="movieForm.get('posterFile')?.invalid && movieForm.get('posterFile')?.touched" class="error">Poster image is required.</div>
+      </div>
     </div>
 
     <!-- Description -->
     <div class="form-group">
       <label for="description">Description</label>
       <textarea id="description" formControlName="description" rows="4"></textarea>
+      <div *ngIf="movieForm.get('description')?.invalid && movieForm.get('description')?.touched" class="error">Description is required.</div>
     </div>
 
-    <!-- Suggested Movie -->
-    <div class="form-check">
-      <input id="isSuggested" type="checkbox" formControlName="isSuggested">
-      <label for="isSuggested">Suggest this movie to users</label>
-    </div>
+    <!-- Debug Output -->
+    <pre>Form Valid: {{ movieForm.valid }}</pre>
+    <pre>{{ movieForm.value | json }}</pre>
+    <pre>{{ movieForm.status }}</pre>
 
     <div class="form-actions">
       <button type="submit" class="btn-primary" [disabled]="movieForm.invalid || isLoading">

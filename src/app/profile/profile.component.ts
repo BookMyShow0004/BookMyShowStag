@@ -167,11 +167,6 @@ export class ProfileComponent implements OnInit {
       return false;
     }
 
-    if (!this.profileData.phone.trim()) {
-      this.errorMessage = 'Phone number is required';
-      return false;
-    }
-
     if (!this.profileData.city) {
       this.errorMessage = 'Please select a city';
       return false;

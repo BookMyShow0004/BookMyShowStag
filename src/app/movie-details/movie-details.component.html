@@ -13,7 +13,7 @@
 
   <!-- Details Card -->
   <div *ngIf="movie && !isLoading" class="details-card">
-    <img [src]="movie.image" [alt]="movie.title" class="movie-poster">
+    <img [src]="movie.posterBase64" [alt]="movie.title" class="movie-poster">
 
     <div class="movie-info">
       <h1 class="movie-title">{{ movie.title }}</h1>
@@ -29,7 +29,7 @@
         <div class="info-grid">
           <div class="info-item">
             <i class="fas fa-star"></i>
-            <span>{{ movie.rating }}/5 Rating</span>
+            <span>Rating</span>
           </div>
           <div class="info-item">
             <i class="fas fa-clock"></i>

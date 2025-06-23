@@ -20,20 +20,13 @@ export class SignupComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
-  captchaText = '';
-  userCaptcha = '';
 
   cities : City[] = [];
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.generateCaptcha();
     this.getCities();
-  }
-
-  generateCaptcha(): void {
-    this.captchaText = this.authService.generateCaptcha();
   }
 
   getCities(): void {
@@ -48,13 +41,6 @@ export class SignupComponent implements OnInit {
   }
 
   onRegister(): void {
-    if (this.userCaptcha.toLowerCase() !== this.captchaText.toLowerCase()) {
-      this.errorMessage = 'Invalid captcha';
-      this.generateCaptcha();
-      this.userCaptcha = '';
-      return;
-    }
-
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
@@ -67,13 +53,11 @@ export class SignupComponent implements OnInit {
           setTimeout(() => this.router.navigate(['/login']), 2000);
         } else {
           this.errorMessage = response.message;
-          this.generateCaptcha();
         }
       },
       error: (error) => {
         this.isLoading = false;
         this.errorMessage = 'Registration failed. Please try again.';
-        this.generateCaptcha();
         console.error('Registration error:', error);
       },
     });

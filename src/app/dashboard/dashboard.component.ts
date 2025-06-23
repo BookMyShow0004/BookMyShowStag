@@ -12,7 +12,6 @@ import { Modal } from 'bootstrap';
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   movies: Movie[] = [];
-  suggestedMovies: Movie[] = [];
   filteredMovies: Movie[] = [];
   isLoading: boolean = true;
   currentUser: User | null = null;
@@ -67,7 +66,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.movieService.getMovies().subscribe({
       next: (movies) => {
         this.movies = movies;
-        this.suggestedMovies = movies.filter(movie => movie.isSuggested);
         this.filteredMovies = movies;
         this.isLoading = false;
       },
@@ -113,11 +111,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       filtered = filtered.filter(movie => movie.language === this.selectedLanguage);
     }
 
-    // Rating filter
-    if (this.selectedRating > 0) {
-      filtered = filtered.filter(movie => movie.rating >= this.selectedRating);
-    }
-
     this.filteredMovies = filtered;
     this.applySorting();
   }
@@ -130,14 +123,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         case 'name':
           comparison = a.title.localeCompare(b.title);
           break;
-        case 'rating':
-          comparison = b.rating - a.rating;
-          break;
         case 'releaseDate':
           comparison = new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
-          break;
-        case 'price':
-          comparison = a.price - b.price;
           break;
       }
 

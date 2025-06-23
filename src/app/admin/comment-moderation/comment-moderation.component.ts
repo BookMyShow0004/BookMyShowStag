@@ -26,7 +26,7 @@ export class CommentModerationComponent implements OnInit {
       this.movies.forEach(movie => this.movieTitleMap.set(movie.movieId, movie.title));
 
       // Then get comments
-      this.movieService.getAllComments().subscribe(comments => {
+      this.movieService.getMovieComments(this.movies[0].movieId).subscribe(comments => {
         this.comments = comments;
         this.isLoading = false;
       });
@@ -41,7 +41,7 @@ export class CommentModerationComponent implements OnInit {
     if (confirm('Are you sure you want to permanently delete this comment?')) {
       this.movieService.deleteComment(commentId).subscribe(() => {
         // Refresh the list after deletion
-        this.comments = this.comments.filter(c => c.id !== commentId);
+        this.comments = this.comments.filter(c => c.commentId !== commentId);
       });
     }
   }

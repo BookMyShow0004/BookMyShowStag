@@ -1,10 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Movie, Theater, MovieService } from '../services/movie.service';
-
-interface Seat {
-  id: string;
-  status: 'available' | 'selected' | 'booked';
-}
+import { Seat, SeatService } from '../services/seat.service';
 
 @Component({
   selector: 'app-book-tickets',
@@ -19,16 +15,17 @@ export class BookTicketsComponent implements OnInit {
   selectedTheater: Theater | null = null;
   selectedShowtime: string | null = null;
 
+  currentStep: number = 1;
   seats: Seat[] = [];
   selectedSeats: Seat[] = [];
 
-  constructor(private movieService: MovieService) {}
+  constructor(private movieService: MovieService, private seatService: SeatService) {}
 
   ngOnInit(): void {
-    // Theaters would typically be fetched based on movie and location
-    // For this demo, we'll get them from the movie object or a service
     if (this.movie) {
-      this.theaters = this.movie.theaters;
+      this.movieService.getTheatersByMovieId(this.movie.movieId).subscribe((theaters: Theater[]) => {
+        this.theaters = theaters;
+      });
     }
   }
 
@@ -41,55 +38,42 @@ export class BookTicketsComponent implements OnInit {
 
   selectTheater(theater: Theater): void {
     this.selectedTheater = theater;
-    this.selectedShowtime = null; // Reset showtime when theater changes
-    this.seats = [];
+    this.currentStep = 2;
+    // Fetch seats for the selected theater
+    this.seatService.getSeatsByTheater(theater.id).subscribe((seats: Seat[]) => {
+      this.seats = seats;
+    });
   }
 
-  selectShowtime(time: string): void {
-    this.selectedShowtime = time;
-    this.generateSeats();
-  }
-
-  generateSeats(): void {
-    // In a real app, you'd get seat availability from a service
-    this.seats = [];
-    const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
-    const cols = 12;
-    for (const row of rows) {
-      for (let i = 1; i <= cols; i++) {
-        const id = `${row}${i}`;
-        // Mock some seats as booked
-        const isBooked = Math.random() < 0.2;
-        this.seats.push({
-          id,
-          status: isBooked ? 'booked' : 'available'
-        });
-      }
-    }
+  selectShowtime(showtime: string): void {
+    this.selectedShowtime = showtime;
+    this.currentStep = 3;
+    // Optionally, fetch seats for showtime if needed
   }
 
   toggleSeat(seat: Seat): void {
-    if (seat.status === 'booked') {
-      return;
-    }
-    if (seat.status === 'available') {
-      seat.status = 'selected';
+    if (seat.status === 'booked') return;
+    const index = this.selectedSeats.indexOf(seat);
+    if (index > -1) {
+      this.selectedSeats.splice(index, 1);
+    } else {
       this.selectedSeats.push(seat);
-    } else if (seat.status === 'selected') {
-      seat.status = 'available';
-      this.selectedSeats = this.selectedSeats.filter(s => s.id !== seat.id);
     }
   }
 
   confirmBooking(): void {
-    if (this.selectedSeats.length === 0) {
-      alert('Please select at least one seat.');
-      return;
-    }
-    // Logic to proceed with booking confirmation
-    console.log('Booking confirmed for:', this.selectedSeats);
-    // Emit event to parent
-    this.bookingComplete.emit();
-    this.resetState();
+    if (!this.selectedTheater || !this.selectedShowtime || this.selectedSeats.length === 0) return;
+    const booking = {
+      movieId: this.movie?.movieId,
+      theaterId: this.selectedTheater.id,
+      showTime: this.selectedShowtime,
+      seatNumbers: this.selectedSeats.map(seat => seat.seatNumber),
+      // Add user info if needed
+    };
+    this.movieService.createBooking(booking).subscribe(response => {
+      // Handle booking confirmation (success/failure)
+      this.bookingComplete.emit();
+      this.resetState();
+    });
   }
 }

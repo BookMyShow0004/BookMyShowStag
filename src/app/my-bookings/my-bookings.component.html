@@ -37,27 +37,24 @@
       <div class="booking-card" *ngFor="let booking of getActiveBookings()">
         <div class="booking-card-header">
           <h3 class="movie-title">{{ booking.movieTitle }}</h3>
-          <p class="booking-date">Booked on {{ booking.createdAt | date:'longDate' }}</p>
+          <p class="booking-date">Booked on {{ booking.bookingTime | date:'longDate' }}</p>
         </div>
         <div class="booking-card-body">
           <div class="detail-item">
             <span>Theater:</span>
-            <strong>{{ booking.theaterName }}</strong>
+            <strong>{{ booking.theatreName }}</strong>
           </div>
           <div class="detail-item">
             <span>Date & Time:</span>
-            <strong>{{ booking.bookingDate | date:'fullDate' }} at {{ booking.showTime }}</strong>
+            <strong>{{ booking.bookingTime | date:'fullDate' }} {{ booking.bookingTime }}</strong>
           </div>
           <div class="detail-item">
             <span>Seats:</span>
-            <strong>{{ booking.selectedSeats.join(', ') }}</strong>
+            <strong>{{ booking.seatNumbers.join(', ') }}</strong>
           </div>
           <div class="detail-item">
             <span>Total Amount:</span>
             <strong>₹{{ booking.totalAmount }}</strong>
-          </div>
-          <div class="qr-code">
-            <img [src]="booking.qrCodeUrl" alt="Booking QR Code">
           </div>
         </div>
       </div>

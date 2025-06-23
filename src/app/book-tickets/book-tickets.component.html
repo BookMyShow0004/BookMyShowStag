@@ -1,13 +1,11 @@
 <div class="container-fluid">
   <!-- Theater and Showtime Selection -->
-  <section class="mb-4">
+  <section *ngIf="currentStep === 1">
     <h4 class="section-title">Step 1: Select Theater & Show Time</h4>
-    <div class="theater-list">
-      <button
-        *ngFor="let theater of theaters"
-        class="theater-btn"
-        [ngClass]="{ 'selected': selectedTheater?.id === theater.id }"
-        (click)="selectTheater(theater)">
+    <div class="theater-buttons">
+      <button *ngFor="let theater of theaters"
+              (click)="selectTheater(theater)"
+              [ngClass]="{'selected': selectedTheater === theater}">
         {{ theater.name }}
       </button>
     </div>
@@ -24,30 +22,26 @@
   </section>
 
   <!-- Seat Selection -->
-  <section *ngIf="selectedShowtime">
-    <h5 class="mb-3">Select Seats</h5>
+  <section *ngIf="currentStep === 2">
+    <h4 class="section-title">Step 2: Select Seats</h4>
     <div class="screen">Screen</div>
     <div class="seats-grid">
-      <div
-        *ngFor="let seat of seats"
-        class="seat"
-        [ngClass]="{
-          'available': seat.status === 'available',
-          'selected': seat.status === 'selected',
-          'booked': seat.status === 'booked'
-        }"
-        (click)="toggleSeat(seat)">
-      </div>
+      <button *ngFor="let seat of seats"
+              (click)="toggleSeat(seat)"
+              [ngClass]="{'selected': selectedSeats.includes(seat), 'booked': seat.status === 'booked'}"
+              [disabled]="seat.status === 'booked'">
+        {{ seat.seatNumber }}
+      </button>
     </div>
+    <button class="btn btn-primary" (click)="confirmBooking()" [disabled]="selectedSeats.length === 0">
+      Confirm Booking
+    </button>
   </section>
 
   <!-- Summary and Actions -->
   <section class="mt-4 text-center">
     <div *ngIf="selectedSeats.length > 0" class="mb-3">
-        <strong>Total: ₹{{ selectedSeats.length * (movie?.price || 0) }}</strong>
+        <strong>Total: ₹{{ selectedSeats.length * 0 }}</strong>
     </div>
-    <button class="btn btn-primary btn-lg" (click)="confirmBooking()" [disabled]="selectedSeats.length === 0">
-      Confirm Booking
-    </button>
   </section>
 </div>

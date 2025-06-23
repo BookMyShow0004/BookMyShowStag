@@ -58,7 +58,7 @@ export interface UpdateProfileRequest {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:5069/api';
+  private apiUrl = 'https://vb7dqrjl-5069.inc1.devtunnels.ms/api';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   public getCurrentUsers = localStorage.getItem('currentUser');
@@ -122,7 +122,7 @@ export class AuthService {
     const registrationData = {
       FullName: request.fullName,
       Email: request.email,
-      PasswordHash: request.password,
+      Password: request.password,
       CityId: request.cityId,
       Role: request.role,
     };
@@ -200,29 +200,25 @@ export class AuthService {
     if (!currentUser) {
       return of({ success: false, message: 'User not authenticated' });
     }
-
-    // This functionality should ideally be handled by a dedicated backend endpoint.
-    // The logic below is a placeholder and may not work without a backend implementation.
-    console.warn('updateProfile is a mock implementation.');
-    const updatedUser: User = {
-      ...currentUser,
-      fullName: request.name,
-      phone: request.phone,
-      city: request.city,
-      dateOfBirth: request.dateOfBirth,
-      gender: request.gender,
-      avatar: request.avatar,
-    };
-
-    return of({
-      success: true,
-      message: 'Profile updated successfully (mock)',
-      user: updatedUser,
-    }).pipe(
-      tap(() => {
-        this.currentUserSubject.next(updatedUser);
-        localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-        sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    // Use the backend API to update the user profile
+    return this.http.put(`${this.apiUrl}/Users/${currentUser.userId}`, {
+      UserId: currentUser.userId,
+      FullName: request.name,
+      Email: currentUser.email,
+      CityId: currentUser.cityId,
+      // Add other fields as needed
+    }, { responseType: 'text' }).pipe(
+      map((response: any) => ({ success: true, message: response, user: { ...currentUser, fullName: request.name, phone: request.phone, city: request.city, dateOfBirth: request.dateOfBirth, gender: request.gender, avatar: request.avatar } })),
+      tap((result) => {
+        if (result.success && result.user) {
+          this.currentUserSubject.next(result.user);
+          localStorage.setItem('currentUser', JSON.stringify(result.user));
+          sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+        }
+      }),
+      catchError((error) => {
+        const message = typeof error.error === 'string' ? error.error : error.error?.message || 'Profile update failed.';
+        return of({ success: false, message });
       })
     );
   }
@@ -233,16 +229,5 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return this.isAuthenticatedSubject.value;
-  }
-
-  generateCaptcha(): string {
-    // This is a mock. Real captcha should be handled with a backend service.
-    const chars =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < 6; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
   }
 }
