@@ -30,6 +30,9 @@ export class MovieDetailsComponent implements OnInit {
   showRatingForm: boolean = false;
   showCommentForm: boolean = false;
 
+  // Average Rating
+  averageRatingRounded: number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -48,6 +51,7 @@ export class MovieDetailsComponent implements OnInit {
     this.movieService.getMovieById(movieId).subscribe({
       next: (movie) => {
         this.movie = movie;
+        this.averageRatingRounded = movie && (movie as any).averageRating ? Math.round((movie as any).averageRating) : 0;
         if (movie) {
           this.loadReviews(movieId);
           this.loadComments(movieId);
@@ -261,5 +265,12 @@ export class MovieDetailsComponent implements OnInit {
       'Sci-Fi': '#54a0ff'
     };
     return colors[genre] || '#667eea';
+  }
+
+  goToTheaters(): void {
+    // Get the current movieId from the route params
+    const movieId = Number(this.route.snapshot.paramMap.get('id'));
+    // Navigate to the theaters page with the movieId as a route param
+    this.router.navigate(['/theaters', movieId]);
   }
 }

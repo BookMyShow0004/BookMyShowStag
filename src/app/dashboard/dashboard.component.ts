@@ -219,4 +219,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const emptyStars = 5 - fullStars;
     return Array(emptyStars).fill(0);
   }
+
+  goToMovieDetails(movie: Movie): void {
+    this.router.navigate(['/movie', movie.movieId]);
+  }
 }

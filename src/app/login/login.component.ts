@@ -18,6 +18,8 @@ export class LoginComponent implements OnInit {
   errorMessage: string | null = null;
   private returnUrl: string = '/dashboard';
   private openBookingFor: string | null = null;
+  captchaToken: string | null = null;
+  captchaError: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -32,9 +34,16 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  onCaptchaResolved(token: string | null): void {
+  this.captchaToken = token;
+  this.captchaError = !token;
+}
+
   onLogin(form: NgForm) {
-    if (form.invalid) {
+    if (form.invalid || !this.captchaToken) {
       this.errorMessage = 'Please fill in all required fields.';
+      this.errorMessage = 'Please complete all fields and solve the captcha.';
+      this.captchaError = !this.captchaToken;
       return;
     }
 

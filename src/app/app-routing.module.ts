@@ -16,6 +16,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'movie/:id', component: MovieDetailsComponent },
   { path: 'theaters', component: TheatersComponent },
+  { path: 'theaters/:id', component: TheatersComponent },
   { path: 'my-bookings', component: MyBookingsComponent },
   { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
   { path: '**', redirectTo: '/dashboard' }

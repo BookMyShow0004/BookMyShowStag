@@ -6,7 +6,7 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 m-auto row-cols-lg-4 row-cols-xl-5 g-4" *ngIf="movies.length > 0; else noMovies">
       <div class="col" *ngFor="let movie of movies; trackBy: trackBymovieId">
         <div class="card h-100 shadow-sm border-0 movie-card-hover">
-          <img [src]="movie.posterBase64" class="card-img-top" [alt]="movie.title" (click)="openBookingModal(movie)">
+          <img [src]="movie.posterBase64" class="card-img-top" [alt]="movie.title" (click)="goToMovieDetails(movie)">
           <div class="card-body">
             <h5 class="card-title text-truncate">{{ movie.title }}</h5>
             <p class="card-text text-muted">{{ movie.genre }}</p>
@@ -15,7 +15,7 @@
             </div>
           </div>
           <div class="card-footer bg-white border-0">
-            <button class="btn btn-primary w-100" (click)="openBookingModal(movie)">Book Now</button>
+            <button class="btn btn-primary w-100" (click)="goToMovieDetails(movie)">Select Movie</button>
           </div>
         </div>
       </div>

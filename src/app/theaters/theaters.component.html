@@ -29,16 +29,16 @@
       <div class="theater-card-header">
         <h2 class="theater-name">{{ theater.name }}</h2>
         <p class="theater-location">
-            <i class="fas fa-map-marker-alt"></i> {{ theater.location }}
+            <i class="fas fa-map-marker-alt"></i> {{ theater.address }}
         </p>
       </div>
       <div class="theater-card-body">
-        <h3 class="section-title">Amenities</h3>
+        <!-- <h3 class="section-title">Amenities</h3>
         <div class="amenities-list">
           <span class="amenity-badge" *ngFor="let amenity of theater.amenities">
             <i [class]="getAmenityIcon(amenity)"></i> {{ amenity }}
           </span>
-        </div>
+        </div> -->
 
         <h3 class="section-title">Today's Showtimes</h3>
         <div class="showtimes-grid">

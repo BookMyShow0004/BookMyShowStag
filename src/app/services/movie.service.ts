@@ -46,9 +46,9 @@ export interface Booking {
 }
 
 export interface Theater {
-  id: number;
+  theatreId: number;
   name: string;
-  location: string;
+  address: string;
   showTimes: string[];
   amenities: string[];
   rating: number;
@@ -150,12 +150,15 @@ export class MovieService {
     return this.http.delete(`${this.apiUrl}/Bookings/${id}`);
   }
 
-  getTheatersByMovieId(movieId: number): Observable<Theater[]> {
-    return this.http.get<Theater[]>(`${this.apiUrl}/Theatres?movieId=${movieId}`);
+  getTheatersByMovieId(movieId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Theatres/ByMovie/${movieId}`);
   }
 
   getSeatsForShow(movieId: number, theaterId: number, showTime: string): Observable<Seat[]> {
     return this.http.get<Seat[]>(`${this.apiUrl}/ShowSeats?movieId=${movieId}&theaterId=${theaterId}&showTime=${encodeURIComponent(showTime)}`);
+  }
+  getShowTimeByMovieAndTheater(movieId: number, theaterId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Shows/ByMovieAndTheatre?movieId=${movieId}&theatreId=${theaterId}`);
   }
 
   getTheaters(city: string): Observable<Theater[]> {

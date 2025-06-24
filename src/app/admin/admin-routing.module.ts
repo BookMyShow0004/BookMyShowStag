@@ -19,7 +19,7 @@ const routes: Routes = [
       { path: 'movies', component: MovieManagementComponent },
       { path: 'theaters', component: TheaterManagementComponent },
       { path: 'shows', component: ShowManagementComponent },
-      { path: 'comments', component: CommentModerationComponent }
+      { path: 'comments', component: CommentModerationComponent },
       // Future admin components will be added here
     ]
   }

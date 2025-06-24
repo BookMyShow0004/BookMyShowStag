@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService, Theater } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-theaters',
@@ -32,7 +33,8 @@ export class TheatersComponent implements OnInit {
 
   constructor(
     private movieService: MovieService,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -44,17 +46,43 @@ export class TheatersComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Get user's city or default to Mumbai
-    const userCity = this.currentUser?.city || 'Mumbai';
-    this.selectedCity = userCity;
-
-    this.movieService.getTheaters(userCity).subscribe({
-      next: (theaters) => {
-        this.theaters = theaters;
-        this.filteredTheaters = theaters;
-        this.isLoading = false;
+    // Get movieId from route params
+    const movieId = Number(this.route.snapshot.paramMap.get('id'));
+    this.movieService.getTheatersByMovieId(movieId).subscribe({
+      next: (theaters: Theater[]) => {
+        // For each theater, fetch showtimes and attach to theater.showTimes
+        let loadedCount = 0;
+        if (theaters.length === 0) {
+          this.theaters = [];
+          this.filteredTheaters = [];
+          this.isLoading = false;
+          return;
+        }
+        theaters.forEach((theater, idx) => {
+          this.movieService.getShowTimeByMovieAndTheater(movieId, theater.theatreId).subscribe({
+            next: (shows: any[]) => {
+              // Map showDateTime to formatted time string (e.g., '10:00 AM')
+              theater.showTimes = shows.map(show => new Date(show.showDateTime).toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
+              loadedCount++;
+              if (loadedCount === theaters.length) {
+                this.theaters = theaters;
+                this.filteredTheaters = theaters;
+                this.isLoading = false;
+              }
+            },
+            error: () => {
+              theater.showTimes = [];
+              loadedCount++;
+              if (loadedCount === theaters.length) {
+                this.theaters = theaters;
+                this.filteredTheaters = theaters;
+                this.isLoading = false;
+              }
+            }
+          });
+        });
       },
-      error: (error) => {
+      error: (error: any) => {
         this.errorMessage = 'Failed to load theaters';
         this.isLoading = false;
         console.error('Error loading theaters:', error);
@@ -86,7 +114,7 @@ export class TheatersComponent implements OnInit {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(theater =>
         theater.name.toLowerCase().includes(query) ||
-        theater.location.toLowerCase().includes(query)
+        theater.address.toLowerCase().includes(query)
       );
     }
 
@@ -120,7 +148,7 @@ export class TheatersComponent implements OnInit {
           comparison = a.rating - b.rating;
           break;
         case 'location':
-          comparison = a.location.localeCompare(b.location);
+          comparison = a.address.localeCompare(b.address);
           break;
       }
 
