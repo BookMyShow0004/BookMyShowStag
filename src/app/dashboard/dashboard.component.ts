@@ -11,8 +11,8 @@ import { Modal } from 'bootstrap';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  movies: Movie[] = [];
-  filteredMovies: Movie[] = [];
+  movies: (Movie & { averageRatingRounded?: number })[] = [];
+  filteredMovies: (Movie & { averageRatingRounded?: number })[] = [];
   isLoading: boolean = true;
   currentUser: User | null = null;
   private userSubscription: Subscription | undefined;
@@ -62,17 +62,37 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadMovies(): void {
     this.isLoading = true;
-
-    this.movieService.getMovies().subscribe({
-      next: (movies) => {
-        this.movies = movies;
-        this.filteredMovies = movies;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading movies:', error);
-        this.isLoading = false;
+    // Fetch all movies and all reviews in parallel
+    Promise.all([
+      this.movieService.getMovies().toPromise(),
+      this.movieService.getAllReviews().toPromise()
+    ]).then(([movies, reviews]) => {
+      if (!movies) return;
+      reviews = reviews || [];
+      // Group reviews by movieId
+      const reviewsByMovie: { [movieId: number]: { rating: number }[] } = {};
+      for (const review of reviews) {
+        if (!review) continue;
+        if (!reviewsByMovie[review.movieId]) reviewsByMovie[review.movieId] = [];
+        reviewsByMovie[review.movieId].push(review);
       }
+      // Attach average rating to each movie
+      const moviesWithRatings = (movies || []).map(movie => {
+        if (!movie) return movie;
+        const movieReviews = reviewsByMovie[movie.movieId] || [];
+        let averageRatingRounded: number | undefined = undefined;
+        if (movieReviews.length > 0) {
+          const sum = movieReviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+          averageRatingRounded = Math.round((sum / movieReviews.length) * 10) / 10;
+        }
+        return { ...movie, averageRatingRounded };
+      });
+      this.movies = moviesWithRatings;
+      this.filteredMovies = moviesWithRatings;
+      this.isLoading = false;
+    }).catch(error => {
+      console.error('Error loading movies or reviews:', error);
+      this.isLoading = false;
     });
   }
 
@@ -92,7 +112,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let filtered = [...this.movies];
 
     // Search filter
-    if (this.searchQuery.trim()) {
+    if (this.searchQuery && this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(movie =>
         movie.title.toLowerCase().includes(query) ||
@@ -101,14 +121,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Genre filter
-    if (this.selectedGenre) {
-      filtered = filtered.filter(movie => movie.genre === this.selectedGenre);
-    }
-
-    // Language filter
-    if (this.selectedLanguage) {
-      filtered = filtered.filter(movie => movie.language === this.selectedLanguage);
+    // Rating filter
+    if (this.selectedRating && this.selectedRating > 0) {
+      filtered = filtered.filter(movie =>
+        movie.averageRatingRounded !== undefined && movie.averageRatingRounded >= this.selectedRating
+      );
     }
 
     this.filteredMovies = filtered;

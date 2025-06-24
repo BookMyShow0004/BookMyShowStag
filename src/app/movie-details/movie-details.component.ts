@@ -29,7 +29,7 @@ export class MovieDetailsComponent implements OnInit {
   activeTab: 'overview' | 'reviews' | 'comments' = 'overview';
   showRatingForm: boolean = false;
   showCommentForm: boolean = false;
-
+  currentUser1: any = null;
   // Average Rating
   averageRatingRounded: number = 0;
 
@@ -51,7 +51,7 @@ export class MovieDetailsComponent implements OnInit {
     this.movieService.getMovieById(movieId).subscribe({
       next: (movie) => {
         this.movie = movie;
-        this.averageRatingRounded = movie && (movie as any).averageRating ? Math.round((movie as any).averageRating) : 0;
+        // Remove old averageRatingRounded logic, let reviews API control it
         if (movie) {
           this.loadReviews(movieId);
           this.loadComments(movieId);
@@ -69,7 +69,16 @@ export class MovieDetailsComponent implements OnInit {
   loadReviews(movieId: number): void {
     this.movieService.getMovieReviews(movieId).subscribe({
       next: (reviews) => {
-        this.reviews = reviews;
+        // Filter reviews to only those matching the current movieId (defensive, in case API returns more)
+        const filteredReviews = reviews.filter(r => r.movieId === movieId);
+        this.reviews = filteredReviews;
+        if (filteredReviews.length > 0) {
+          // Calculate average rating for this movie only
+          const sum = filteredReviews.reduce((acc, r) => acc + (r.rating || 0), 0);
+          this.averageRatingRounded = Math.round(sum / filteredReviews.length);
+        } else {
+          this.averageRatingRounded = 0;
+        }
       },
       error: (error) => {
         console.error('Error loading reviews:', error);
@@ -150,26 +159,28 @@ export class MovieDetailsComponent implements OnInit {
 
     this.isSubmittingComment = true;
     this.errorMessage = '';
-
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
     const commentRequest = {
+      userId: currentUser.userId,
       movieId: this.movie.movieId,
-      comment: this.newComment.trim()
+      content: this.newComment.trim()
     };
 
     this.movieService.addComment(commentRequest).subscribe({
       next: (response: any) => {
         this.isSubmittingComment = false;
-        if (response.success) {
+        // Accept both { success: true } or just a successful response
+        if (response?.success === false) {
+          this.errorMessage = response.message || 'Failed to add comment';
+        } else {
           this.showCommentForm = false;
           this.newComment = '';
           this.loadComments(this.movie!.movieId);
-        } else {
-          this.errorMessage = response.message;
         }
       },
       error: (error: any) => {
         this.isSubmittingComment = false;
-        this.errorMessage = 'Failed to submit comment';
+        this.errorMessage = 'Failed to add comment';
         console.error('Error submitting comment:', error);
       }
     });
@@ -272,5 +283,9 @@ export class MovieDetailsComponent implements OnInit {
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
     // Navigate to the theaters page with the movieId as a route param
     this.router.navigate(['/theaters', movieId]);
+  }
+
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 }

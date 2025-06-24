@@ -1,76 +1,105 @@
-<div class="movie-management-flex-container">
-  <div class="movie-form-card left-col">
-    <h2>{{ editMode ? 'Edit Movie' : 'Add a New Movie' }}</h2>
-    <form [formGroup]="movieForm" (ngSubmit)="onFormSubmit()">
-      <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-        <input id="title" class="form-control" formControlName="title" placeholder="e.g., Avengers: Endgame">
-        <div *ngIf="movieForm.get('title')?.invalid && movieForm.get('title')?.touched" class="error">Title is required.</div>
+<div class="row justify-content-center">
+  <!-- Add/Edit Movie Card -->
+  <div class="col-md-5">
+    <div class="card shadow mb-4">
+      <div class="card-header d-flex align-items-center"
+        style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #fff; font-weight: bold; font-size: 1.15rem;">
+        <i class="fas fa-plus-circle"></i>&nbsp;
+        <span>{{ editMode ? 'Edit Movie' : 'Add New Movie' }}</span>
       </div>
-      <div class="mb-3">
-        <label for="genre" class="form-label">Genre</label>
-        <input id="genre" class="form-control" formControlName="genre" placeholder="e.g., Action">
-        <div *ngIf="movieForm.get('genre')?.invalid && movieForm.get('genre')?.touched" class="error">Genre is required.</div>
+      <div class="card-body">
+        <form [formGroup]="movieForm" (ngSubmit)="onFormSubmit()">
+          <div class="form-group mb-3">
+            <label for="title">Title</label>
+            <input id="title" class="form-control" formControlName="title" placeholder="e.g., Avengers: Endgame">
+            <div *ngIf="movieForm.get('title')?.invalid && movieForm.get('title')?.touched" class="text-danger small">
+              Title is required.</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="genre">Genre</label>
+            <input id="genre" class="form-control" formControlName="genre" placeholder="e.g., Action">
+            <div *ngIf="movieForm.get('genre')?.invalid && movieForm.get('genre')?.touched" class="text-danger small">
+              Genre is required.</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="language">Language</label>
+            <input id="language" class="form-control" formControlName="language" placeholder="e.g., English">
+            <div *ngIf="movieForm.get('language')?.invalid && movieForm.get('language')?.touched"
+              class="text-danger small">Language is required.</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="durationMins">Duration (minutes)</label>
+            <input id="durationMins" class="form-control" formControlName="durationMins" placeholder="e.g., 120"
+              type="number">
+            <div *ngIf="movieForm.get('durationMins')?.invalid && movieForm.get('durationMins')?.touched"
+              class="text-danger small">Duration is required and must be a positive number.</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="releaseDate">Release Date</label>
+            <input id="releaseDate" class="form-control" type="datetime-local" formControlName="releaseDate">
+            <div *ngIf="movieForm.get('releaseDate')?.invalid && movieForm.get('releaseDate')?.touched"
+              class="text-danger small">Release date is required.</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="posterFile">Poster Image</label>
+            <input id="posterFile" class="form-control" type="file" (change)="onFileChange($event)">
+            <div *ngIf="movieForm.get('posterFile')?.invalid && movieForm.get('posterFile')?.touched"
+              class="text-danger small">Poster image is required.</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="description">Description</label>
+            <textarea id="description" class="form-control" formControlName="description" rows="4"></textarea>
+            <div *ngIf="movieForm.get('description')?.invalid && movieForm.get('description')?.touched"
+              class="text-danger small">Description is required.</div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary" [disabled]="movieForm.invalid || isLoading">
+              {{ isLoading ? 'Saving...' : (editMode ? 'Update Movie' : 'Add Movie') }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="hideMovieForm()">Cancel</button>
+          </div>
+        </form>
       </div>
-      <div class="mb-3">
-        <label for="language" class="form-label">Language</label>
-        <input id="language" class="form-control" formControlName="language" placeholder="e.g., English">
-        <div *ngIf="movieForm.get('language')?.invalid && movieForm.get('language')?.touched" class="error">Language is required.</div>
-      </div>
-      <div class="mb-3">
-        <label for="durationMins" class="form-label">Duration (minutes)</label>
-        <input id="durationMins" class="form-control" formControlName="durationMins" placeholder="e.g., 120" type="number">
-        <div *ngIf="movieForm.get('durationMins')?.invalid && movieForm.get('durationMins')?.touched" class="error">Duration is required and must be a positive number.</div>
-      </div>
-      <div class="mb-3">
-        <label for="releaseDate" class="form-label">Release Date</label>
-        <input id="releaseDate" class="form-control" type="datetime-local" formControlName="releaseDate">
-        <div *ngIf="movieForm.get('releaseDate')?.invalid && movieForm.get('releaseDate')?.touched" class="error">Release date is required.</div>
-      </div>
-      <div class="mb-3">
-        <label for="posterFile" class="form-label">Poster Image</label>
-        <input id="posterFile" class="form-control" type="file" (change)="onFileChange($event)">
-        <div *ngIf="movieForm.get('posterFile')?.invalid && movieForm.get('posterFile')?.touched" class="error">Poster image is required.</div>
-      </div>
-      <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea id="description" class="form-control" formControlName="description" rows="4"></textarea>
-        <div *ngIf="movieForm.get('description')?.invalid && movieForm.get('description')?.touched" class="error">Description is required.</div>
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary" [disabled]="movieForm.invalid || isLoading">
-          {{ isLoading ? 'Saving...' : (editMode ? 'Update Movie' : 'Add Movie') }}
-        </button>
-        <button type="button" class="btn btn-secondary" (click)="hideMovieForm()">Cancel</button>
-      </div>
-    </form>
+    </div>
   </div>
-  <div class="right-col movie-list-card">
-    <h3>All Movies</h3>
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Genre</th>
-            <th>Duration</th>
-            <th>Language</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let movie of movies">
-            <td>{{ movie.title }}</td>
-            <td>{{ movie.genre }}</td>
-            <td>{{ movie.durationMins }}</td>
-            <td>{{ movie.language }}</td>
-            <td class="action-buttons">
-              <button class="btn btn-sm btn-outline-primary me-2" (click)="editMovie(movie)"><i class="fas fa-edit"></i> Edit</button>
-              <button class="btn btn-sm btn-outline-danger" (click)="deleteMovie(movie.movieId)"><i class="fas fa-trash"></i> Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+
+  <!-- Movie List Card -->
+  <div class="col-md-7">
+    <div class="card shadow mb-4">
+      <div class="card-header d-flex align-items-center"
+        style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #fff; font-weight: bold; font-size: 1.15rem;">
+        <i class="fas fa-list"></i>&nbsp;
+        <span>Existing Movies</span>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th>Title</th>
+                <th>Genre</th>
+                <th>Duration</th>
+                <th>Language</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let movie of movies">
+                <td class="font-weight-bold">{{ movie.title }}</td>
+                <td>{{ movie.genre }}</td>
+                <td>{{ movie.durationMins }}</td>
+                <td>{{ movie.language }}</td>
+                <td>
+                  <button class="btn btn-sm btn-outline-primary mr-2" (click)="editMovie(movie)"><i
+                      class="fas fa-edit"></i></button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="deleteMovie(movie.movieId)"><i
+                      class="fas fa-trash"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

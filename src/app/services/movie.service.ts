@@ -91,7 +91,7 @@ export interface Show {
 export class MovieService {
   private apiUrl = 'https://vb7dqrjl-5069.inc1.devtunnels.ms/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Movies
   getMovies(): Observable<Movie[]> {
@@ -131,13 +131,19 @@ export class MovieService {
     return this.http.delete(`${this.apiUrl}/Reviews/${id}`);
   }
 
+  // Add this method to fetch all reviews
+  getAllReviews(): Observable<MovieReview[]> {
+    return this.http.get<MovieReview[]>(`${this.apiUrl}/Reviews`);
+  }
+
   // Comments
   getMovieComments(movieId: number): Observable<MovieComment[]> {
     return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments?movieId=${movieId}`);
   }
 
   addComment(comment: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Comments`, comment);
+    // Set responseType: 'text' to handle plain text backend responses
+    return this.http.post(`${this.apiUrl}/Comments`, comment, { responseType: 'text' });
   }
 
   deleteComment(id: number): Observable<any> {
