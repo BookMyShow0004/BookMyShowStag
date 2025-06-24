@@ -55,7 +55,14 @@ export interface Theater {
 }
 
 export interface Seat {
-  id: string;
+  showSeatId: number;
+  seatId: number;
+  showId: number;
+  movieTitle: string;
+  seatNumber: string;
+  seatType: string;
+  isBooked: boolean;
+  theatreName: string | null;
   status: 'available' | 'selected' | 'booked';
 }
 
@@ -100,7 +107,7 @@ export class MovieService {
   }
 
   updateMovie(id: number, formData: FormData): Observable<any> {
-    return this.http.put(`${this.apiUrl}/Movies/${id}`, formData);
+    return this.http.put(`${this.apiUrl}/Movies/${id}`, formData, { responseType: 'text' });
   }
 
   deleteMovie(id: number): Observable<any> {

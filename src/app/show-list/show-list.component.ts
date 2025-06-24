@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService } from '../services/movie.service';
+import { AlertService } from '../shared/alert.service';
 
 @Component({
   selector: 'app-show-list',
@@ -12,7 +13,12 @@ export class ShowListComponent implements OnInit {
   isLoading = true;
   errorMessage = '';
 
-  constructor(private route: ActivatedRoute, private movieService: MovieService, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private movieService: MovieService,
+    private router: Router,
+    private alertService: AlertService
+  ) {}
 
   ngOnInit(): void {
     const movieId = Number(this.route.snapshot.paramMap.get('movieId'));
@@ -23,7 +29,7 @@ export class ShowListComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMessage = 'Failed to load shows.';
+        this.handleError('Failed to load shows.');
         this.isLoading = false;
       }
     });
@@ -32,5 +38,9 @@ export class ShowListComponent implements OnInit {
   selectShow(show: any): void {
     // Navigate to seat selection page for this show
     this.router.navigate(['/seat-selection', show.showId]);
+  }
+
+  handleError(message: string): void {
+    this.alertService.showAlert(message);
   }
 }

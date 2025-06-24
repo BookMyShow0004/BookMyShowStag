@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService, LoginRequest } from '../services/auth.service';
+import { AlertService } from '../shared/alert.service';
 import { tap } from 'rxjs/operators';
 
 @Component({
@@ -24,7 +25,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private alertService: AlertService
   ) { }
 
   ngOnInit(): void {

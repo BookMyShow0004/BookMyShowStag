@@ -8,10 +8,10 @@
   <div *ngIf="!isLoading && seats.length > 0">
     <div class="seats-grid">
       <button *ngFor="let seat of seats"
-              [ngClass]="{'seat-btn': true, 'selected': selectedSeats.includes(seat.id), 'booked': seat.status === 'booked'}"
-              [disabled]="seat.status === 'booked'"
+              [ngClass]="{'seat-btn': true, 'selected': selectedSeats.includes(seat.showSeatId), 'booked': seat.status === 'booked' || seat.isBooked}"
+              [disabled]="seat.status === 'booked' || seat.isBooked"
               (click)="toggleSeat(seat)">
-        {{ seat.id }}
+        {{ seat.seatNumber }}
       </button>
     </div>
     <div class="mt-3">

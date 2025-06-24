@@ -28,11 +28,6 @@
         <div *ngIf="movieForm.get('releaseDate')?.invalid && movieForm.get('releaseDate')?.touched" class="error">Release date is required.</div>
       </div>
       <div class="mb-3">
-        <label for="createdByUserId" class="form-label">Created By User ID</label>
-        <input id="createdByUserId" class="form-control" type="number" formControlName="createdByUserId">
-        <div *ngIf="movieForm.get('createdByUserId')?.invalid && movieForm.get('createdByUserId')?.touched" class="error">User ID is required and must be a positive number.</div>
-      </div>
-      <div class="mb-3">
         <label for="posterFile" class="form-label">Poster Image</label>
         <input id="posterFile" class="form-control" type="file" (change)="onFileChange($event)">
         <div *ngIf="movieForm.get('posterFile')?.invalid && movieForm.get('posterFile')?.touched" class="error">Poster image is required.</div>

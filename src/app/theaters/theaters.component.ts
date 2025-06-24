@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MovieService, Theater } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertService } from '../shared/alert.service';
 
 @Component({
   selector: 'app-theaters',
@@ -32,9 +33,10 @@ export class TheatersComponent implements OnInit {
   sortOrder: 'asc' | 'desc' = 'asc';
 
   constructor(
-    private movieService: MovieService,
-    private authService: AuthService,
     private route: ActivatedRoute,
+    private movieService: MovieService,
+    private alertService: AlertService,
+    private authService: AuthService,
     private router: Router
   ) { }
 
@@ -218,5 +220,9 @@ export class TheatersComponent implements OnInit {
   goToShowList(theater: any): void {
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
     this.router.navigate(['/shows', movieId, theater.theatreId]);
+  }
+
+  handleError(message: string): void {
+    this.alertService.showAlert(message);
   }
 }
