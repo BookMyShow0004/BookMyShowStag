@@ -1,0 +1,44 @@
+.show-list-container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.show-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s;
+}
+.show-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+.show-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.show-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+.show-theater, .show-datetime, .show-price {
+  font-size: 1rem;
+  color: #4a5568;
+}
+.select-btn {
+  min-width: 120px;
+  font-weight: 500;
+}
+.loading-state, .alert {
+  text-align: center;
+  margin: 2rem 0;
+}

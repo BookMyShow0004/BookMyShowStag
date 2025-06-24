@@ -12,16 +12,16 @@
   </div>
 
   <!-- Details Card -->
-  <div *ngIf="movie && !isLoading" class="details-card">
-    <img [src]="movie.posterBase64" [alt]="movie.title" class="movie-poster">
+  <div *ngIf="!isLoading && !errorMessage" class="details-card">
+    <img src="https://via.placeholder.com/200x300?text=Movie+Poster" alt="Sample Movie" class="movie-poster">
 
     <div class="movie-info">
-      <h1 class="movie-title">{{ movie.title }}</h1>
-      <p class="movie-genre">{{ movie.genre }}</p>
+      <h1 class="movie-title">Sample Movie Title</h1>
+      <p class="movie-genre">Action, Adventure</p>
 
       <div class="info-section">
         <h2 class="section-title">Synopsis</h2>
-        <p class="movie-description">{{ movie.description }}</p>
+        <p class="movie-description">This is a sample description for the movie. It is an action-packed adventure with lots of excitement and drama.</p>
       </div>
 
       <div class="info-section">
@@ -33,24 +33,88 @@
           </div>
           <div class="info-item">
             <i class="fas fa-clock"></i>
-            <span>{{ movie.durationMins }}</span>
+            <span>120 mins</span>
           </div>
           <div class="info-item">
             <i class="fas fa-language"></i>
-            <span>{{ movie.language }}</span>
+            <span>English</span>
           </div>
           <div class="info-item">
             <i class="fas fa-calendar-alt"></i>
-            <span>Released on {{ movie.releaseDate | date:'longDate' }}</span>
+            <span>Released on January 1, 2024</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall Rating Section -->
+      <div class="info-section">
+        <h2 class="section-title">Overall Rating</h2>
+        <div class="d-flex align-items-center mb-2">
+          <ng-container>
+            <ng-container *ngFor="let star of [1,2,3,4]; let i = index">
+              <i class="fas fa-star text-warning"></i>
+            </ng-container>
+            <ng-container *ngFor="let star of [1]">
+              <i class="far fa-star text-warning"></i>
+            </ng-container>
+            <span class="ms-2">4.0/5</span>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- Rating Form -->
+      <div class="info-section">
+        <h2 class="section-title">Rate this Movie</h2>
+        <div>
+          <div class="mb-2">
+            <ng-container *ngFor="let star of [1,2,3,4,5]; let i = index">
+              <i class="fa-star" [ngClass]="i < 3 ? 'fas text-warning' : 'far text-secondary'" style="cursor:pointer;"></i>
+            </ng-container>
+            <span class="ms-2">3/5</span>
+          </div>
+          <textarea class="form-control mb-2" placeholder="Write a review (optional)">Great movie!</textarea>
+          <button class="btn btn-success" disabled>Submit Rating</button>
+        </div>
+      </div>
+
+      <!-- Today's Showtimes Section -->
+      <div class="info-section">
+        <h2 class="section-title">Today's Showtimes</h2>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn btn-outline-primary">10:00 AM</button>
+          <button class="btn btn-outline-primary">1:00 PM</button>
+          <button class="btn btn-outline-primary">4:00 PM</button>
+          <button class="btn btn-outline-primary">7:00 PM</button>
+        </div>
+        <div class="text-muted small">Showtimes are managed by admin and fetched from the backend API.</div>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="info-section">
+        <h2 class="section-title">Comments</h2>
+        <div>
+          <textarea class="form-control mb-2" placeholder="Add a comment...">Awesome experience!</textarea>
+          <button class="btn btn-primary mb-3" disabled>Submit Comment</button>
+        </div>
+        <div>
+          <div class="border rounded p-2 mb-2">
+            <div class="fw-bold">John Doe</div>
+            <div>Loved the action scenes!</div>
+            <div class="text-muted small">June 20, 2025</div>
+          </div>
+          <div class="border rounded p-2 mb-2">
+            <div class="fw-bold">Jane Smith</div>
+            <div>Great family movie night.</div>
+            <div class="text-muted small">June 21, 2025</div>
           </div>
         </div>
       </div>
 
       <div class="action-buttons">
-        <button class="btn btn-primary" (click)="bookMovie()">
+        <button class="btn btn-primary" (click)="goToTheaters()">
             <i class="fas fa-ticket-alt"></i> Book Tickets
         </button>
-        <button class="btn btn-secondary" routerLink="/dashboard">
+        <button class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to Movies
         </button>
       </div>

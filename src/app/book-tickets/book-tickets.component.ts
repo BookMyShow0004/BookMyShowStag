@@ -40,7 +40,7 @@ export class BookTicketsComponent implements OnInit {
     this.selectedTheater = theater;
     this.currentStep = 2;
     // Fetch seats for the selected theater
-    this.seatService.getSeatsByTheater(theater.id).subscribe((seats: Seat[]) => {
+    this.seatService.getSeatsByTheater(theater.theatreId).subscribe((seats: Seat[]) => {
       this.seats = seats;
     });
   }
@@ -65,7 +65,7 @@ export class BookTicketsComponent implements OnInit {
     if (!this.selectedTheater || !this.selectedShowtime || this.selectedSeats.length === 0) return;
     const booking = {
       movieId: this.movie?.movieId,
-      theaterId: this.selectedTheater.id,
+      theaterId: this.selectedTheater.theatreId,
       showTime: this.selectedShowtime,
       seatNumbers: this.selectedSeats.map(seat => seat.seatNumber),
       // Add user info if needed

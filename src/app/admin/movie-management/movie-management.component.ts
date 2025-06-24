@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Movie, MovieService } from 'src/app/services/movie.service';
+import { AlertService } from '../../shared/alert.service';
 
 @Component({
   selector: 'app-movie-management',
@@ -17,7 +18,8 @@ export class MovieManagementComponent implements OnInit {
 
   constructor(
     private movieService: MovieService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private alertService: AlertService
   ) {
     this.movieForm = this.fb.group({
       title: ['', Validators.required],
@@ -26,8 +28,6 @@ export class MovieManagementComponent implements OnInit {
       genre: ['', Validators.required],
       language: ['', Validators.required],
       releaseDate: ['', Validators.required],
-      createdByUserId: [0, Validators.required],
-      posterFile: [null, Validators.required]
     });
   }
 
@@ -56,13 +56,28 @@ export class MovieManagementComponent implements OnInit {
   editMovie(movie: Movie): void {
     this.editMode = true;
     this.selectedmovieId = movie.movieId;
-    // Prefill form with movie data if needed
+    this.isFormVisible = true;
+    this.movieForm.patchValue({
+      title: movie.title,
+      description: movie.description,
+      durationMins: movie.durationMins,
+      genre: movie.genre,
+      language: movie.language,
+      releaseDate: movie.releaseDate,
+      posterFile: null // File input cannot be prefilled
+    });
   }
 
   deleteMovie(id: number): void {
-    if (confirm('Are you sure you want to delete this movie?')) {
-      this.movieService.deleteMovie(id).subscribe(() => {
-        this.loadMovies();
+    if (window.confirm('Are you sure you want to delete this movie?')) {
+      this.movieService.deleteMovie(id).subscribe({
+        next: () => {
+          this.alertService.showAlert('Movie deleted successfully!');
+          this.loadMovies();
+        },
+        error: () => {
+          this.alertService.showAlert('Failed to delete movie.');
+        }
       });
     }
   }
@@ -76,6 +91,7 @@ export class MovieManagementComponent implements OnInit {
 
   onFormSubmit(): void {
     if (this.movieForm.invalid) {
+      this.alertService.showAlert('Please fill all required fields.');
       return;
     }
     this.isLoading = true;
@@ -87,9 +103,34 @@ export class MovieManagementComponent implements OnInit {
         formData.append(key, value.toString());
       }
     });
-    this.movieService.createMovie(formData).subscribe(response => {
-      this.finalizeFormSubmission();
-    });
+    // Set createdByUserId from localStorage
+    const currentUser = localStorage.getItem('currentUser');
+    const userId = currentUser ? JSON.parse(currentUser).userId : null;
+    formData.append('createdByUserId', userId);
+    if (this.editMode && this.selectedmovieId) {
+      this.movieService.updateMovie(this.selectedmovieId, formData).subscribe({
+        next: () => {
+          this.alertService.showAlert('Movie updated successfully!');
+          this.finalizeFormSubmission();
+        },
+        error: (error) => {
+          console.log(error)
+          this.alertService.showAlert('Failed to update movie.');
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.movieService.createMovie(formData).subscribe({
+        next: () => {
+          this.alertService.showAlert('Movie added successfully!');
+          this.finalizeFormSubmission();
+        },
+        error: () => {
+          this.alertService.showAlert('Failed to add movie.');
+          this.isLoading = false;
+        }
+      });
+    }
   }
 
   finalizeFormSubmission(): void {

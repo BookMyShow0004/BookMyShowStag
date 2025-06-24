@@ -10,6 +10,7 @@ import { MovieManagementComponent } from './movie-management/movie-management.co
 import { CommentModerationComponent } from './comment-moderation/comment-moderation.component';
 import { TheaterManagementComponent } from './theater-management/theater-management.component';
 import { ShowManagementComponent } from './show-management/show-management.component';
+import { AddSeatsComponent } from './add-seats/add-seats.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ShowManagementComponent } from './show-management/show-management.compo
     MovieManagementComponent,
     CommentModerationComponent,
     TheaterManagementComponent,
-    ShowManagementComponent
+    ShowManagementComponent,
+    AddSeatsComponent
   ],
   imports: [
     CommonModule,

@@ -49,6 +49,19 @@
             <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
           </button>
         </div>
+        <div class="mb-3">
+        <re-captcha
+          name="recaptcha"
+          [(ngModel)]="captchaToken"
+          (ngModelChange)="onCaptchaResolved($event)"
+          required
+          [class.is-invalid]="captchaError">
+        </re-captcha>
+
+        <div *ngIf="captchaError" class="text-danger mt-1 small">
+          Captcha is required.
+        </div>
+      </div>
         
         <!-- Login Options -->
         <div class="d-flex justify-content-between align-items-center mb-3">

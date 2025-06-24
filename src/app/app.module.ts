@@ -7,11 +7,16 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { RecaptchaModule, RecaptchaFormsModule, RECAPTCHA_SETTINGS, RecaptchaSettings } from 'ng-recaptcha';
+
 import { BookTicketsComponent } from './book-tickets/book-tickets.component';
 import { ProfileComponent } from './profile/profile.component';
 import { MovieDetailsComponent } from './movie-details/movie-details.component';
 import { TheatersComponent } from './theaters/theaters.component';
 import { MyBookingsComponent } from './my-bookings/my-bookings.component';
+import { CommonModule } from '@angular/common';
+import { ShowListComponent } from './show-list/show-list.component';
+import { SeatSelectionComponent } from './seat-selection/seat-selection.component';
 
 @NgModule({
   declarations: [
@@ -23,16 +28,28 @@ import { MyBookingsComponent } from './my-bookings/my-bookings.component';
     ProfileComponent,
     MovieDetailsComponent,
     TheatersComponent,
-    MyBookingsComponent
+    MyBookingsComponent,
+    ShowListComponent,
+    SeatSelectionComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    RecaptchaModule,
+    RecaptchaFormsModule,
+    CommonModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: RECAPTCHA_SETTINGS,
+      useValue: {
+        siteKey: '6LeSkGsrAAAAABOLsVNfYPC7XTKKqEQekDgfeb6J'
+      } as RecaptchaSettings
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
