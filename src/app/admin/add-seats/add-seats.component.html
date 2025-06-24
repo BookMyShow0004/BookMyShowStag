@@ -1,0 +1,28 @@
+<div class="add-seats-container">
+  <h2>Add Seat</h2>
+  <form [formGroup]="addSeatForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="theatreId" class="form-label">Theater</label>
+      <select id="theatreId" class="form-select" formControlName="theatreId" required>
+        <option value="" disabled selected>Select a theater</option>
+        <option *ngFor="let theater of theaters" [value]="theater.theatreId">{{ theater.name }}</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="seatNumber" class="form-label">Seat Number</label>
+      <input id="seatNumber" type="text" class="form-control" formControlName="seatNumber" required />
+    </div>
+    <div class="mb-3">
+      <label for="seatType" class="form-label">Seat Type</label>
+      <select id="seatType" class="form-select" formControlName="seatType" required>
+        <option value="" disabled selected>Select seat type</option>
+        <option value="Regular">Regular</option>
+        <option value="Premium">Premium</option>
+        <option value="VIP">VIP</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" type="submit" [disabled]="addSeatForm.invalid || isSubmitting">Add Seat</button>
+  </form>
+  <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+</div>

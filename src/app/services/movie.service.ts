@@ -188,4 +188,8 @@ export class MovieService {
   rescheduleBooking(bookingId: number, newShowTime: string, newDate: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/Bookings/${bookingId}/reschedule`, { newShowTime, newDate });
   }
+
+  addSeat(seat: { theatreId: number, seatNumber: string, seatType: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Seats`, seat);
+  }
 }
