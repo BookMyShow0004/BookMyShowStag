@@ -1,0 +1,81 @@
+.add-seats-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.add-seat-form-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.add-seat-form-card h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #343a40;
+  margin-bottom: 1.5rem;
+}
+.form-label {
+  font-weight: 600;
+  color: #2d3748;
+}
+.form-select, .form-control {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #dee2e6;
+  margin-bottom: 1rem;
+}
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.btn-primary:disabled {
+  background: #b0c4de;
+}
+.alert {
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+.table-responsive {
+  margin-top: 2rem;
+}
+.table {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.table th, .table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+}
+.table th {
+  background: #f8f9fa;
+  font-weight: 700;
+  color: #343a40;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+  background: #f4f8fb;
+}
+@media (max-width: 768px) {
+  .add-seats-container {
+    padding: 1rem;
+  }
+  .add-seat-form-card {
+    padding: 1rem;
+  }
+  .table th, .table td {
+    padding: 0.5rem;
+  }
+}

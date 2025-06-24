@@ -1,115 +1,81 @@
-<div class="page-header">
-  <h1>Movie Management</h1>
-  <button class="btn-primary" (click)="showMovieForm()">
-    <i class="fas fa-plus"></i> Add New Movie
-  </button>
-</div>
-
-<!-- Movie Form (for Add/Edit) -->
-<div class="form-container" *ngIf="isFormVisible">
-  <h2>{{ editMode ? 'Edit Movie' : 'Add a New Movie' }}</h2>
-  <form [formGroup]="movieForm" (ngSubmit)="onFormSubmit()">
-
-    <div class="form-grid">
-      <!-- Title -->
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input id="title" formControlName="title" placeholder="e.g., Avengers: Endgame">
+<div class="movie-management-flex-container">
+  <div class="movie-form-card left-col">
+    <h2>{{ editMode ? 'Edit Movie' : 'Add a New Movie' }}</h2>
+    <form [formGroup]="movieForm" (ngSubmit)="onFormSubmit()">
+      <div class="mb-3">
+        <label for="title" class="form-label">Title</label>
+        <input id="title" class="form-control" formControlName="title" placeholder="e.g., Avengers: Endgame">
         <div *ngIf="movieForm.get('title')?.invalid && movieForm.get('title')?.touched" class="error">Title is required.</div>
       </div>
-
-      <!-- Genre -->
-      <div class="form-group">
-        <label for="genre">Genre</label>
-        <input id="genre" formControlName="genre" placeholder="e.g., Action">
+      <div class="mb-3">
+        <label for="genre" class="form-label">Genre</label>
+        <input id="genre" class="form-control" formControlName="genre" placeholder="e.g., Action">
         <div *ngIf="movieForm.get('genre')?.invalid && movieForm.get('genre')?.touched" class="error">Genre is required.</div>
       </div>
-
-      <!-- Language -->
-      <div class="form-group">
-        <label for="language">Language</label>
-        <input id="language" formControlName="language" placeholder="e.g., English">
+      <div class="mb-3">
+        <label for="language" class="form-label">Language</label>
+        <input id="language" class="form-control" formControlName="language" placeholder="e.g., English">
         <div *ngIf="movieForm.get('language')?.invalid && movieForm.get('language')?.touched" class="error">Language is required.</div>
       </div>
-
-      <!-- Duration -->
-      <div class="form-group">
-        <label for="durationMins">Duration (minutes)</label>
-        <input id="durationMins" formControlName="durationMins" placeholder="e.g., 120" type="number">
+      <div class="mb-3">
+        <label for="durationMins" class="form-label">Duration (minutes)</label>
+        <input id="durationMins" class="form-control" formControlName="durationMins" placeholder="e.g., 120" type="number">
         <div *ngIf="movieForm.get('durationMins')?.invalid && movieForm.get('durationMins')?.touched" class="error">Duration is required and must be a positive number.</div>
       </div>
-
-      <!-- Release Date -->
-      <div class="form-group">
-        <label for="releaseDate">Release Date</label>
-        <input id="releaseDate" type="datetime-local" formControlName="releaseDate">
+      <div class="mb-3">
+        <label for="releaseDate" class="form-label">Release Date</label>
+        <input id="releaseDate" class="form-control" type="datetime-local" formControlName="releaseDate">
         <div *ngIf="movieForm.get('releaseDate')?.invalid && movieForm.get('releaseDate')?.touched" class="error">Release date is required.</div>
       </div>
-
-      <!-- Created By User ID -->
-      <div class="form-group">
-        <label for="createdByUserId">Created By User ID</label>
-        <input id="createdByUserId" type="number" formControlName="createdByUserId">
+      <div class="mb-3">
+        <label for="createdByUserId" class="form-label">Created By User ID</label>
+        <input id="createdByUserId" class="form-control" type="number" formControlName="createdByUserId">
         <div *ngIf="movieForm.get('createdByUserId')?.invalid && movieForm.get('createdByUserId')?.touched" class="error">User ID is required and must be a positive number.</div>
       </div>
-
-      <!-- Poster File -->
-      <div class="form-group">
-        <label for="posterFile">Poster Image</label>
-        <input id="posterFile" type="file" (change)="onFileChange($event)">
+      <div class="mb-3">
+        <label for="posterFile" class="form-label">Poster Image</label>
+        <input id="posterFile" class="form-control" type="file" (change)="onFileChange($event)">
         <div *ngIf="movieForm.get('posterFile')?.invalid && movieForm.get('posterFile')?.touched" class="error">Poster image is required.</div>
       </div>
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea id="description" class="form-control" formControlName="description" rows="4"></textarea>
+        <div *ngIf="movieForm.get('description')?.invalid && movieForm.get('description')?.touched" class="error">Description is required.</div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="movieForm.invalid || isLoading">
+          {{ isLoading ? 'Saving...' : (editMode ? 'Update Movie' : 'Add Movie') }}
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="hideMovieForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+  <div class="right-col movie-list-card">
+    <h3>All Movies</h3>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Genre</th>
+            <th>Duration</th>
+            <th>Language</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let movie of movies">
+            <td>{{ movie.title }}</td>
+            <td>{{ movie.genre }}</td>
+            <td>{{ movie.durationMins }}</td>
+            <td>{{ movie.language }}</td>
+            <td class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="editMovie(movie)"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteMovie(movie.movieId)"><i class="fas fa-trash"></i> Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <!-- Description -->
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea id="description" formControlName="description" rows="4"></textarea>
-      <div *ngIf="movieForm.get('description')?.invalid && movieForm.get('description')?.touched" class="error">Description is required.</div>
-    </div>
-
-    <!-- Debug Output -->
-    <pre>Form Valid: {{ movieForm.valid }}</pre>
-    <pre>{{ movieForm.value | json }}</pre>
-    <pre>{{ movieForm.status }}</pre>
-
-    <div class="form-actions">
-      <button type="submit" class="btn-primary" [disabled]="movieForm.invalid || isLoading">
-        {{ isLoading ? 'Saving...' : (editMode ? 'Update Movie' : 'Add Movie') }}
-      </button>
-      <button type="button" class="btn-secondary" (click)="hideMovieForm()">Cancel</button>
-    </div>
-  </form>
-</div>
-
-
-<!-- Movies Table -->
-<div class="table-container">
-  <table class="movies-table">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Genre</th>
-        <th>Duration</th>
-        <th>Language</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let movie of movies">
-        <td>{{ movie.title }}</td>
-        <td>{{ movie.genre }}</td>
-        <td>{{ movie.durationMins }}</td>
-        <td>{{ movie.language }}</td>
-        <td class="action-buttons">
-          <button class="btn-edit" (click)="editMovie(movie)">
-            <i class="fas fa-edit"></i> Edit
-          </button>
-          <button class="btn-delete" (click)="deleteMovie(movie.movieId)">
-            <i class="fas fa-trash"></i> Delete
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  </div>
 </div>

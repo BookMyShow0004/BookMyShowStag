@@ -1,28 +1,66 @@
-<div class="add-seats-container">
-  <h2>Add Seat</h2>
-  <form [formGroup]="addSeatForm" (ngSubmit)="onSubmit()">
-    <div class="mb-3">
-      <label for="theatreId" class="form-label">Theater</label>
-      <select id="theatreId" class="form-select" formControlName="theatreId" required>
-        <option value="" disabled selected>Select a theater</option>
-        <option *ngFor="let theater of theaters" [value]="theater.theatreId">{{ theater.name }}</option>
-      </select>
+<div class="add-seats-flex-container">
+  <div class="add-seat-form-card left-col">
+    <h2>{{ editingSeat ? 'Edit Seat' : 'Add Seat' }}</h2>
+    <form [formGroup]="addSeatForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="theatreId" class="form-label">Theater</label>
+        <select id="theatreId" class="form-select" formControlName="theatreId" required>
+          <option value="" disabled selected>Select a theater</option>
+          <option *ngFor="let theater of theaters" [value]="theater.theatreId">{{ theater.name }}</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="seatNumber" class="form-label">Seat Number</label>
+        <input id="seatNumber" type="text" class="form-control" formControlName="seatNumber" required />
+      </div>
+      <div class="mb-3">
+        <label for="seatType" class="form-label">Seat Type</label>
+        <select id="seatType" class="form-select" formControlName="seatType" required>
+          <option value="" disabled selected>Select seat type</option>
+          <option value="Regular">Regular</option>
+          <option value="Premium">Premium</option>
+          <option value="VIP">VIP</option>
+        </select>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="addSeatForm.invalid || isSubmitting">
+          {{ editingSeat ? (isSubmitting ? 'Updating...' : 'Update Seat') : (isSubmitting ? 'Adding...' : 'Add Seat') }}
+        </button>
+        <button *ngIf="editingSeat" class="btn btn-secondary ms-2" type="button" (click)="cancelEdit()">Cancel</button>
+      </div>
+      <div *ngIf="editingSeat" class="alert alert-info mt-2">Editing seat: {{ editingSeat.seatNumber }}</div>
+    </form>
+    <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  </div>
+  <div class="right-col seat-list-card">
+    <h3>All Seats</h3>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Seat ID</th>
+            <th>Theater ID</th>
+            <th>Theater Name</th>
+            <th>Seat Number</th>
+            <th>Seat Type</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let seat of allSeats">
+            <td>{{ seat.seatId }}</td>
+            <td>{{ seat.theatreId }}</td>
+            <td>{{ seat.theatreName }}</td>
+            <td>{{ seat.seatNumber }}</td>
+            <td>{{ seat.seatType }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-2" (click)="editSeat(seat)"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteSeat(seat)"><i class="fas fa-trash"></i> Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="mb-3">
-      <label for="seatNumber" class="form-label">Seat Number</label>
-      <input id="seatNumber" type="text" class="form-control" formControlName="seatNumber" required />
-    </div>
-    <div class="mb-3">
-      <label for="seatType" class="form-label">Seat Type</label>
-      <select id="seatType" class="form-select" formControlName="seatType" required>
-        <option value="" disabled selected>Select seat type</option>
-        <option value="Regular">Regular</option>
-        <option value="Premium">Premium</option>
-        <option value="VIP">VIP</option>
-      </select>
-    </div>
-    <button class="btn btn-primary" type="submit" [disabled]="addSeatForm.invalid || isSubmitting">Add Seat</button>
-  </form>
-  <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
-  <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+  </div>
 </div>
