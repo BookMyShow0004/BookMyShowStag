@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService, Theater } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-theaters',
@@ -34,7 +34,8 @@ export class TheatersComponent implements OnInit {
   constructor(
     private movieService: MovieService,
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -212,5 +213,10 @@ export class TheatersComponent implements OnInit {
 
   getTotalCount(): number {
     return this.theaters.length;
+  }
+
+  goToShowList(theater: any): void {
+    const movieId = Number(this.route.snapshot.paramMap.get('id'));
+    this.router.navigate(['/shows', movieId, theater.theatreId]);
   }
 }

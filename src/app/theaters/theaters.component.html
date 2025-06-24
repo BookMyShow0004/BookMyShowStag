@@ -25,7 +25,7 @@
 
   <!-- Theaters Grid -->
   <div *ngIf="!isLoading && !errorMessage && filteredTheaters.length > 0; else noTheaters" class="theaters-grid">
-    <div class="theater-card" *ngFor="let theater of filteredTheaters">
+    <div class="theater-card" *ngFor="let theater of filteredTheaters" (click)="goToShowList(theater)" style="cursor:pointer;">
       <div class="theater-card-header">
         <h2 class="theater-name">{{ theater.name }}</h2>
         <p class="theater-location">
@@ -33,13 +33,6 @@
         </p>
       </div>
       <div class="theater-card-body">
-        <!-- <h3 class="section-title">Amenities</h3>
-        <div class="amenities-list">
-          <span class="amenity-badge" *ngFor="let amenity of theater.amenities">
-            <i [class]="getAmenityIcon(amenity)"></i> {{ amenity }}
-          </span>
-        </div> -->
-
         <h3 class="section-title">Today's Showtimes</h3>
         <div class="showtimes-grid">
           <button class="showtime-btn" *ngFor="let time of theater.showTimes">

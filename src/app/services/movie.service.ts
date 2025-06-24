@@ -70,6 +70,14 @@ export interface CommentRequest {
   comment: string;
 }
 
+export interface Show {
+  showId: number;
+  movieId: number;
+  theatreId: number;
+  showDateTime: string;
+  // Add other fields as needed
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -191,5 +199,13 @@ export class MovieService {
 
   addSeat(seat: { theatreId: number, seatNumber: string, seatType: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/Seats`, seat);
+  }
+
+  getShowDetailsById(showId: number): Observable<Show> {
+    return this.http.get<Show>(`${this.apiUrl}/Shows/${showId}`);
+  }
+
+  getAllSeatsByShow(showId: number): Observable<Seat[]> {
+    return this.http.get<Seat[]>(`${this.apiUrl}/ShowSeats/AllByShow/${showId}`);
   }
 }

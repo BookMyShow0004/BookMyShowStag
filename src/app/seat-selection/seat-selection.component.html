@@ -1,0 +1,22 @@
+<div class="seat-selection-container">
+  <h2>Select Your Seats</h2>
+  <div *ngIf="isLoading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Loading seats...</p>
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="!isLoading && seats.length > 0">
+    <div class="seats-grid">
+      <button *ngFor="let seat of seats"
+              [ngClass]="{'seat-btn': true, 'selected': selectedSeats.includes(seat.id), 'booked': seat.status === 'booked'}"
+              [disabled]="seat.status === 'booked'"
+              (click)="toggleSeat(seat)">
+        {{ seat.id }}
+      </button>
+    </div>
+    <div class="mt-3">
+      <button class="btn btn-success" [disabled]="selectedSeats.length === 0" (click)="bookSeats()">Book Selected Seats</button>
+    </div>
+  </div>
+  <div *ngIf="!isLoading && seats.length === 0 && !errorMessage" class="text-muted">No seats found for this show.</div>
+</div>
