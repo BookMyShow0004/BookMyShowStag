@@ -25,6 +25,6 @@ export class ShowSeatService {
   }
 
   deleteShowSeat(showSeatId: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${showSeatId}`,{ responseType: 'text' as 'json' });
+    return this.http.delete<any>(`${this.apiUrl}/${showSeatId}`, { responseType: 'text' as 'json' });
   }
 }

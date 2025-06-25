@@ -9,6 +9,7 @@ import { MyBookingsComponent } from './my-bookings/my-bookings.component';
 import { ShowListComponent } from './show-list/show-list.component';
 import { SeatSelectionComponent } from './seat-selection/seat-selection.component';
 import { TheatresComponent } from './theatres/theatres.component';
+import { BookingComponent } from './booking/booking.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'my-bookings', component: MyBookingsComponent },
   { path: 'shows/:movieId/:theatreId', component: ShowListComponent },
   { path: 'seat-selection/:showId', component: SeatSelectionComponent },
+  { path: 'booking', component: BookingComponent },
   { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
   { path: '**', redirectTo: '/dashboard' }
 ];

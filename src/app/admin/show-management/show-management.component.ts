@@ -95,13 +95,60 @@ export class ShowManagementComponent implements OnInit {
   }
 
   editShow(show: ShowApi): void {
-    this.showData = {
-      movieId: show.movieId ?? 0,
-      theatreId: show.theatreId ?? 0,
+    // Wait for movies and theatres to be loaded before setting showData
+    if (!this.movies.length || !this.theatres.length) {
+      Promise.all([
+        new Promise<void>(resolve => this.showService.getMovies().subscribe(movies => { this.movies = movies; resolve(); })),
+        new Promise<void>(resolve => this.showService.getTheatres().subscribe(theatres => { this.theatres = theatres; resolve(); }))
+      ]).then(() => {
+        this.setShowDataForEdit(show);
+      });
+    } else {
+      this.setShowDataForEdit(show);
+    }
+  }
+
+  setShowDataForEdit(show: ShowApi): void {
+    // Fallback: find movieId/theatreId from title/name if missing
+    let movieId = show.movieId;
+    if (!movieId && show.movieTitle) {
+      const movie = this.movies.find(m => m.title === show.movieTitle);
+      movieId = movie ? movie.movieId : 0;
+    }
+    let theatreId = show.theatreId;
+    if (!theatreId && show.theatreName) {
+      const theatre = this.theatres.find(t => t.name === show.theatreName);
+      theatreId = theatre ? theatre.theatreId : 0;
+    }
+    this.editingShow = {
+      showId: show.showId,
+      movieId: movieId ?? 0,
+      theatreId: theatreId ?? 0,
       showDateTime: show.showDateTime,
       ticketPrice: show.ticketPrice
     };
-    this.editingShow = show as any;
+    this.showData = {
+      showId: show.showId,
+      movieId: movieId ?? 0,
+      theatreId: theatreId ?? 0,
+      showDateTime: this.formatDateTimeForInput(show.showDateTime),
+      ticketPrice: show.ticketPrice
+    };
+    setTimeout(() => {
+      this.showData = { ...this.showData };
+    }, 0);
+  }
+
+  formatDateTimeForInput(dateTime: string): string {
+    // Converts ISO string or date string to yyyy-MM-ddTHH:mm for input[type=datetime-local]
+    const date = new Date(dateTime);
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const yyyy = date.getFullYear();
+    const MM = pad(date.getMonth() + 1);
+    const dd = pad(date.getDate());
+    const hh = pad(date.getHours());
+    const mm = pad(date.getMinutes());
+    return `${yyyy}-${MM}-${dd}T${hh}:${mm}`;
   }
 
   deleteShow(show: ShowApi): void {

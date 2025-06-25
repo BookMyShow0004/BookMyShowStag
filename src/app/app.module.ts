@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 import { ShowListComponent } from './show-list/show-list.component';
 import { SeatSelectionComponent } from './seat-selection/seat-selection.component';
 import { TheatresComponent } from './theatres/theatres.component';
+import { BookingComponent } from './booking/booking.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { TheatresComponent } from './theatres/theatres.component';
     TheatresComponent,
     MyBookingsComponent,
     ShowListComponent,
-    SeatSelectionComponent
+    SeatSelectionComponent,
+    BookingComponent
   ],
   imports: [
     BrowserModule,

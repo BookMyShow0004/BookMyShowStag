@@ -1,0 +1,29 @@
+<div class="container mt-4">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Booking Summary</h4>
+    </div>
+    <div class="card-body">
+      <div *ngIf="bookingData">
+        <p><strong>Movie:</strong> {{ bookingData.movieTitle }}</p>
+        <p><strong>Theatre:</strong> {{ bookingData.theatreName }}</p>
+        <p><strong>Date:</strong> {{ bookingData.showDate }}</p>
+        <p><strong>Show Time:</strong> {{ bookingData.showTimeStr }}</p>
+        <p><strong>Selected Seats:</strong> {{ bookingData.seatNumbers?.join(', ') }}</p>
+        <p><strong>Number of Tickets:</strong> {{ bookingData.seatNumbers?.length || 0 }}</p>
+        <p><strong>Price per Seat:</strong> ₹{{ bookingData.totalPrice && bookingData.seatNumbers?.length ? (bookingData.totalPrice / bookingData.seatNumbers.length) : 0 }}</p>
+        <p><strong>Total Price:</strong> ₹{{ bookingData.totalPrice }}</p>
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-success flex-grow-1" (click)="confirmBooking()" [disabled]="isLoading">
+          Book
+        </button>
+        <button class="btn btn-secondary flex-grow-1" (click)="router.navigate(['/seat-selection', bookingData.showId])">
+          Back
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -47,12 +47,10 @@ export class ShowService {
   constructor(private http: HttpClient) { }
 
   addShow(show: Show): Observable<ShowResponse> {
-    return this.http.post(`${this.apiUrl}/Shows`, show, {
-      responseType: 'text'
-    }).pipe(
-      map((responseText: string) => ({
+    return this.http.post(`${this.apiUrl}/Shows`, show, { responseType: 'text' as 'json' }).pipe(
+      map((responseText: any) => ({
         success: true,
-        message: responseText
+        message: typeof responseText === 'string' ? responseText : JSON.stringify(responseText)
       })),
       catchError((error) => {
         let message = 'Failed to add show';
@@ -69,11 +67,11 @@ export class ShowService {
   }
 
   updateShow(showId: number, show: Show): Observable<any> {
-    return this.http.put(`${this.apiUrl}/Shows/${showId}`, show);
+    return this.http.put(`${this.apiUrl}/Shows/${showId}`, show, { responseType: 'text' as 'json' });
   }
 
   deleteShow(showId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/Shows/${showId}`);
+    return this.http.delete(`${this.apiUrl}/Shows/${showId}`, { responseType: 'text' as 'json' });
   }
 
   getMovies(): Observable<Movie[]> {

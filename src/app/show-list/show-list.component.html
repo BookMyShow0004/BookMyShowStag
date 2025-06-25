@@ -10,20 +10,35 @@
     </div>
   </div>
   <h2 class="mb-4">Available Shows</h2>
+  <div class="mb-3" *ngIf="dateFilters.length > 0">
+    <div style="overflow-x: auto; white-space: nowrap;">
+      <button *ngFor="let date of dateFilters"
+              class="btn btn-outline-primary mr-2 mb-2"
+              [ngClass]="{ 'active': selectedDate === date }"
+              (click)="onDateFilterChange(date)"
+              style="min-width: 120px; display: inline-block;">
+        {{ date | date:'d MMM' }}
+      </button>
+    </div>
+  </div>
   <div *ngIf="isLoading" class="loading-state">
     <i class="fas fa-spinner fa-spin"></i>
     <p>Loading shows...</p>
   </div>
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-  <div *ngIf="!isLoading && shows.length > 0">
-    <div class="show-card" *ngFor="let show of shows">
+  <div *ngIf="!isLoading && filteredShows.length > 0">
+    <div class="show-card" *ngFor="let show of filteredShows">
       <div class="show-info">
-        <div class="show-datetime mb-2"><i class="fas fa-calendar-alt"></i> {{ show.showDateTime | date:'fullDate' }}</div>
-        <div class="show-time mb-2"><i class="fas fa-clock"></i> {{ show.showDateTime | date:'shortTime' }}</div>
+        <div class="show-datetime mb-2"><i class="fas fa-calendar-alt"></i> {{ show.showDateTime | date:'fullDate':'Asia/Kolkata' }}</div>
+        <div class="show-time mb-2"><i class="fas fa-clock"></i> {{ show.showDateTime | date:'shortTime':'Asia/Kolkata' }}</div>
         <div class="show-price"><i class="fas fa-rupee-sign"></i> {{ show.ticketPrice }}</div>
       </div>
-      <button class="btn btn-primary select-btn" (click)="selectShow(show)">Select Show</button>
+      <button class="btn btn-primary select-btn"
+              (click)="selectShow(show)"
+              [disabled]="isShowStarted(show)">
+        {{ isShowStarted(show) ? 'Show Started' : 'Select Show' }}
+      </button>
     </div>
   </div>
-  <div *ngIf="!isLoading && shows.length === 0 && !errorMessage" class="text-muted">No shows found for this theatre.</div>
+  <div *ngIf="!isLoading && filteredShows.length === 0 && !errorMessage" class="text-muted">No shows found for this date.</div>
 </div>

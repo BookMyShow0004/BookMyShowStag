@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService, Seat } from '../services/movie.service';
 import { AlertService } from '../shared/alert.service';
 import { BookingService } from '../services/booking.service';
@@ -28,6 +28,7 @@ export class SeatSelectionComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private movieService: MovieService,
     private alertService: AlertService,
     private bookingService: BookingService
@@ -96,22 +97,18 @@ export class SeatSelectionComponent implements OnInit {
       this.alertService.showAlert('User not logged in.');
       return;
     }
-    const bookingRequest = {
+    // Prepare booking data for navigation
+    const bookingData = {
       userId: Number(userId),
       showId: Number(this.showId),
-      seatIds: this.selectedSeats.map(id => Number(id))
+      seatIds: this.selectedSeats.map(id => Number(id)),
+      movieTitle: this.movieTitle,
+      theatreName: this.theatreName,
+      showDate: this.showDate,
+      showTimeStr: this.showTimeStr,
+      seatNumbers: this.seats.filter(s => this.selectedSeats.includes(s.seatId)).map(s => s.seatNumber),
+      totalPrice: this.selectedSeats.length * Number(this.ticketPrice)
     };
-    console.log('Booking payload:', bookingRequest);
-    this.bookingService.bookSeats(bookingRequest).subscribe({
-      next: () => {
-        this.alertService.showAlert('Seats booked successfully!');
-        this.selectedSeats = [];
-        this.ngOnInit(); // reload seats
-      },
-      error: (err) => {
-        console.error('Booking error:', err);
-        this.alertService.showAlert('Failed to book seats. Please try again.');
-      }
-    });
+    this.router.navigate(['/booking'], { state: bookingData });
   }
 }

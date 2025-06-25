@@ -15,6 +15,6 @@ export class BookingService {
   constructor(private http: HttpClient) {}
 
   bookSeats(request: BookingRequest): Observable<any> {
-    return this.http.post<any>(this.apiUrl, request);
+    return this.http.post<any>(this.apiUrl, request, { responseType: 'text' as 'json' });
   }
 }

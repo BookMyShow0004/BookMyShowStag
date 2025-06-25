@@ -12,6 +12,9 @@ import { ShowManagementComponent } from './show-management/show-management.compo
 import { AddSeatsComponent } from './add-seats/add-seats.component';
 import { ShowSeatManagementComponent } from './show-seat-management/show-seat-management.component';
 import { TheatreManagementComponent } from './theatre-management/theatre-management.component';
+import { BookingManagementComponent } from './booking-management/booking-management.component';
+import { CityManagementComponent } from './city-management/city-management.component';
+import { UserManagementComponent } from './user-management/user-management.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +26,10 @@ import { TheatreManagementComponent } from './theatre-management/theatre-managem
     TheatreManagementComponent,
     ShowManagementComponent,
     AddSeatsComponent,
-    ShowSeatManagementComponent
+    ShowSeatManagementComponent,
+    BookingManagementComponent,
+    CityManagementComponent,
+    UserManagementComponent
   ],
   imports: [
     CommonModule,

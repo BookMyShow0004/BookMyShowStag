@@ -232,4 +232,8 @@ export class MovieService {
   getTheatreById(theatreId: number): Observable<Theatre> {
     return this.http.get<Theatre>(`${this.apiUrl}/Theatres/${theatreId}`);
   }
+
+  getUserBookingsByUserId(userId: number): Observable<Booking[]> {
+    return this.http.get<Booking[]>(`${this.apiUrl}/Bookings/ByUser/${userId}`);
+  }
 }

@@ -9,6 +9,9 @@ import { ShowManagementComponent } from './show-management/show-management.compo
 import { AddSeatsComponent } from './add-seats/add-seats.component';
 import { ShowSeatManagementComponent } from './show-seat-management/show-seat-management.component';
 import { TheatreManagementComponent } from './theatre-management/theatre-management.component';
+import { BookingManagementComponent } from './booking-management/booking-management.component';
+import { CityManagementComponent } from './city-management/city-management.component';
+import { UserManagementComponent } from './user-management/user-management.component';
 
 const routes: Routes = [
   {
@@ -24,6 +27,9 @@ const routes: Routes = [
       { path: 'comments', component: CommentModerationComponent },
       { path: 'seats', component: AddSeatsComponent },
       { path: 'show-seats', component: ShowSeatManagementComponent },
+      { path: 'bookings', component: BookingManagementComponent },
+      { path: 'cities', component: CityManagementComponent },
+      { path: 'users', component: UserManagementComponent },
       // Future admin components will be added here
     ]
   }

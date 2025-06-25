@@ -1,0 +1,97 @@
+<div class="city-management">
+  <div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <h2 class="page-title">
+          <i class="fas fa-building"></i>
+          City Management
+        </h2>
+        <p class="text-muted">Add and manage cities</p>
+      </div>
+    </div>
+
+    <!-- Error/Success Messages -->
+    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ successMessage }}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+
+    <div class="row">
+      <!-- Add/Edit City Form -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-plus-circle"></i>
+              {{ editingCity ? 'Edit City' : 'Add New City' }}
+            </h5>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="onSubmit()" #cityForm="ngForm">
+              <!-- City Name -->
+              <div class="mb-3">
+                <label for="cityName" class="form-label">City Name</label>
+                <input 
+                  type="text" 
+                  id="cityName" 
+                  name="cityName" 
+                  [(ngModel)]="cityData.cityName" 
+                  required 
+                  class="form-control" 
+                  placeholder="Enter city name">
+              </div>
+              <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary" [disabled]="!cityForm.form.valid">
+                  {{ editingCity ? 'Update City' : 'Add City' }}
+                </button>
+                <button *ngIf="editingCity" type="button" class="btn btn-secondary" (click)="onCancelEdit()">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- City List Table -->
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-list"></i>
+              Cities List
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <div *ngIf="isLoading" class="p-3 text-center text-muted">
+              <i class="fas fa-spinner fa-spin"></i> Loading cities...
+            </div>
+            <table class="table table-striped mb-0" *ngIf="!isLoading && cities.length > 0">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th style="width: 120px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let city of cities">
+                  <td>{{ city.cityName }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-info me-2" (click)="onEdit(city)"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-danger" (click)="onDelete(city)"><i class="fas fa-trash"></i></button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div *ngIf="!isLoading && cities.length === 0" class="p-3 text-center text-muted">
+              No cities found.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

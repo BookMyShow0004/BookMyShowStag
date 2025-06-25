@@ -26,12 +26,10 @@ export class TheatreService {
   constructor(private http: HttpClient) { }
 
   addTheatre(theatre: Theatre): Observable<TheatreResponse> {
-    return this.http.post(`${this.apiUrl}/Theatres`, theatre, {
-      responseType: 'text'
-    }).pipe(
-      map((responseText: string) => ({
+    return this.http.post(`${this.apiUrl}/Theatres`, theatre, { responseType: 'text' as 'json' }).pipe(
+      map((responseText: any) => ({
         success: true,
-        message: responseText
+        message: typeof responseText === 'string' ? responseText : JSON.stringify(responseText)
       })),
       catchError((error) => {
         let message = 'Failed to add theatre';
@@ -54,4 +52,4 @@ export class TheatreService {
   getTheatres(): Observable<Theatre[]> {
     return this.http.get<Theatre[]>(`${this.apiUrl}/Theatres`);
   }
-} 
+}

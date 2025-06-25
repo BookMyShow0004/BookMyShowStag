@@ -28,11 +28,11 @@ export class SeatService {
   }
 
   updateSeat(seat: Seat): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${seat.seatId}`, seat);
+    return this.http.put(`${this.apiUrl}/${seat.seatId}`, seat, { responseType: 'text' as 'json' });
   }
 
   deleteSeat(seatId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${seatId}`);
+    return this.http.delete(`${this.apiUrl}/${seatId}`, { responseType: 'text' as 'json' });
   }
 
   getAllSeatsByTheatre(theatreId: number): Observable<Seat[]> {
