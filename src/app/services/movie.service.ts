@@ -45,7 +45,7 @@ export interface Booking {
   seatNumbers: string[];
 }
 
-export interface Theater {
+export interface Theatre {
   theatreId: number;
   name: string;
   address: string;
@@ -82,6 +82,9 @@ export interface Show {
   movieId: number;
   theatreId: number;
   showDateTime: string;
+  ticketPrice: string;
+  theatreName?: string; // Optional, can be fetched separately
+  movieTitle?: string; // Optional, can be fetched separately
   // Add other fields as needed
 }
 
@@ -138,7 +141,11 @@ export class MovieService {
 
   // Comments
   getMovieComments(movieId: number): Observable<MovieComment[]> {
-    return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments?movieId=${movieId}`);
+    return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments/ByMovie/${movieId}`);
+  }
+
+  getAllMovieComments(): Observable<MovieComment[]> {
+    return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments`);
   }
 
   addComment(comment: any): Observable<any> {
@@ -171,19 +178,19 @@ export class MovieService {
     return this.http.delete(`${this.apiUrl}/Bookings/${id}`);
   }
 
-  getTheatersByMovieId(movieId: number): Observable<any[]> {
+  getTheatresByMovieId(movieId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/Theatres/ByMovie/${movieId}`);
   }
 
-  getSeatsForShow(movieId: number, theaterId: number, showTime: string): Observable<Seat[]> {
-    return this.http.get<Seat[]>(`${this.apiUrl}/ShowSeats?movieId=${movieId}&theaterId=${theaterId}&showTime=${encodeURIComponent(showTime)}`);
+  getSeatsForShow(movieId: number, theatreId: number, showTime: string): Observable<Seat[]> {
+    return this.http.get<Seat[]>(`${this.apiUrl}/ShowSeats?movieId=${movieId}&theatreId=${theatreId}&showTime=${encodeURIComponent(showTime)}`);
   }
-  getShowTimeByMovieAndTheater(movieId: number, theaterId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/Shows/ByMovieAndTheatre?movieId=${movieId}&theatreId=${theaterId}`);
+  getShowTimeByMovieAndTheatre(movieId: number, theatreId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Shows/ByMovieAndTheatre?movieId=${movieId}&theatreId=${theatreId}`);
   }
 
-  getTheaters(city: string): Observable<Theater[]> {
-    return this.http.get<Theater[]>(`${this.apiUrl}/Theatres?city=${encodeURIComponent(city)}`);
+  getTheatres(city: string): Observable<Theatre[]> {
+    return this.http.get<Theatre[]>(`${this.apiUrl}/Theatres?city=${encodeURIComponent(city)}`);
   }
 
   addRating(request: RatingRequest): Observable<any> {
@@ -220,5 +227,13 @@ export class MovieService {
 
   getAllSeatsByShow(showId: number): Observable<Seat[]> {
     return this.http.get<Seat[]>(`${this.apiUrl}/ShowSeats/AllByShow/${showId}`);
+  }
+
+  getTheatreById(theatreId: number): Observable<Theatre> {
+    return this.http.get<Theatre>(`${this.apiUrl}/Theatres/${theatreId}`);
+  }
+
+  getUserBookingsByUserId(userId: number): Observable<Booking[]> {
+    return this.http.get<Booking[]>(`${this.apiUrl}/Bookings/ByUser/${userId}`);
   }
 }

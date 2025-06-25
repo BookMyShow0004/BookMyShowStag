@@ -1,19 +1,19 @@
 <div class="container-fluid">
-  <!-- Theater and Showtime Selection -->
+  <!-- Theatre and Showtime Selection -->
   <section *ngIf="currentStep === 1">
-    <h4 class="section-title">Step 1: Select Theater & Show Time</h4>
-    <div class="theater-buttons mb-4">
-      <button *ngFor="let theater of theaters"
-              (click)="selectTheater(theater)"
-              [ngClass]="{'selected': selectedTheater === theater}"
+    <h4 class="section-title">Step 1: Select Theatre & Show Time</h4>
+    <div class="theatre-buttons mb-4">
+      <button *ngFor="let theatre of theatres"
+              (click)="selectTheatre(theatre)"
+              [ngClass]="{'selected': selectedTheatre === theatre}"
               class="btn btn-outline-primary mr-2 mb-2">
-        {{ theater.name }}
+        {{ theatre.name }}
       </button>
     </div>
 
-    <div class="show-times" *ngIf="selectedTheater">
+    <div class="show-times" *ngIf="selectedTheatre">
       <button
-        *ngFor="let time of selectedTheater.showTimes"
+        *ngFor="let time of selectedTheatre.showTimes"
         class="show-time-btn"
         [ngClass]="{ 'selected': selectedShowtime === time }"
         (click)="selectShowtime(time)">

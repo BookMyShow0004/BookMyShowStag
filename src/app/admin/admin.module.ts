@@ -8,9 +8,13 @@ import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { MovieManagementComponent } from './movie-management/movie-management.component';
 import { CommentModerationComponent } from './comment-moderation/comment-moderation.component';
-import { TheaterManagementComponent } from './theater-management/theater-management.component';
 import { ShowManagementComponent } from './show-management/show-management.component';
 import { AddSeatsComponent } from './add-seats/add-seats.component';
+import { ShowSeatManagementComponent } from './show-seat-management/show-seat-management.component';
+import { TheatreManagementComponent } from './theatre-management/theatre-management.component';
+import { BookingManagementComponent } from './booking-management/booking-management.component';
+import { CityManagementComponent } from './city-management/city-management.component';
+import { UserManagementComponent } from './user-management/user-management.component';
 
 @NgModule({
   declarations: [
@@ -19,9 +23,13 @@ import { AddSeatsComponent } from './add-seats/add-seats.component';
     DashboardComponent,
     MovieManagementComponent,
     CommentModerationComponent,
-    TheaterManagementComponent,
+    TheatreManagementComponent,
     ShowManagementComponent,
-    AddSeatsComponent
+    AddSeatsComponent,
+    ShowSeatManagementComponent,
+    BookingManagementComponent,
+    CityManagementComponent,
+    UserManagementComponent
   ],
   imports: [
     CommonModule,

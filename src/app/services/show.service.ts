@@ -23,9 +23,19 @@ export interface Movie {
   // description?: string; // add other properties if needed
 }
 
-export interface Theater {
+export interface Theatre {
   theatreId: number;
   name: string;
+}
+
+export interface ShowApi {
+  showId: number;
+  movieTitle?: string;
+  theatreName?: string;
+  showDateTime: string;
+  ticketPrice: number;
+  movieId?: number;
+  theatreId?: number;
 }
 
 @Injectable({
@@ -37,12 +47,10 @@ export class ShowService {
   constructor(private http: HttpClient) { }
 
   addShow(show: Show): Observable<ShowResponse> {
-    return this.http.post(`${this.apiUrl}/Shows`, show, {
-      responseType: 'text'
-    }).pipe(
-      map((responseText: string) => ({
+    return this.http.post(`${this.apiUrl}/Shows`, show, { responseType: 'text' as 'json' }).pipe(
+      map((responseText: any) => ({
         success: true,
-        message: responseText
+        message: typeof responseText === 'string' ? responseText : JSON.stringify(responseText)
       })),
       catchError((error) => {
         let message = 'Failed to add show';
@@ -58,11 +66,23 @@ export class ShowService {
     );
   }
 
+  updateShow(showId: number, show: Show): Observable<any> {
+    return this.http.put(`${this.apiUrl}/Shows/${showId}`, show, { responseType: 'text' as 'json' });
+  }
+
+  deleteShow(showId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/Shows/${showId}`, { responseType: 'text' as 'json' });
+  }
+
   getMovies(): Observable<Movie[]> {
     return this.http.get<Movie[]>(`${this.apiUrl}/Movies`);
   }
 
-  getTheaters(): Observable<Theater[]> {
-    return this.http.get<Theater[]>(`${this.apiUrl}/Theatres`);
+  getTheatres(): Observable<Theatre[]> {
+    return this.http.get<Theatre[]>(`${this.apiUrl}/Theatres`);
   }
-} 
+
+  getAllShows(): Observable<ShowApi[]> {
+    return this.http.get<ShowApi[]>(`${this.apiUrl}/Shows`);
+  }
+}

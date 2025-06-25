@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MovieService, Theater } from '../../services/movie.service';
+import { MovieService, Theatre } from '../../services/movie.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SeatService, Seat } from '../../services/seat.service';
 import { AlertService } from '../../shared/alert.service';
@@ -11,7 +11,7 @@ import { AlertService } from '../../shared/alert.service';
 })
 export class AddSeatsComponent implements OnInit {
   addSeatForm: FormGroup;
-  theaters: Theater[] = [];
+  theatres: Theatre[] = [];
   isSubmitting = false;
   allSeats: Seat[] = [];
   editingSeat: Seat | null = null;
@@ -25,12 +25,12 @@ export class AddSeatsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.movieService.getTheaters('Mumbai').subscribe({
-      next: (theaters) => {
-        this.theaters = theaters;
+    this.movieService.getTheatres('Mumbai').subscribe({
+      next: (theatres) => {
+        this.theatres = theatres;
       },
       error: () => {
-        this.alertService.showAlert('Failed to load theaters.');
+        this.alertService.showAlert('Failed to load theatres.');
       }
     });
     this.loadAllSeats();

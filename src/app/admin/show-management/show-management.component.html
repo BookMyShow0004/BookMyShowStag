@@ -6,7 +6,7 @@
           <i class="fas fa-ticket-alt"></i>
           Show Management
         </h2>
-        <p class="text-muted">Add new shows by selecting a movie, theater, date/time, and ticket price.</p>
+        <p class="text-muted">Add new shows by selecting a movie, theatre, date/time, and ticket price.</p>
       </div>
     </div>
 
@@ -19,8 +19,9 @@
       <button type="button" class="btn-close" (click)="successMessage = ''"></button>
     </div>
 
-    <div class="row justify-content-center">
-      <div class="col-lg-6">
+    <div class="row">
+      <!-- Add Show Form -->
+      <div class="col-lg-5">
         <div class="card shadow-sm">
           <div class="card-header">
             <h5 class="card-title mb-0">
@@ -39,12 +40,12 @@
                 </select>
               </div>
 
-              <!-- Theater Dropdown -->
+              <!-- Theatre Dropdown -->
               <div class="mb-3">
-                <label for="theater" class="form-label">Theater</label>
-                <select id="theater" name="theater" [(ngModel)]="showData.theatreId" [ngModelOptions]="{standalone: true}" required class="form-select">
-                  <option [ngValue]="0" disabled>Select a theater</option>
-                  <option *ngFor="let theater of theaters" [ngValue]="+theater.theatreId">{{ theater.name }}</option>
+                <label for="theatre" class="form-label">Theatre</label>
+                <select id="theatre" name="theatre" [(ngModel)]="showData.theatreId" [ngModelOptions]="{standalone: true}" required class="form-select">
+                  <option [ngValue]="0" disabled>Select a theatre</option>
+                  <option *ngFor="let theatre of theatres" [ngValue]="+theatre.theatreId">{{ theatre.name }}</option>
                 </select>
               </div>
 
@@ -60,20 +61,16 @@
                 <input type="number" id="ticketPrice" name="ticketPrice" [(ngModel)]="showData.ticketPrice" [ngModelOptions]="{standalone: true}" required min="1" step="0.01" class="form-control" placeholder="Enter ticket price">
               </div>
 
-              <!-- Debug Output -->
-              <pre>{{ showData | json }}</pre>
-              <pre>Form valid: {{ showForm.valid }}</pre>
-
               <!-- Submit Button -->
               <div class="d-grid">
                 <button type="submit" class="btn btn-primary" [disabled]="isLoading || !showForm.valid">
                   <span *ngIf="!isLoading">
                     <i class="fas fa-plus"></i>
-                    Add Show
+                    {{ editingShow ? 'Update Show' : 'Add Show' }}
                   </span>
                   <span *ngIf="isLoading">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Adding...
+                    {{ editingShow ? 'Updating...' : 'Adding...' }}
                   </span>
                 </button>
               </div>
@@ -81,6 +78,51 @@
           </div>
         </div>
       </div>
+
+      <!-- Shows Table -->
+      <div class="col-lg-7">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="fas fa-list"></i>
+              Existing Shows
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="shows.length === 0" class="text-center py-4">
+              <i class="fas fa-ticket-alt fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No shows found. Add your first show using the form.</p>
+            </div>
+            <div *ngIf="shows.length > 0" class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Show ID</th>
+                    <th>Movie</th>
+                    <th>Theatre</th>
+                    <th>Date & Time</th>
+                    <th>Ticket Price</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let show of shows">
+                    <td>{{ show.showId }}</td>
+                    <td>{{ getMovieTitleByShow(show) }}</td>
+                    <td>{{ getTheatreNameByShow(show) }}</td>
+                    <td>{{ show.showDateTime | date:'short' }}</td>
+                    <td>{{ show.ticketPrice | currency:'INR' }}</td>
+                    <td *ngIf="shows.length > 0">
+                      <button class="btn btn-sm btn-primary mr-2" (click)="editShow(show)"><i class="fas fa-edit"></i> Edit</button>
+                      <button class="btn btn-sm btn-danger" (click)="deleteShow(show)"><i class="fas fa-trash"></i> Delete</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</div> 
+</div>

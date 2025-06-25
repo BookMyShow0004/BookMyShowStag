@@ -7,6 +7,25 @@
         <span>Seat Management</span>
       </div>
       <div class="card-body">
+        <div class="booking-summary mb-4 p-3 border rounded bg-light">
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <strong>Movie:</strong> {{ movieTitle }}
+            </div>
+            <div class="col-md-6 mb-2">
+              <strong>Theatre:</strong> {{ theatreName }}
+            </div>
+            <div class="col-md-6 mb-2">
+              <strong>Ticket Price:</strong> {{ ticketPrice | currency:'INR' }}
+            </div>
+            <div class="col-md-6 mb-2">
+              <strong>Date:</strong> {{ showDate }}
+            </div>
+            <div class="col-md-6 mb-2">
+              <strong>Show Time:</strong> {{ showTimeStr }}
+            </div>
+          </div>
+        </div>
         <h5 class="mb-4">Select Your Seats</h5>
         <div *ngIf="isLoading" class="text-center my-4">
           <i class="fas fa-spinner fa-spin fa-2x"></i>
@@ -16,7 +35,7 @@
         <div *ngIf="!isLoading && seats.length > 0">
           <div class="seats-grid mb-3">
             <button *ngFor="let seat of seats"
-              [ngClass]="{'seat-btn': true, 'selected': selectedSeats.includes(seat.showSeatId), 'booked': seat.status === 'booked' || seat.isBooked}"
+              [ngClass]="{'seat-btn': true, 'selected': selectedSeats.includes(seat.seatId), 'booked': seat.status === 'booked' || seat.isBooked}"
               [disabled]="seat.status === 'booked' || seat.isBooked" (click)="toggleSeat(seat)">
               {{ seat.seatNumber }}
             </button>

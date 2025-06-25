@@ -10,10 +10,10 @@
       <div class="card-body">
         <form [formGroup]="addSeatForm" (ngSubmit)="onSubmit()">
           <div class="form-group mb-3">
-            <label for="theatreId" class="form-label">Theater</label>
+            <label for="theatreId" class="form-label">Theatre</label>
             <select id="theatreId" class="form-control" formControlName="theatreId" required>
-              <option value="" disabled selected>Select a theater</option>
-              <option *ngFor="let theater of theaters" [value]="theater.theatreId">{{ theater.name }}</option>
+              <option value="" disabled selected>Select a theatre</option>
+              <option *ngFor="let theatre of theatres" [value]="theatre.theatreId">{{ theatre.name }}</option>
             </select>
           </div>
           <div class="form-group mb-3">
@@ -55,8 +55,8 @@
             <thead>
               <tr>
                 <th>Seat ID</th>
-                <th>Theater ID</th>
-                <th>Theater Name</th>
+                <th>Theatre ID</th>
+                <th>Theatre Name</th>
                 <th>Seat Number</th>
                 <th>Seat Type</th>
                 <th>Actions</th>

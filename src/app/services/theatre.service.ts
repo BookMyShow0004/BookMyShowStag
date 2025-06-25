@@ -4,37 +4,35 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { City } from './auth.service';
 
-export interface Theater {
-  theaterId?: number;
+export interface Theatre {
+  theatreId?: number;
   name: string;
   address: string;
   cityId: number;
 }
 
-export interface TheaterResponse {
+export interface TheatreResponse {
   success: boolean;
   message: string;
-  theater?: Theater;
+  theatre?: Theatre;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class TheaterService {
+export class TheatreService {
   private apiUrl = 'https://vb7dqrjl-5069.inc1.devtunnels.ms/api';
 
   constructor(private http: HttpClient) { }
 
-  addTheater(theater: Theater): Observable<TheaterResponse> {
-    return this.http.post(`${this.apiUrl}/Theatres`, theater, {
-      responseType: 'text'
-    }).pipe(
-      map((responseText: string) => ({
+  addTheatre(theatre: Theatre): Observable<TheatreResponse> {
+    return this.http.post(`${this.apiUrl}/Theatres`, theatre, { responseType: 'text' as 'json' }).pipe(
+      map((responseText: any) => ({
         success: true,
-        message: responseText
+        message: typeof responseText === 'string' ? responseText : JSON.stringify(responseText)
       })),
       catchError((error) => {
-        let message = 'Failed to add theater';
+        let message = 'Failed to add theatre';
         if (typeof error.error === 'string') {
           message = error.error;
         } else if (error.error && error.error.errors) {
@@ -51,7 +49,7 @@ export class TheaterService {
     return this.http.get<City[]>(`${this.apiUrl}/Cities`);
   }
 
-  getTheaters(): Observable<Theater[]> {
-    return this.http.get<Theater[]>(`${this.apiUrl}/Theatres`);
+  getTheatres(): Observable<Theatre[]> {
+    return this.http.get<Theatre[]>(`${this.apiUrl}/Theatres`);
   }
-} 
+}

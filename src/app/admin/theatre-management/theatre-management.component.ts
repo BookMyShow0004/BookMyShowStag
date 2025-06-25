@@ -1,34 +1,34 @@
 import { Component, OnInit } from '@angular/core';
-import { TheaterService, Theater } from '../../services/theater.service';
+import { TheatreService, Theatre } from '../../services/theatre.service';
 import { City } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-theater-management',
-  templateUrl: './theater-management.component.html',
-  styleUrls: ['./theater-management.component.css']
+  selector: 'app-theatre-management',
+  templateUrl: './theatre-management.component.html',
+  styleUrls: ['./theatre-management.component.css']
 })
-export class TheaterManagementComponent implements OnInit {
-  theaterData: Theater = {
+export class TheatreManagementComponent implements OnInit {
+  theatreData: Theatre = {
     name: '',
     address: '',
     cityId: 0
   };
 
   cities: City[] = [];
-  theaters: Theater[] = [];
+  theatres: Theatre[] = [];
   isLoading = false;
   errorMessage = '';
   successMessage = '';
 
-  constructor(private theaterService: TheaterService) { }
+  constructor(private theatreService: TheatreService) { }
 
   ngOnInit(): void {
     this.loadCities();
-    this.loadTheaters();
+    this.loadTheatres();
   }
 
   loadCities(): void {
-    this.theaterService.getCities().subscribe({
+    this.theatreService.getCities().subscribe({
       next: (cities) => {
         this.cities = cities;
       },
@@ -39,14 +39,14 @@ export class TheaterManagementComponent implements OnInit {
     });
   }
 
-  loadTheaters(): void {
-    this.theaterService.getTheaters().subscribe({
-      next: (theaters) => {
-        this.theaters = theaters;
+  loadTheatres(): void {
+    this.theatreService.getTheatres().subscribe({
+      next: (theatres) => {
+        this.theatres = theatres;
       },
       error: (err) => {
-        console.error('Failed to load theaters:', err);
-        this.errorMessage = 'Failed to load theaters. Please try again.';
+        console.error('Failed to load theatres:', err);
+        this.errorMessage = 'Failed to load theatres. Please try again.';
       }
     });
   }
@@ -60,37 +60,37 @@ export class TheaterManagementComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.theaterService.addTheater(this.theaterData).subscribe({
+    this.theatreService.addTheatre(this.theatreData).subscribe({
       next: (response) => {
         this.isLoading = false;
         if (response.success) {
-          this.successMessage = 'Theater added successfully!';
+          this.successMessage = 'Theatre added successfully!';
           this.resetForm();
-          this.loadTheaters(); // Refresh the theaters list
+          this.loadTheatres(); // Refresh the theatres list
         } else {
-          this.errorMessage = response.message || 'Failed to add theater';
+          this.errorMessage = response.message || 'Failed to add theatre';
         }
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorMessage = 'Failed to add theater. Please try again.';
-        console.error('Add theater error:', error);
+        this.errorMessage = 'Failed to add theatre. Please try again.';
+        console.error('Add theatre error:', error);
       }
     });
   }
 
   validateForm(): boolean {
-    if (!this.theaterData.name.trim()) {
-      this.errorMessage = 'Theater name is required';
+    if (!this.theatreData.name.trim()) {
+      this.errorMessage = 'Theatre name is required';
       return false;
     }
 
-    if (!this.theaterData.address.trim()) {
-      this.errorMessage = 'Theater address is required';
+    if (!this.theatreData.address.trim()) {
+      this.errorMessage = 'Theatre address is required';
       return false;
     }
 
-    if (!this.theaterData.cityId || this.theaterData.cityId === 0) {
+    if (!this.theatreData.cityId || this.theatreData.cityId === 0) {
       this.errorMessage = 'Please select a city';
       return false;
     }
@@ -99,7 +99,7 @@ export class TheaterManagementComponent implements OnInit {
   }
 
   resetForm(): void {
-    this.theaterData = {
+    this.theatreData = {
       name: '',
       address: '',
       cityId: 0

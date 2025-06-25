@@ -23,16 +23,20 @@ export class SeatService {
     return this.http.get<Seat[]>(this.apiUrl);
   }
 
-  getSeatsByTheater(theatreId: number): Observable<Seat[]> {
+  getSeatsByTheatre(theatreId: number): Observable<Seat[]> {
     return this.http.get<Seat[]>(`${this.apiUrl}?theatreId=${theatreId}`);
   }
 
   updateSeat(seat: Seat): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${seat.seatId}`, seat);
+    return this.http.put(`${this.apiUrl}/${seat.seatId}`, seat, { responseType: 'text' as 'json' });
   }
 
   deleteSeat(seatId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${seatId}`);
+    return this.http.delete(`${this.apiUrl}/${seatId}`, { responseType: 'text' as 'json' });
+  }
+
+  getAllSeatsByTheatre(theatreId: number): Observable<Seat[]> {
+    return this.http.get<Seat[]>(`${this.apiUrl}/ByTheatre/${theatreId}`);
   }
 
   logAllSeats(): void {

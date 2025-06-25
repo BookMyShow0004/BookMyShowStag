@@ -66,7 +66,7 @@ export class MyBookingsComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     const user = JSON.parse(this.currentUser);
-    this.movieService.getUserBookings(user.userId).subscribe({
+    this.movieService.getUserBookingsByUserId(user.userId).subscribe({
       next: (bookings) => {
         this.bookings = bookings;
         this.filteredBookings = bookings;

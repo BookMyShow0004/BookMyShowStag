@@ -1,0 +1,71 @@
+<div class="page-header">
+  <h1>Show Seat Management</h1>
+</div>
+
+<div class="form-container">
+  <h2>Add Show Seat</h2>
+  <form [formGroup]="seatForm" (ngSubmit)="createShowSeat()">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="showId">Show ID</label>
+        <select id="showId" formControlName="showId" required class="form-control" (change)="onShowChange()">
+          <option value="" disabled>Select show</option>
+          <option *ngFor="let show of shows" [value]="show.showId">
+            Show: {{ show.showId }} (Movie: {{ getMovieTitleByShow(show) }}, Theatre: {{ getTheatreNameByShow(show) }})
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="seatId">Seat ID</label>
+        <select id="seatId" formControlName="seatId" required class="form-control" [disabled]="isSeatsLoading">
+          <option value="" disabled>Select seat</option>
+          <option *ngFor="let seat of filteredSeats" [value]="seat.seatId">
+            {{ getSeatLabel(seat) }}
+          </option>
+        </select>
+        <div *ngIf="isSeatsLoading" class="loading-text">Loading seats...</div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" type="submit" [disabled]="seatForm.invalid">
+        {{ editingSeatId ? 'Update Show Seat' : 'Add Show Seat' }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="table-container" *ngIf="showSeats.length">
+  <table class="movies-table">
+    <thead>
+      <tr>
+        <th>Show ID</th>
+        <th>Movie Title</th>
+        <th>Theatre Name</th>
+        <th>Seat ID</th>
+        <th>Seat Number</th>
+        <th>Seat Type</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let seat of showSeats">
+        <td>{{ seat.showId }}</td>
+        <td>{{ getMovieTitleByShow(seat) }}</td>
+        <td>{{ getTheatreNameByShow(seat) }}</td>
+        <td>{{ seat.seatId }}</td>
+        <td>{{ seat.seatNumber }}</td>
+        <td>{{ seat.seatType }}</td>
+        <td>{{ seat.isBooked ? 'Booked' : 'Available' }}</td>
+        <td>
+          <button type="button" class="btn btn-sm btn-primary btn-action" (click)="editShowSeat(seat)">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button type="button" class="btn btn-sm btn-danger btn-action" (click)="deleteShowSeat(seat)">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "install": "npm install ng-recaptcha@9.0.0 --legacy-peer-deps"
   },
   "private": true,
   "dependencies": {
