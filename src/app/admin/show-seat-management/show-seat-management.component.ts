@@ -4,7 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { AlertService } from '../../shared/alert.service';
 import { SeatService, Seat } from '../../services/seat.service';
 import { ShowService } from '../../services/show.service';
-import { MovieService, Movie, Theater } from '../../services/movie.service';
+import { MovieService, Movie, Theatre } from '../../services/movie.service';
+import { ShowSeatService } from '../../services/show-seat.service';
+import { switchMap, filter, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-show-seat-management',
@@ -22,7 +24,8 @@ export class ShowSeatManagementComponent implements OnInit {
   seats: any[] = [];
   filteredSeats: any[] = [];
   movies: Movie[] = [];
-  theaters: Theater[] = [];
+  theatres: Theatre[] = [];
+  isSeatsLoading = false;
 
   constructor(
     private http: HttpClient,
@@ -30,24 +33,17 @@ export class ShowSeatManagementComponent implements OnInit {
     private alertService: AlertService,
     private seatService: SeatService,
     private showService: ShowService,
-    private movieService: MovieService
+    private movieService: MovieService,
+    private showSeatService: ShowSeatService
   ) {
     this.seatForm = this.fb.group({
       showId: ['', Validators.required],
-      seatId: ['', Validators.required],
-      seatType: ['', Validators.required]
+      seatId: ['', Validators.required]
     });
   }
 
   ngOnInit(): void {
     this.fetchShowSeats();
-    this.seatService.getAllSeats().subscribe({
-      next: (seats) => {
-        this.seatTypes = Array.from(new Set(seats.map(s => s.seatType)));
-        this.seats = seats;
-        this.filteredSeats = seats; // Default to all seats
-      }
-    });
     this.showService.getAllShows().subscribe({
       next: (shows) => {
         this.shows = (shows || []).filter(s => s.showId && s.showDateTime);
@@ -56,14 +52,51 @@ export class ShowSeatManagementComponent implements OnInit {
     this.movieService.getMovies().subscribe({
       next: (movies) => { this.movies = movies; }
     });
-    this.movieService.getTheaters('').subscribe({
-      next: (theaters) => { this.theaters = theaters; }
+    this.movieService.getTheatres('').subscribe({
+      next: (theatres) => { this.theatres = theatres; }
+    });
+    // Use switchMap to handle rapid showId changes and avoid race conditions
+    this.seatForm.get('showId')?.valueChanges.pipe(
+      tap(() => {
+        this.filteredSeats = [];
+        this.isSeatsLoading = true;
+        this.seatForm.get('seatId')?.disable();
+      }),
+      filter(showId => !!showId),
+      switchMap((showId) => {
+        const show = this.shows.find(s => s.showId == showId);
+        let theatreId = show?.theatreId;
+        if (!theatreId && show?.theatreName) {
+          const theatre = this.theatres.find(t => t.name === show.theatreName);
+          theatreId = theatre?.theatreId;
+        }
+        if (theatreId) {
+          return this.seatService.getAllSeatsByTheatre(theatreId);
+        } else {
+          this.isSeatsLoading = false;
+          this.seatForm.get('seatId')?.enable();
+          return [];
+        }
+      })
+    ).subscribe({
+      next: (seats: any) => {
+        this.filteredSeats = seats || [];
+        this.seatTypes = Array.from(new Set((seats || []).map((s: any) => s.seatType)));
+        this.isSeatsLoading = false;
+        this.seatForm.get('seatId')?.enable();
+        this.seatForm.patchValue({ seatId: '' });
+      },
+      error: (err) => {
+        this.filteredSeats = [];
+        this.isSeatsLoading = false;
+        this.seatForm.get('seatId')?.enable();
+      }
     });
   }
 
   fetchShowSeats(): void {
     this.isLoading = true;
-    this.http.get<any[]>('https://vb7dqrjl-5069.inc1.devtunnels.ms/api/ShowSeats').subscribe({
+    this.showSeatService.getAllShowSeats().subscribe({
       next: (data) => {
         this.showSeats = data;
         this.isLoading = false;
@@ -76,16 +109,51 @@ export class ShowSeatManagementComponent implements OnInit {
   }
 
   editShowSeat(seat: any): void {
+    this.editingSeatId = seat.showSeatId;
+    // Patch both showId and seatId immediately
     this.seatForm.patchValue({
       showId: seat.showId,
       seatId: seat.seatId
     });
-    this.editingSeatId = seat.showSeatId;
+    // Find the show and theatreId
+    const show = this.shows.find(s => s.showId == seat.showId);
+    let theatreId = show?.theatreId;
+    if (!theatreId && show?.theatreName) {
+      const theatre = this.theatres.find(t => t.name === show.theatreName);
+      theatreId = theatre?.theatreId;
+    }
+    // If the seat is already in the dropdown, do nothing more
+    if (this.filteredSeats.some(s => s.seatId === seat.seatId)) {
+      return;
+    }
+    // Otherwise, fetch the seats for the show and patch seatId after loading
+    if (theatreId) {
+      this.isSeatsLoading = true;
+      this.seatForm.get('seatId')?.disable();
+      this.seatService.getAllSeatsByTheatre(theatreId).subscribe({
+        next: (seats) => {
+          this.filteredSeats = seats;
+          this.seatTypes = Array.from(new Set(seats.map((s: any) => s.seatType)));
+          this.isSeatsLoading = false;
+          this.seatForm.get('seatId')?.enable();
+          // Patch seatId again after seats are loaded
+          this.seatForm.patchValue({ seatId: seat.seatId });
+        },
+        error: () => {
+          this.filteredSeats = [];
+          this.isSeatsLoading = false;
+          this.seatForm.get('seatId')?.enable();
+        }
+      });
+    } else {
+      this.filteredSeats = [];
+      this.seatForm.get('seatId')?.enable();
+    }
   }
 
   deleteShowSeat(seat: any): void {
     if (!confirm('Are you sure you want to delete this show seat?')) return;
-    this.http.delete(`https://vb7dqrjl-5069.inc1.devtunnels.ms/api/ShowSeats/${seat.showSeatId}`).subscribe({
+    this.showSeatService.deleteShowSeat(seat.showSeatId).subscribe({
       next: () => {
         this.alertService.showAlert('Show seat deleted successfully!');
         this.fetchShowSeats();
@@ -98,54 +166,52 @@ export class ShowSeatManagementComponent implements OnInit {
 
   createShowSeat(): void {
     if (this.seatForm.invalid) return;
+    // Only pass showId and seatId to the API
     const seatData = {
       showId: this.seatForm.value.showId,
       seatId: this.seatForm.value.seatId
     };
     if (this.editingSeatId) {
       // Update existing seat
-      this.http.put(`https://vb7dqrjl-5069.inc1.devtunnels.ms/api/ShowSeats/${this.editingSeatId}`, seatData).subscribe({
+      this.showSeatService.updateShowSeat(this.editingSeatId, seatData).subscribe({
         next: () => {
           this.alertService.showAlert('Show seat updated successfully!');
           this.seatForm.reset();
           this.editingSeatId = null;
           this.fetchShowSeats();
         },
-        error: () => {
+        error: (error) => {
           this.alertService.showAlert('Failed to update show seat.');
         }
       });
     } else {
       // Create new seat
-      this.http.post('https://vb7dqrjl-5069.inc1.devtunnels.ms/api/ShowSeats', seatData).subscribe({
+      this.showSeatService.createShowSeat(seatData).subscribe({
         next: () => {
           this.alertService.showAlert('Show seat created successfully!');
           this.seatForm.reset();
           this.fetchShowSeats();
         },
-        error: () => {
+        error: (error) => {
+          console.log(error)
           this.alertService.showAlert('Failed to create show seat.');
         }
       });
     }
   }
 
+  // Remove seat fetching logic from onShowChange, keep only patchValue and logs
   onShowChange(): void {
     const showId = this.seatForm.value.showId;
     const show = this.shows.find(s => s.showId == showId);
-    console.log('Selected show:', show);
-    const theatreId = show?.theatreId || show?.theaterId;
-    if (theatreId) {
-      this.filteredSeats = this.seats.filter(seat => {
-        // Log each seat for debugging
-        console.log('Checking seat:', seat);
-        return seat.theatreId == theatreId || seat.theaterId == theatreId;
-      });
-      console.log('Filtered seats:', this.filteredSeats);
-    } else {
-      this.filteredSeats = this.seats;
-      console.log('No theatreId found, showing all seats.');
+    console.log('onShowChange called. showId:', showId, 'show:', show);
+    let theatreId = show?.theatreId;
+    if (!theatreId && show?.theatreName) {
+      const theatre = this.theatres.find(t => t.name === show.theatreName);
+      theatreId = theatre?.theatreId;
+      console.log('Looked up theatreId from theatreName:', theatreId);
     }
+    console.log('TheatreId:', theatreId);
     this.seatForm.patchValue({ seatId: '' }); // Reset seat selection
   }
 
@@ -158,13 +224,26 @@ export class ShowSeatManagementComponent implements OnInit {
     return '';
   }
 
-  getTheaterNameByShow(show: any): string {
-    if (show.theatreName) return show.theatreName;
-    if (show.theatreId) {
-      const theater = this.theaters.find(t => t.theatreId === show.theatreId);
-      return theater ? theater.name : show.theatreId.toString();
+  getTheatreNameByShow(show: any): string {
+    // Try to get theatreId from show, fallback to theatreName
+    let theatreId = show.theatreId;
+    let theatreName = show.theatreName;
+    if (!theatreName && theatreId) {
+      const theatre = this.theatres.find(t => t.theatreId === theatreId);
+      theatreName = theatre ? theatre.name : '';
     }
-    return '';
+    // If still not found, try to match by show.showId in shows array
+    if (!theatreName && show.showId) {
+      const showObj = this.shows.find(s => s.showId === show.showId);
+      if (showObj) {
+        if (showObj.theatreName) return showObj.theatreName;
+        if (showObj.theatreId) {
+          const theatre = this.theatres.find(t => t.theatreId === showObj.theatreId);
+          if (theatre) return theatre.name;
+        }
+      }
+    }
+    return theatreName || '';
   }
 
   getSeatLabel(seat: any): string {
@@ -172,14 +251,14 @@ export class ShowSeatManagementComponent implements OnInit {
     const details: string[] = [];
     if (seat.seatNumber) details.push(`Number: ${seat.seatNumber}`);
     if (seat.seatType) details.push(`Type: ${seat.seatType}`);
-    // Add theater name or theaterId
-    let theaterName = '';
-    if (seat.theatreId || seat.theaterId) {
-      const tid = seat.theatreId || seat.theaterId;
-      const theater = this.theaters.find(t => t.theatreId === tid);
-      theaterName = theater ? theater.name : tid;
+    // Add theatre name or theatreId
+    let theatreName = '';
+    if (seat.theatreId || seat.theatreId) {
+      const tid = seat.theatreId || seat.theatreId;
+      const theatre = this.theatres.find(t => t.theatreId === tid);
+      theatreName = theatre ? theatre.name : tid;
     }
-    if (theaterName) details.push(`Theater: ${theaterName}`);
+    if (theatreName) details.push(`Theatre: ${theatreName}`);
     if (details.length) label += ` (${details.join(', ')})`;
     return label;
   }

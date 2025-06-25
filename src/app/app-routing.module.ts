@@ -5,10 +5,10 @@ import { SignupComponent } from './signup/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
 import { MovieDetailsComponent } from './movie-details/movie-details.component';
-import { TheatersComponent } from './theaters/theaters.component';
 import { MyBookingsComponent } from './my-bookings/my-bookings.component';
 import { ShowListComponent } from './show-list/show-list.component';
 import { SeatSelectionComponent } from './seat-selection/seat-selection.component';
+import { TheatresComponent } from './theatres/theatres.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
@@ -17,10 +17,10 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'movie/:id', component: MovieDetailsComponent },
-  { path: 'theaters', component: TheatersComponent },
-  { path: 'theaters/:id', component: TheatersComponent },
+  { path: 'theatres', component: TheatresComponent },
+  { path: 'theatres/:id', component: TheatresComponent },
   { path: 'my-bookings', component: MyBookingsComponent },
-  { path: 'shows/:movieId/:theaterId', component: ShowListComponent },
+  { path: 'shows/:movieId/:theatreId', component: ShowListComponent },
   { path: 'seat-selection/:showId', component: SeatSelectionComponent },
   { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
   { path: '**', redirectTo: '/dashboard' }

@@ -9,12 +9,12 @@
     <div class="show-card" *ngFor="let show of shows">
       <div class="show-info">
         <div class="show-title">{{ show.movieTitle }}</div>
-        <div class="show-theater"><i class="fas fa-map-marker-alt"></i> {{ show.theatreName }}</div>
+        <div class="show-theatre"><i class="fas fa-map-marker-alt"></i> {{ show.theatreName }}</div>
         <div class="show-datetime"><i class="fas fa-calendar-alt"></i> {{ show.showDateTime | date:'fullDate' }} <i class="fas fa-clock"></i> {{ show.showDateTime | date:'shortTime' }}</div>
         <div class="show-price"><i class="fas fa-rupee-sign"></i> {{ show.ticketPrice }}</div>
       </div>
       <button class="btn btn-primary select-btn" (click)="selectShow(show)">Select Show</button>
     </div>
   </div>
-  <div *ngIf="!isLoading && shows.length === 0 && !errorMessage" class="text-muted">No shows found for this theater.</div>
+  <div *ngIf="!isLoading && shows.length === 0 && !errorMessage" class="text-muted">No shows found for this theatre.</div>
 </div>

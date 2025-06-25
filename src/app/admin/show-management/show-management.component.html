@@ -6,7 +6,7 @@
           <i class="fas fa-ticket-alt"></i>
           Show Management
         </h2>
-        <p class="text-muted">Add new shows by selecting a movie, theater, date/time, and ticket price.</p>
+        <p class="text-muted">Add new shows by selecting a movie, theatre, date/time, and ticket price.</p>
       </div>
     </div>
 
@@ -40,12 +40,12 @@
                 </select>
               </div>
 
-              <!-- Theater Dropdown -->
+              <!-- Theatre Dropdown -->
               <div class="mb-3">
-                <label for="theater" class="form-label">Theater</label>
-                <select id="theater" name="theater" [(ngModel)]="showData.theatreId" [ngModelOptions]="{standalone: true}" required class="form-select">
-                  <option [ngValue]="0" disabled>Select a theater</option>
-                  <option *ngFor="let theater of theaters" [ngValue]="+theater.theatreId">{{ theater.name }}</option>
+                <label for="theatre" class="form-label">Theatre</label>
+                <select id="theatre" name="theatre" [(ngModel)]="showData.theatreId" [ngModelOptions]="{standalone: true}" required class="form-select">
+                  <option [ngValue]="0" disabled>Select a theatre</option>
+                  <option *ngFor="let theatre of theatres" [ngValue]="+theatre.theatreId">{{ theatre.name }}</option>
                 </select>
               </div>
 
@@ -99,7 +99,7 @@
                   <tr>
                     <th>Show ID</th>
                     <th>Movie</th>
-                    <th>Theater</th>
+                    <th>Theatre</th>
                     <th>Date & Time</th>
                     <th>Ticket Price</th>
                     <th>Actions</th>
@@ -109,7 +109,7 @@
                   <tr *ngFor="let show of shows">
                     <td>{{ show.showId }}</td>
                     <td>{{ getMovieTitleByShow(show) }}</td>
-                    <td>{{ getTheaterNameByShow(show) }}</td>
+                    <td>{{ getTheatreNameByShow(show) }}</td>
                     <td>{{ show.showDateTime | date:'short' }}</td>
                     <td>{{ show.ticketPrice | currency }}</td>
                     <td *ngIf="shows.length > 0">

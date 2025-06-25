@@ -23,7 +23,7 @@ export interface Movie {
   // description?: string; // add other properties if needed
 }
 
-export interface Theater {
+export interface Theatre {
   theatreId: number;
   name: string;
 }
@@ -80,8 +80,8 @@ export class ShowService {
     return this.http.get<Movie[]>(`${this.apiUrl}/Movies`);
   }
 
-  getTheaters(): Observable<Theater[]> {
-    return this.http.get<Theater[]>(`${this.apiUrl}/Theatres`);
+  getTheatres(): Observable<Theatre[]> {
+    return this.http.get<Theatre[]>(`${this.apiUrl}/Theatres`);
   }
 
   getAllShows(): Observable<ShowApi[]> {

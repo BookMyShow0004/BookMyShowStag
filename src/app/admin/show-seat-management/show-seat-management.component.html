@@ -11,18 +11,19 @@
         <select id="showId" formControlName="showId" required class="form-control" (change)="onShowChange()">
           <option value="" disabled>Select show</option>
           <option *ngFor="let show of shows" [value]="show.showId">
-            Show: {{ show.showId }} (Movie: {{ getMovieTitleByShow(show) }}, Theater: {{ getTheaterNameByShow(show) }})
+            Show: {{ show.showId }} (Movie: {{ getMovieTitleByShow(show) }}, Theatre: {{ getTheatreNameByShow(show) }})
           </option>
         </select>
       </div>
       <div class="form-group">
-        <label for="seatId">Seat</label>
-        <select id="seatId" formControlName="seatId" required class="form-control">
+        <label for="seatId">Seat ID</label>
+        <select id="seatId" formControlName="seatId" required class="form-control" [disabled]="isSeatsLoading">
           <option value="" disabled>Select seat</option>
           <option *ngFor="let seat of filteredSeats" [value]="seat.seatId">
             {{ getSeatLabel(seat) }}
           </option>
         </select>
+        <div *ngIf="isSeatsLoading" class="loading-text">Loading seats...</div>
       </div>
     </div>
     <div class="form-actions">
@@ -38,6 +39,9 @@
     <thead>
       <tr>
         <th>Show ID</th>
+        <th>Movie Title</th>
+        <th>Theatre Name</th>
+        <th>Seat ID</th>
         <th>Seat Number</th>
         <th>Seat Type</th>
         <th>Status</th>
@@ -46,13 +50,10 @@
     </thead>
     <tbody>
       <tr *ngFor="let seat of showSeats">
-        <td>
-          {{ seat.seatId }}
-          <span *ngIf="seat.seatNumber">, {{ seat.seatNumber }}</span>
-          <span *ngIf="seat.seatType">, {{ seat.seatType }}</span>
-          <span *ngIf="getTheaterNameByShow(seat)">, {{ getTheaterNameByShow(seat) }}</span>
-          <span *ngIf="!getTheaterNameByShow(seat) && seat.theatreId">, {{ seat.theatreId }}</span>
-        </td>
+        <td>{{ seat.showId }}</td>
+        <td>{{ getMovieTitleByShow(seat) }}</td>
+        <td>{{ getTheatreNameByShow(seat) }}</td>
+        <td>{{ seat.seatId }}</td>
         <td>{{ seat.seatNumber }}</td>
         <td>{{ seat.seatType }}</td>
         <td>{{ seat.isBooked ? 'Booked' : 'Available' }}</td>

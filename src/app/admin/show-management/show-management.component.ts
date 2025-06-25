@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ShowService, Show, Movie, Theater, ShowApi } from '../../services/show.service';
+import { ShowService, Show, Movie, Theatre, ShowApi } from '../../services/show.service';
 
 @Component({
   selector: 'app-show-management',
@@ -15,7 +15,7 @@ export class ShowManagementComponent implements OnInit {
   };
 
   movies: Movie[] = [];
-  theaters: Theater[] = [];
+  theatres: Theatre[] = [];
   shows: ShowApi[] = [];
   editingShow: Show | null = null;
   isLoading = false;
@@ -26,7 +26,7 @@ export class ShowManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMovies();
-    this.loadTheaters();
+    this.loadTheatres();
     this.loadShows();
   }
 
@@ -37,10 +37,10 @@ export class ShowManagementComponent implements OnInit {
     });
   }
 
-  loadTheaters(): void {
-    this.showService.getTheaters().subscribe({
-      next: (theaters) => { this.theaters = theaters; },
-      error: (err) => { this.errorMessage = 'Failed to load theaters.'; }
+  loadTheatres(): void {
+    this.showService.getTheatres().subscribe({
+      next: (theatres) => { this.theatres = theatres; },
+      error: (err) => { this.errorMessage = 'Failed to load theatres.'; }
     });
   }
 
@@ -127,7 +127,7 @@ export class ShowManagementComponent implements OnInit {
       return false;
     }
     if (!this.showData.theatreId) {
-      this.errorMessage = 'Please select a theater';
+      this.errorMessage = 'Please select a theatre';
       return false;
     }
     if (!this.showData.showDateTime) {
@@ -155,9 +155,9 @@ export class ShowManagementComponent implements OnInit {
     return movie ? movie.title : movieId.toString();
   }
 
-  getTheaterName(theatreId: number): string {
-    const theater = this.theaters.find(t => t.theatreId === theatreId);
-    return theater ? theater.name : theatreId.toString();
+  getTheatreName(theatreId: number): string {
+    const theatre = this.theatres.find(t => t.theatreId === theatreId);
+    return theatre ? theatre.name : theatreId.toString();
   }
 
   getMovieTitleByShow(show: ShowApi): string {
@@ -169,11 +169,11 @@ export class ShowManagementComponent implements OnInit {
     return '';
   }
 
-  getTheaterNameByShow(show: ShowApi): string {
+  getTheatreNameByShow(show: ShowApi): string {
     if (show.theatreName) return show.theatreName;
     if (show.theatreId) {
-      const theater = this.theaters.find(t => t.theatreId === show.theatreId);
-      return theater ? theater.name : show.theatreId.toString();
+      const theatre = this.theatres.find(t => t.theatreId === show.theatreId);
+      return theatre ? theatre.name : show.theatreId.toString();
     }
     return '';
   }

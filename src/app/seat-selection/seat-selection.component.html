@@ -16,7 +16,7 @@
         <div *ngIf="!isLoading && seats.length > 0">
           <div class="seats-grid mb-3">
             <button *ngFor="let seat of seats"
-              [ngClass]="{'seat-btn': true, 'selected': selectedSeats.includes(seat.showSeatId), 'booked': seat.status === 'booked' || seat.isBooked}"
+              [ngClass]="{'seat-btn': true, 'selected': selectedSeats.includes(seat.seatId), 'booked': seat.status === 'booked' || seat.isBooked}"
               [disabled]="seat.status === 'booked' || seat.isBooked" (click)="toggleSeat(seat)">
               {{ seat.seatNumber }}
             </button>

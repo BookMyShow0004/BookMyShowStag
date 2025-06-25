@@ -1,13 +1,13 @@
-<div class="theater-management">
+<div class="theatre-management">
   <div class="container-fluid">
     <!-- Header -->
     <div class="row mb-4">
       <div class="col-12">
         <h2 class="page-title">
           <i class="fas fa-building"></i>
-          Theater Management
+          Theatre Management
         </h2>
-        <p class="text-muted">Add and manage theaters across different cities</p>
+        <p class="text-muted">Add and manage theatres across different cities</p>
       </div>
     </div>
 
@@ -22,41 +22,41 @@
     </div>
 
     <div class="row">
-      <!-- Add Theater Form -->
+      <!-- Add Theatre Form -->
       <div class="col-lg-4">
         <div class="card shadow-sm">
           <div class="card-header">
             <h5 class="card-title mb-0">
               <i class="fas fa-plus-circle"></i>
-              Add New Theater
+              Add New Theatre
             </h5>
           </div>
           <div class="card-body">
-            <form (ngSubmit)="onSubmit()" #theaterForm="ngForm">
-              <!-- Theater Name -->
+            <form (ngSubmit)="onSubmit()" #theatreForm="ngForm">
+              <!-- Theatre Name -->
               <div class="mb-3">
-                <label for="theaterName" class="form-label">Theater Name</label>
+                <label for="theatreName" class="form-label">Theatre Name</label>
                 <input 
                   type="text" 
-                  id="theaterName" 
-                  name="theaterName" 
-                  [(ngModel)]="theaterData.name" 
+                  id="theatreName" 
+                  name="theatreName" 
+                  [(ngModel)]="theatreData.name" 
                   required 
                   class="form-control" 
-                  placeholder="Enter theater name">
+                  placeholder="Enter theatre name">
               </div>
 
-              <!-- Theater Address -->
+              <!-- Theatre Address -->
               <div class="mb-3">
-                <label for="theaterAddress" class="form-label">Address</label>
+                <label for="theatreAddress" class="form-label">Address</label>
                 <textarea 
-                  id="theaterAddress" 
-                  name="theaterAddress" 
-                  [(ngModel)]="theaterData.address" 
+                  id="theatreAddress" 
+                  name="theatreAddress" 
+                  [(ngModel)]="theatreData.address" 
                   required 
                   class="form-control" 
                   rows="3"
-                  placeholder="Enter theater address"></textarea>
+                  placeholder="Enter theatre address"></textarea>
               </div>
 
               <!-- City Selection -->
@@ -65,7 +65,7 @@
                 <select 
                   id="city" 
                   name="city" 
-                  [(ngModel)]="theaterData.cityId" 
+                  [(ngModel)]="theatreData.cityId" 
                   required 
                   class="form-select">
                   <option [ngValue]="0" disabled>Select a city</option>
@@ -80,10 +80,10 @@
                 <button 
                   type="submit" 
                   class="btn btn-primary" 
-                  [disabled]="isLoading || !theaterForm.valid">
+                  [disabled]="isLoading || !theatreForm.valid">
                   <span *ngIf="!isLoading">
                     <i class="fas fa-plus"></i>
-                    Add Theater
+                    Add Theatre
                   </span>
                   <span *ngIf="isLoading">
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -96,41 +96,41 @@
         </div>
       </div>
 
-      <!-- Theaters List -->
+      <!-- Theatres List -->
       <div class="col-lg-8">
         <div class="card shadow-sm">
           <div class="card-header">
             <h5 class="card-title mb-0">
               <i class="fas fa-list"></i>
-              Existing Theaters
+              Existing Theatres
             </h5>
           </div>
           <div class="card-body">
-            <div *ngIf="theaters.length === 0" class="text-center py-4">
+            <div *ngIf="theatres.length === 0" class="text-center py-4">
               <i class="fas fa-building fa-3x text-muted mb-3"></i>
-              <p class="text-muted">No theaters found. Add your first theater using the form.</p>
+              <p class="text-muted">No theatres found. Add your first theatre using the form.</p>
             </div>
             
-            <div *ngIf="theaters.length > 0" class="table-responsive">
+            <div *ngIf="theatres.length > 0" class="table-responsive">
               <table class="table table-hover">
                 <thead class="table-light">
                   <tr>
                     <th>ID</th>
-                    <th>Theater Name</th>
+                    <th>Theatre Name</th>
                     <th>Address</th>
                     <th>City</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let theater of theaters">
-                    <td>{{ theater.theaterId }}</td>
+                  <tr *ngFor="let theatre of theatres">
+                    <td>{{ theatre.theatreId }}</td>
                     <td>
-                      <strong>{{ theater.name }}</strong>
+                      <strong>{{ theatre.name }}</strong>
                     </td>
-                    <td>{{ theater.address }}</td>
+                    <td>{{ theatre.address }}</td>
                     <td>
-                      <span class="badge bg-info">{{ getCityName(theater.cityId) }}</span>
+                      <span class="badge bg-info">{{ getCityName(theatre.cityId) }}</span>
                     </td>
                     <td>
                       <button class="btn btn-sm btn-outline-primary me-2" title="Edit">

@@ -8,10 +8,10 @@ import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { MovieManagementComponent } from './movie-management/movie-management.component';
 import { CommentModerationComponent } from './comment-moderation/comment-moderation.component';
-import { TheaterManagementComponent } from './theater-management/theater-management.component';
 import { ShowManagementComponent } from './show-management/show-management.component';
 import { AddSeatsComponent } from './add-seats/add-seats.component';
 import { ShowSeatManagementComponent } from './show-seat-management/show-seat-management.component';
+import { TheatreManagementComponent } from './theatre-management/theatre-management.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +20,7 @@ import { ShowSeatManagementComponent } from './show-seat-management/show-seat-ma
     DashboardComponent,
     MovieManagementComponent,
     CommentModerationComponent,
-    TheaterManagementComponent,
+    TheatreManagementComponent,
     ShowManagementComponent,
     AddSeatsComponent,
     ShowSeatManagementComponent

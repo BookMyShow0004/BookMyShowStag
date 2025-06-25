@@ -278,11 +278,11 @@ export class MovieDetailsComponent implements OnInit {
     return colors[genre] || '#667eea';
   }
 
-  goToTheaters(): void {
+  goToTheatres(): void {
     // Get the current movieId from the route params
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
-    // Navigate to the theaters page with the movieId as a route param
-    this.router.navigate(['/theaters', movieId]);
+    // Navigate to the theatres page with the movieId as a route param
+    this.router.navigate(['/theatres', movieId]);
   }
 
   goToDashboard(): void {
