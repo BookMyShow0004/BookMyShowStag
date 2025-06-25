@@ -138,7 +138,7 @@ export class MovieService {
 
   // Comments
   getMovieComments(movieId: number): Observable<MovieComment[]> {
-    return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments?movieId=${movieId}`);
+    return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments/ByMovie/${movieId}`);
   }
 
   addComment(comment: any): Observable<any> {

@@ -28,6 +28,16 @@ export interface Theater {
   name: string;
 }
 
+export interface ShowApi {
+  showId: number;
+  movieTitle?: string;
+  theatreName?: string;
+  showDateTime: string;
+  ticketPrice: number;
+  movieId?: number;
+  theatreId?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -58,6 +68,14 @@ export class ShowService {
     );
   }
 
+  updateShow(showId: number, show: Show): Observable<any> {
+    return this.http.put(`${this.apiUrl}/Shows/${showId}`, show);
+  }
+
+  deleteShow(showId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/Shows/${showId}`);
+  }
+
   getMovies(): Observable<Movie[]> {
     return this.http.get<Movie[]>(`${this.apiUrl}/Movies`);
   }
@@ -65,4 +83,8 @@ export class ShowService {
   getTheaters(): Observable<Theater[]> {
     return this.http.get<Theater[]>(`${this.apiUrl}/Theatres`);
   }
-} 
+
+  getAllShows(): Observable<ShowApi[]> {
+    return this.http.get<ShowApi[]>(`${this.apiUrl}/Shows`);
+  }
+}

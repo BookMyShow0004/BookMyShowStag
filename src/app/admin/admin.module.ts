@@ -11,6 +11,7 @@ import { CommentModerationComponent } from './comment-moderation/comment-moderat
 import { TheaterManagementComponent } from './theater-management/theater-management.component';
 import { ShowManagementComponent } from './show-management/show-management.component';
 import { AddSeatsComponent } from './add-seats/add-seats.component';
+import { ShowSeatManagementComponent } from './show-seat-management/show-seat-management.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { AddSeatsComponent } from './add-seats/add-seats.component';
     CommentModerationComponent,
     TheaterManagementComponent,
     ShowManagementComponent,
-    AddSeatsComponent
+    AddSeatsComponent,
+    ShowSeatManagementComponent
   ],
   imports: [
     CommonModule,
