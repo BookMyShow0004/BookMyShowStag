@@ -18,6 +18,13 @@ export class SeatSelectionComponent implements OnInit {
   selectedSeats: number[] = [];
   isLoading = true;
   errorMessage = '';
+  theatreAddress: string = '';
+
+  movieTitle: string = '';
+  theatreName: string = '';
+  ticketPrice: string = '';
+  showDate: string = '';
+  showTimeStr: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -28,11 +35,36 @@ export class SeatSelectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.showId = Number(this.route.snapshot.paramMap.get('showId'));
+    // Fetch show details
+    this.movieService.getShowDetailsById(this.showId).subscribe({
+      next: (show) => {
+        console.log('Show details:', show);
+        this.movieId = show.movieId;
+        this.theatreId = show.theatreId;
+        this.showTime = show.showDateTime;
+        this.ticketPrice = show.ticketPrice;
+        this.showDate = new Date(show.showDateTime).toLocaleDateString();
+        this.showTimeStr = new Date(show.showDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+        // Prefer backend response fields if available
+        this.movieTitle = show.movieTitle || '';
+        this.theatreName = show.theatreName || '';
+        // Fetch movie and theatre details only if missing
+        if (!this.movieTitle && show.movieId) {
+          this.movieService.getMovieById(show.movieId).subscribe(m => this.movieTitle = m.title);
+        }
+        if (!this.theatreName && show.theatreId) {
+          this.movieService.getTheatreById(show.theatreId).subscribe(t => {
+            this.theatreName = t.name;
+            this.theatreAddress = t.address;
+          });
+        }
+      },
+      error: () => {}
+    });
     this.movieService.getAllSeatsByShow(this.showId).subscribe({
       next: (seats: Seat[]) => {
         this.seats = seats;
         this.isLoading = false;
-        console.log(this.seats)
       },
       error: () => {
         this.errorMessage = 'Failed to load seats.';

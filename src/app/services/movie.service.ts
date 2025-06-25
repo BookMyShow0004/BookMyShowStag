@@ -82,6 +82,9 @@ export interface Show {
   movieId: number;
   theatreId: number;
   showDateTime: string;
+  ticketPrice: string;
+  theatreName?: string; // Optional, can be fetched separately
+  movieTitle?: string; // Optional, can be fetched separately
   // Add other fields as needed
 }
 
@@ -139,6 +142,10 @@ export class MovieService {
   // Comments
   getMovieComments(movieId: number): Observable<MovieComment[]> {
     return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments/ByMovie/${movieId}`);
+  }
+
+  getAllMovieComments(): Observable<MovieComment[]> {
+    return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments`);
   }
 
   addComment(comment: any): Observable<any> {
@@ -220,5 +227,9 @@ export class MovieService {
 
   getAllSeatsByShow(showId: number): Observable<Seat[]> {
     return this.http.get<Seat[]>(`${this.apiUrl}/ShowSeats/AllByShow/${showId}`);
+  }
+
+  getTheatreById(theatreId: number): Observable<Theatre> {
+    return this.http.get<Theatre>(`${this.apiUrl}/Theatres/${theatreId}`);
   }
 }
