@@ -1,27 +1,56 @@
-<div class="container-fluid py-4">
+<div class="container-fluid py-4 bg-light min-vh-100">
+
+  <!-- Search and Filter Bar -->
+  <div class="row mb-4 mt-4 justify-content-center align-items-center">
+    <div class="col-12 col-md-6 col-lg-5 mb-2 d-flex">
+      <div class="input-group shadow-sm rounded-pill flex-grow-1" style="min-width: 0;">
+        <input type="text" class="form-control border-0 rounded-pill"
+          style="border-radius: 50px !important; min-width: 0;"
+          placeholder="Search movies by title, genre, or description..." [(ngModel)]="searchQuery" (input)="onSearch()">
+      </div>
+      <div style="width: 24px;"></div>
+      <div class="input-group shadow-sm rounded-pill" style="width: 180px; min-width: 120px;">
+        <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
+          [(ngModel)]="selectedRating" (change)="onFilterChange()">
+          <option value="0">All Ratings</option>
+          <option *ngFor="let r of [5,4,3,2,1]" [value]="r">{{r}}+ stars</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
   <!-- All Movies Grid -->
-  <div>
-    <h2 class="mb-4">All Movies</h2>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 m-auto row-cols-lg-4 row-cols-xl-5 g-4" *ngIf="movies.length > 0; else noMovies">
-      <div class="col" *ngFor="let movie of movies; trackBy: trackBymovieId">
-        <div class="card h-100 shadow-sm border-0 movie-card-hover">
-          <img [src]="movie.posterBase64" class="card-img-top" [alt]="movie.title" (click)="goToMovieDetails(movie)">
-          <div class="card-body">
-            <h5 class="card-title text-truncate">{{ movie.title }}</h5>
-            <p class="card-text text-muted">{{ movie.genre }}</p>
-            <div class="d-flex justify-content-between align-items-center text-muted small">
-              <span><i class="fas fa-clock me-1"></i>{{ movie.durationMins }}</span>
+  <div class="mb-5">
+    <h2 class="mb-4 text-primary font-weight-bold text-center">All Movies</h2>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 m-auto row-cols-lg-4 row-cols-xl-5 g-4"
+      *ngIf="filteredMovies.length > 0; else noMovies">
+      <div class="col" *ngFor="let movie of filteredMovies; trackBy: trackBymovieId">
+        <div class="card h-100 shadow-lg border-0 movie-card-hover position-relative overflow-hidden">
+          <img [src]="movie.posterBase64" class="card-img-top movie-poster-img" [alt]="movie.title"
+            (click)="goToMovieDetails(movie)">
+          <div class="card-body bg-white">
+            <h5 class="card-title text-truncate font-weight-bold mb-1">{{ movie.title }}</h5>
+            <p class="card-text text-muted mb-2">{{ movie.genre }}</p>
+            <div class="d-flex justify-content-between align-items-center text-muted small mb-2">
+              <span><i class="fas fa-clock me-1"></i>{{ movie.durationMins }} mins</span>
+            </div>
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-star text-warning mr-1"></i>
+              <span class="font-weight-bold rating-badge">
+                {{ (movie.averageRatingRounded !== undefined && movie.averageRatingRounded > 0) ?
+                (movie.averageRatingRounded + '/5') : 'No ratings' }}
+              </span>
             </div>
           </div>
-          <div class="card-footer bg-white border-0">
-            <button class="btn btn-primary w-100" (click)="goToMovieDetails(movie)">Select Movie</button>
+          <div class="card-footer bg-white border-0 p-2">
+            <button class="btn btn-primary w-100 rounded-pill font-weight-bold" (click)="goToMovieDetails(movie)">Select
+              Movie</button>
           </div>
         </div>
       </div>
     </div>
     <ng-template #noMovies>
-      <div class="text-center p-5 bg-light rounded">
+      <div class="text-center p-5 bg-white rounded shadow-sm mt-5">
         <h3 class="text-muted">No movies found.</h3>
         <p>Try adjusting your search or filter criteria.</p>
       </div>
@@ -34,15 +63,44 @@
 <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-primary text-white">
         <h5 class="modal-title" id="bookingModalLabel">
           <span *ngIf="selectedMovie">{{ selectedMovie.title }}</span>
         </h5>
         <button type="button" class="btn-close" (click)="closeBookingModal()" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <app-book-tickets *ngIf="selectedMovie" [movie]="selectedMovie" (bookingComplete)="onBookingComplete()"></app-book-tickets>
+      <div class="modal-body bg-light">
+        <app-book-tickets *ngIf="selectedMovie" [movie]="selectedMovie"
+          (bookingComplete)="onBookingComplete()"></app-book-tickets>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .movie-card-hover {
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .movie-card-hover:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  .movie-poster-img {
+    height: 320px;
+    object-fit: cover;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+  }
+
+  .rating-badge {
+    background: #f8f9fa;
+    border-radius: 50rem;
+    padding: 0.25rem 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-block;
+    margin-left: 0.5rem;
+  }
+</style>

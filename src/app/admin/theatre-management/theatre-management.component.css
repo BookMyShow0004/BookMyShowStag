@@ -1,4 +1,4 @@
-.theater-management {
+.theatre-management {
   padding: 20px;
 }
 
@@ -117,7 +117,7 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .theater-management {
+  .theatre-management {
     padding: 15px;
   }
   
@@ -130,7 +130,7 @@
   }
 }
 
-/* Animation for new theaters */
+/* Animation for new theatres */
 .table tbody tr {
   transition: all 0.3s ease;
 }

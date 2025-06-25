@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ShowService, Show, Movie, Theater } from '../../services/show.service';
+import { ShowService, Show, Movie, Theatre, ShowApi } from '../../services/show.service';
 
 @Component({
   selector: 'app-show-management',
@@ -15,7 +15,9 @@ export class ShowManagementComponent implements OnInit {
   };
 
   movies: Movie[] = [];
-  theaters: Theater[] = [];
+  theatres: Theatre[] = [];
+  shows: ShowApi[] = [];
+  editingShow: Show | null = null;
   isLoading = false;
   errorMessage = '';
   successMessage = '';
@@ -24,7 +26,8 @@ export class ShowManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMovies();
-    this.loadTheaters();
+    this.loadTheatres();
+    this.loadShows();
   }
 
   loadMovies(): void {
@@ -34,10 +37,20 @@ export class ShowManagementComponent implements OnInit {
     });
   }
 
-  loadTheaters(): void {
-    this.showService.getTheaters().subscribe({
-      next: (theaters) => { this.theaters = theaters; },
-      error: (err) => { this.errorMessage = 'Failed to load theaters.'; }
+  loadTheatres(): void {
+    this.showService.getTheatres().subscribe({
+      next: (theatres) => { this.theatres = theatres; },
+      error: (err) => { this.errorMessage = 'Failed to load theatres.'; }
+    });
+  }
+
+  loadShows(): void {
+    this.showService.getAllShows().subscribe({
+      next: (shows) => {
+        // Filter out shows that do not have showId or showDateTime
+        this.shows = (shows || []).filter(s => s.showId && s.showDateTime);
+      },
+      error: () => { this.errorMessage = 'Failed to load shows.'; }
     });
   }
 
@@ -46,19 +59,64 @@ export class ShowManagementComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
-    this.showService.addShow(this.showData).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        if (response.success) {
-          this.successMessage = 'Show added successfully!';
+    if (this.editingShow) {
+      // Update show
+      this.showService.updateShow(this.editingShow.showId!, this.showData).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.successMessage = 'Show updated successfully!';
           this.resetForm();
-        } else {
-          this.errorMessage = response.message || 'Failed to add show';
+          this.loadShows();
+          this.editingShow = null;
+        },
+        error: () => {
+          this.isLoading = false;
+          this.errorMessage = 'Failed to update show.';
         }
+      });
+    } else {
+      this.showService.addShow(this.showData).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          if (response.success) {
+            this.successMessage = 'Show added successfully!';
+            this.resetForm();
+            this.loadShows();
+          } else {
+            this.errorMessage = response.message || 'Failed to add show';
+          }
+        },
+        error: () => {
+          this.isLoading = false;
+          this.errorMessage = 'Failed to add show. Please try again.';
+        }
+      });
+    }
+  }
+
+  editShow(show: ShowApi): void {
+    this.showData = {
+      movieId: show.movieId ?? 0,
+      theatreId: show.theatreId ?? 0,
+      showDateTime: show.showDateTime,
+      ticketPrice: show.ticketPrice
+    };
+    this.editingShow = show as any;
+  }
+
+  deleteShow(show: ShowApi): void {
+    if (!show.showId) return;
+    if (!confirm('Are you sure you want to delete this show?')) return;
+    this.showService.deleteShow(show.showId).subscribe({
+      next: () => {
+        this.successMessage = 'Show deleted successfully!';
+        // Remove the deleted show from the local array immediately
+        this.shows = this.shows.filter(s => s.showId !== show.showId);
+        // Optionally, reload from server for consistency
+        setTimeout(() => this.loadShows(), 500);
       },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = 'Failed to add show. Please try again.';
+      error: () => {
+        this.errorMessage = 'Failed to delete show.';
       }
     });
   }
@@ -69,7 +127,7 @@ export class ShowManagementComponent implements OnInit {
       return false;
     }
     if (!this.showData.theatreId) {
-      this.errorMessage = 'Please select a theater';
+      this.errorMessage = 'Please select a theatre';
       return false;
     }
     if (!this.showData.showDateTime) {
@@ -91,4 +149,32 @@ export class ShowManagementComponent implements OnInit {
       ticketPrice: 0
     };
   }
-} 
+
+  getMovieTitle(movieId: number): string {
+    const movie = this.movies.find(m => m.movieId === movieId);
+    return movie ? movie.title : movieId.toString();
+  }
+
+  getTheatreName(theatreId: number): string {
+    const theatre = this.theatres.find(t => t.theatreId === theatreId);
+    return theatre ? theatre.name : theatreId.toString();
+  }
+
+  getMovieTitleByShow(show: ShowApi): string {
+    if (show.movieTitle) return show.movieTitle;
+    if (show.movieId) {
+      const movie = this.movies.find(m => m.movieId === show.movieId);
+      return movie ? movie.title : show.movieId.toString();
+    }
+    return '';
+  }
+
+  getTheatreNameByShow(show: ShowApi): string {
+    if (show.theatreName) return show.theatreName;
+    if (show.theatreId) {
+      const theatre = this.theatres.find(t => t.theatreId === show.theatreId);
+      return theatre ? theatre.name : show.theatreId.toString();
+    }
+    return '';
+  }
+}

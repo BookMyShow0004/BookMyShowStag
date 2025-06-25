@@ -22,8 +22,8 @@ export class ShowListComponent implements OnInit {
 
   ngOnInit(): void {
     const movieId = Number(this.route.snapshot.paramMap.get('movieId'));
-    const theaterId = Number(this.route.snapshot.paramMap.get('theaterId'));
-    this.movieService.getShowTimeByMovieAndTheater(movieId, theaterId).subscribe({
+    const theatreId = Number(this.route.snapshot.paramMap.get('theatreId'));
+    this.movieService.getShowTimeByMovieAndTheatre(movieId, theatreId).subscribe({
       next: (shows) => {
         this.shows = shows;
         this.isLoading = false;

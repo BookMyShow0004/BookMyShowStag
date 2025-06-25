@@ -5,9 +5,10 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { LayoutComponent } from './layout/layout.component';
 import { MovieManagementComponent } from './movie-management/movie-management.component';
 import { CommentModerationComponent } from './comment-moderation/comment-moderation.component';
-import { TheaterManagementComponent } from './theater-management/theater-management.component';
 import { ShowManagementComponent } from './show-management/show-management.component';
 import { AddSeatsComponent } from './add-seats/add-seats.component';
+import { ShowSeatManagementComponent } from './show-seat-management/show-seat-management.component';
+import { TheatreManagementComponent } from './theatre-management/theatre-management.component';
 
 const routes: Routes = [
   {
@@ -18,10 +19,11 @@ const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'movies', component: MovieManagementComponent },
-      { path: 'theaters', component: TheaterManagementComponent },
+      { path: 'theatres', component: TheatreManagementComponent },
       { path: 'shows', component: ShowManagementComponent },
       { path: 'comments', component: CommentModerationComponent },
       { path: 'seats', component: AddSeatsComponent },
+      { path: 'show-seats', component: ShowSeatManagementComponent },
       // Future admin components will be added here
     ]
   }

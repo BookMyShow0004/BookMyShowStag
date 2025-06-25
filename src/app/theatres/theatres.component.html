@@ -1,11 +1,11 @@
-<div class="theaters-container">
-  <header class="theaters-header">
-    <h1 class="header-title">Find a Theater Near You</h1>
+<div class="theatres-container">
+  <header class="theatres-header">
+    <h1 class="header-title">Find a Theatre Near You</h1>
     <div class="search-bar">
       <input 
         type="text" 
         class="search-input" 
-        placeholder="Search by theater name or location..."
+        placeholder="Search by theatre name or location..."
         [(ngModel)]="searchQuery"
         (input)="onSearch()">
     </div>
@@ -14,7 +14,7 @@
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-state">
       <i class="fas fa-spinner fa-spin"></i>
-      <p>Loading theaters...</p>
+      <p>Loading theatres...</p>
   </div>
 
   <!-- Error State -->
@@ -23,19 +23,19 @@
     <p>{{ errorMessage }}</p>
   </div>
 
-  <!-- Theaters Grid -->
-  <div *ngIf="!isLoading && !errorMessage && filteredTheaters.length > 0; else noTheaters" class="theaters-grid">
-    <div class="theater-card" *ngFor="let theater of filteredTheaters" (click)="goToShowList(theater)" style="cursor:pointer;">
-      <div class="theater-card-header">
-        <h2 class="theater-name">{{ theater.name }}</h2>
-        <p class="theater-location">
-            <i class="fas fa-map-marker-alt"></i> {{ theater.address }}
+  <!-- Theatres Grid -->
+  <div *ngIf="!isLoading && !errorMessage && filteredTheatres.length > 0; else noTheatres" class="theatres-grid">
+    <div class="theatre-card" *ngFor="let theatre of filteredTheatres" (click)="goToShowList(theatre)" style="cursor:pointer;">
+      <div class="theatre-card-header">
+        <h2 class="theatre-name">{{ theatre.name }}</h2>
+        <p class="theatre-location">
+            <i class="fas fa-map-marker-alt"></i> {{ theatre.address }}
         </p>
       </div>
-      <div class="theater-card-body">
+      <div class="theatre-card-body">
         <h3 class="section-title">Today's Showtimes</h3>
         <div class="showtimes-grid">
-          <button class="showtime-btn" *ngFor="let time of theater.showTimes">
+          <button class="showtime-btn" *ngFor="let time of theatre.showTimes">
             {{ time }}
           </button>
         </div>
@@ -44,10 +44,10 @@
   </div>
 
   <!-- Empty State -->
-  <ng-template #noTheaters>
+  <ng-template #noTheatres>
     <div class="empty-state" *ngIf="!isLoading">
       <i class="fas fa-video-slash"></i>
-      <h3>No Theaters Found</h3>
+      <h3>No Theatres Found</h3>
       <p>Try a different search term or check back later.</p>
     </div>
   </ng-template>

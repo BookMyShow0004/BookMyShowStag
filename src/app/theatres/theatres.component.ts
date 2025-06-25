@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { MovieService, Theater } from '../services/movie.service';
+import { MovieService, Theatre } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../shared/alert.service';
 
 @Component({
-  selector: 'app-theaters',
-  templateUrl: './theaters.component.html',
-  styleUrls: ['./theaters.component.css']
+  selector: 'app-theatres',
+  templateUrl: './theatres.component.html',
+  styleUrls: ['./theatres.component.css']
 })
-export class TheatersComponent implements OnInit {
-  theaters: Theater[] = [];
-  filteredTheaters: Theater[] = [];
+export class TheatresComponent implements OnInit {
+  theatres: Theatre[] = [];
+  filteredTheatres: Theatre[] = [];
   isLoading: boolean = true;
   errorMessage: string = '';
   currentUser: any = null;
@@ -42,43 +42,43 @@ export class TheatersComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.loadTheaters();
+    this.loadTheatres();
   }
 
-  loadTheaters(): void {
+  loadTheatres(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
     // Get movieId from route params
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
-    this.movieService.getTheatersByMovieId(movieId).subscribe({
-      next: (theaters: Theater[]) => {
-        // For each theater, fetch showtimes and attach to theater.showTimes
+    this.movieService.getTheatresByMovieId(movieId).subscribe({
+      next: (theatres: Theatre[]) => {
+        // For each theatre, fetch showtimes and attach to theatre.showTimes
         let loadedCount = 0;
-        if (theaters.length === 0) {
-          this.theaters = [];
-          this.filteredTheaters = [];
+        if (theatres.length === 0) {
+          this.theatres = [];
+          this.filteredTheatres = [];
           this.isLoading = false;
           return;
         }
-        theaters.forEach((theater, idx) => {
-          this.movieService.getShowTimeByMovieAndTheater(movieId, theater.theatreId).subscribe({
+        theatres.forEach((theatre, idx) => {
+          this.movieService.getShowTimeByMovieAndTheatre(movieId, theatre.theatreId).subscribe({
             next: (shows: any[]) => {
               // Map showDateTime to formatted time string (e.g., '10:00 AM')
-              theater.showTimes = shows.map(show => new Date(show.showDateTime).toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
+              theatre.showTimes = shows.map(show => new Date(show.showDateTime).toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
               loadedCount++;
-              if (loadedCount === theaters.length) {
-                this.theaters = theaters;
-                this.filteredTheaters = theaters;
+              if (loadedCount === theatres.length) {
+                this.theatres = theatres;
+                this.filteredTheatres = theatres;
                 this.isLoading = false;
               }
             },
             error: () => {
-              theater.showTimes = [];
+              theatre.showTimes = [];
               loadedCount++;
-              if (loadedCount === theaters.length) {
-                this.theaters = theaters;
-                this.filteredTheaters = theaters;
+              if (loadedCount === theatres.length) {
+                this.theatres = theatres;
+                this.filteredTheatres = theatres;
                 this.isLoading = false;
               }
             }
@@ -86,9 +86,9 @@ export class TheatersComponent implements OnInit {
         });
       },
       error: (error: any) => {
-        this.errorMessage = 'Failed to load theaters';
+        this.errorMessage = 'Failed to load theatres';
         this.isLoading = false;
-        console.error('Error loading theaters:', error);
+        console.error('Error loading theatres:', error);
       }
     });
   }
@@ -98,7 +98,7 @@ export class TheatersComponent implements OnInit {
   }
 
   onCityChange(): void {
-    this.loadTheaters();
+    this.loadTheatres();
   }
 
   onFilterChange(): void {
@@ -110,37 +110,37 @@ export class TheatersComponent implements OnInit {
   }
 
   applyFilters(): void {
-    let filtered = [...this.theaters];
+    let filtered = [...this.theatres];
 
     // Search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(theater =>
-        theater.name.toLowerCase().includes(query) ||
-        theater.address.toLowerCase().includes(query)
+      filtered = filtered.filter(theatre =>
+        theatre.name.toLowerCase().includes(query) ||
+        theatre.address.toLowerCase().includes(query)
       );
     }
 
     // Amenity filter
     if (this.selectedAmenity) {
-      filtered = filtered.filter(theater =>
-        theater.amenities.includes(this.selectedAmenity)
+      filtered = filtered.filter(theatre =>
+        theatre.amenities.includes(this.selectedAmenity)
       );
     }
 
     // Rating filter
     if (this.selectedRating > 0) {
-      filtered = filtered.filter(theater =>
-        theater.rating >= this.selectedRating
+      filtered = filtered.filter(theatre =>
+        theatre.rating >= this.selectedRating
       );
     }
 
-    this.filteredTheaters = filtered;
+    this.filteredTheatres = filtered;
     this.applySorting();
   }
 
   applySorting(): void {
-    this.filteredTheaters.sort((a, b) => {
+    this.filteredTheatres.sort((a, b) => {
       let comparison = 0;
 
       switch (this.sortBy) {
@@ -163,7 +163,7 @@ export class TheatersComponent implements OnInit {
     this.searchQuery = '';
     this.selectedAmenity = '';
     this.selectedRating = 0;
-    this.filteredTheaters = [...this.theaters];
+    this.filteredTheatres = [...this.theatres];
     this.applySorting();
   }
 
@@ -210,16 +210,16 @@ export class TheatersComponent implements OnInit {
   }
 
   getFilteredCount(): number {
-    return this.filteredTheaters.length;
+    return this.filteredTheatres.length;
   }
 
   getTotalCount(): number {
-    return this.theaters.length;
+    return this.theatres.length;
   }
 
-  goToShowList(theater: any): void {
+  goToShowList(theatre: any): void {
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
-    this.router.navigate(['/shows', movieId, theater.theatreId]);
+    this.router.navigate(['/shows', movieId, theatre.theatreId]);
   }
 
   handleError(message: string): void {

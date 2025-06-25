@@ -23,9 +23,19 @@ export interface Movie {
   // description?: string; // add other properties if needed
 }
 
-export interface Theater {
+export interface Theatre {
   theatreId: number;
   name: string;
+}
+
+export interface ShowApi {
+  showId: number;
+  movieTitle?: string;
+  theatreName?: string;
+  showDateTime: string;
+  ticketPrice: number;
+  movieId?: number;
+  theatreId?: number;
 }
 
 @Injectable({
@@ -58,11 +68,23 @@ export class ShowService {
     );
   }
 
+  updateShow(showId: number, show: Show): Observable<any> {
+    return this.http.put(`${this.apiUrl}/Shows/${showId}`, show);
+  }
+
+  deleteShow(showId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/Shows/${showId}`);
+  }
+
   getMovies(): Observable<Movie[]> {
     return this.http.get<Movie[]>(`${this.apiUrl}/Movies`);
   }
 
-  getTheaters(): Observable<Theater[]> {
-    return this.http.get<Theater[]>(`${this.apiUrl}/Theatres`);
+  getTheatres(): Observable<Theatre[]> {
+    return this.http.get<Theatre[]>(`${this.apiUrl}/Theatres`);
   }
-} 
+
+  getAllShows(): Observable<ShowApi[]> {
+    return this.http.get<ShowApi[]>(`${this.apiUrl}/Shows`);
+  }
+}

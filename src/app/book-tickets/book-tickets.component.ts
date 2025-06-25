@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { Movie, Theater, MovieService } from '../services/movie.service';
+import { Movie, Theatre, MovieService } from '../services/movie.service';
 import { Seat, SeatService } from '../services/seat.service';
 
 @Component({
@@ -11,8 +11,8 @@ export class BookTicketsComponent implements OnInit {
   @Input() movie: Movie | null = null;
   @Output() bookingComplete = new EventEmitter<void>();
 
-  theaters: Theater[] = [];
-  selectedTheater: Theater | null = null;
+  theatres: Theatre[] = [];
+  selectedTheatre: Theatre | null = null;
   selectedShowtime: string | null = null;
 
   currentStep: number = 1;
@@ -23,25 +23,26 @@ export class BookTicketsComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.movie) {
-      this.movieService.getTheatersByMovieId(this.movie.movieId).subscribe((theaters: Theater[]) => {
-        this.theaters = theaters;
+      this.movieService.getTheatresByMovieId(this.movie.movieId).subscribe((theatres: Theatre[]) => {
+        this.theatres = theatres;
       });
     }
   }
 
   resetState(): void {
-    this.selectedTheater = null;
+    this.selectedTheatre = null;
     this.selectedShowtime = null;
     this.seats = [];
     this.selectedSeats = [];
   }
 
-  selectTheater(theater: Theater): void {
-    this.selectedTheater = theater;
+  selectTheatre(theatre: Theatre): void {
+    this.selectedTheatre = theatre;
     this.currentStep = 2;
-    // Fetch seats for the selected theater
-    this.seatService.getSeatsByTheater(theater.theatreId).subscribe((seats: Seat[]) => {
+    // Fetch seats for the selected theatre
+    this.seatService.getSeatsByTheatre(theatre.theatreId).subscribe((seats: Seat[]) => {
       this.seats = seats;
+      console.log(this.seats)
     });
   }
 
@@ -61,15 +62,23 @@ export class BookTicketsComponent implements OnInit {
     }
   }
 
+
   confirmBooking(): void {
-    if (!this.selectedTheater || !this.selectedShowtime || this.selectedSeats.length === 0) return;
+    if (!this.selectedTheatre || !this.selectedShowtime || this.selectedSeats.length === 0) return;
+    // Get userId from localStorage or your auth service
+    const currentUser = localStorage.getItem('currentUser');
+    const userId = currentUser ? JSON.parse(currentUser).userId : null;
+
+    if (!userId) {
+      alert('User not logged in.');
+      return;
+    }
     const booking = {
-      movieId: this.movie?.movieId,
-      theaterId: this.selectedTheater.theatreId,
-      showTime: this.selectedShowtime,
-      seatNumbers: this.selectedSeats.map(seat => seat.seatNumber),
-      // Add user info if needed
+      userId: Number(userId),
+      showId: Number(this.selectedShowtime), // If showId is available, otherwise adjust accordingly
+      seatIds: this.selectedSeats.map(seat => seat.seatId)
     };
+    console.log('Booking payload:', booking);
     this.movieService.createBooking(booking).subscribe(response => {
       // Handle booking confirmation (success/failure)
       this.bookingComplete.emit();

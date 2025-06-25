@@ -5,8 +5,8 @@ h5 {
   margin-bottom: 1.5rem;
 }
 
-/* Theaters and Showtimes */
-.theater-list,
+/* Theatres and Showtimes */
+.theatre-list,
 .show-times {
   display: flex;
   flex-wrap: wrap;
@@ -15,12 +15,12 @@ h5 {
   margin-bottom: 1.5rem;
 }
 
-.theater-btn,
+.theatre-btn,
 .show-time-btn {
   border-radius: 20px;
 }
 
-.theater-btn.selected,
+.theatre-btn.selected,
 .show-time-btn.selected {
   background-color: #0d6efd;
   color: #fff;

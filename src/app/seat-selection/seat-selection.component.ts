@@ -12,7 +12,7 @@ import { BookingService } from '../services/booking.service';
 export class SeatSelectionComponent implements OnInit {
   showId!: number;
   movieId!: number;
-  theaterId!: number;
+  theatreId!: number;
   showTime!: string;
   seats: Seat[] = [];
   selectedSeats: number[] = [];
@@ -32,6 +32,7 @@ export class SeatSelectionComponent implements OnInit {
       next: (seats: Seat[]) => {
         this.seats = seats;
         this.isLoading = false;
+        console.log(this.seats)
       },
       error: () => {
         this.errorMessage = 'Failed to load seats.';
@@ -42,13 +43,13 @@ export class SeatSelectionComponent implements OnInit {
 
   toggleSeat(seat: Seat): void {
     if (seat.status === 'booked' || seat.isBooked) return;
-    const index = this.selectedSeats.indexOf(seat.showSeatId);
+    const index = this.selectedSeats.indexOf(seat.seatId);
     if (index > -1) {
       // Seat is already selected, remove it
       this.selectedSeats.splice(index, 1);
     } else {
-      // Add seat to selection
-      this.selectedSeats.push(seat.showSeatId);
+      // Add seatId to selection
+      this.selectedSeats.push(seat.seatId);
     }
   }
 
@@ -64,10 +65,11 @@ export class SeatSelectionComponent implements OnInit {
       return;
     }
     const bookingRequest = {
-      userId: userId,
-      showId: this.showId,
-      seatIds: this.selectedSeats
+      userId: Number(userId),
+      showId: Number(this.showId),
+      seatIds: this.selectedSeats.map(id => Number(id))
     };
+    console.log('Booking payload:', bookingRequest);
     this.bookingService.bookSeats(bookingRequest).subscribe({
       next: () => {
         this.alertService.showAlert('Seats booked successfully!');
@@ -75,6 +77,7 @@ export class SeatSelectionComponent implements OnInit {
         this.ngOnInit(); // reload seats
       },
       error: (err) => {
+        console.error('Booking error:', err);
         this.alertService.showAlert('Failed to book seats. Please try again.');
       }
     });
