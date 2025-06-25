@@ -33,6 +33,11 @@ export class MovieDetailsComponent implements OnInit {
   // Average Rating
   averageRatingRounded: number = 0;
 
+  // Like Movie
+  userHasLiked: boolean = false;
+  isSubmittingLike: boolean = false;
+  totalLikes: number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -47,21 +52,19 @@ export class MovieDetailsComponent implements OnInit {
 
   loadMovieDetails(): void {
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
-
     this.movieService.getMovieById(movieId).subscribe({
       next: (movie) => {
         this.movie = movie;
+        this.totalLikes = (movie as any).totalLikes || 0;
         // Remove old averageRatingRounded logic, let reviews API control it
         if (movie) {
           this.loadReviews(movieId);
-          this.loadComments(movieId);
         }
         this.isLoading = false;
       },
-      error: (error) => {
-        this.errorMessage = 'Failed to load movie details';
+      error: (err) => {
+        this.errorMessage = 'Failed to load movie details.';
         this.isLoading = false;
-        console.error('Error loading movie:', error);
       }
     });
   }
@@ -222,6 +225,26 @@ export class MovieDetailsComponent implements OnInit {
     });
   }
 
+  likeMovie(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (!this.movie || this.userHasLiked) return;
+    this.isSubmittingLike = true;
+    this.movieService.likeMovie(this.movie.movieId).subscribe({
+      next: () => {
+        this.userHasLiked = true;
+        this.isSubmittingLike = false;
+        this.totalLikes++;
+      },
+      error: () => {
+        this.errorMessage = 'Failed to like the movie.';
+        this.isSubmittingLike = false;
+      }
+    });
+  }
+
   bookMovie(): void {
     if (!this.currentUser) {
       this.errorMessage = 'Please login to book tickets';
@@ -287,5 +310,9 @@ export class MovieDetailsComponent implements OnInit {
 
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  goBack() {
+    window.history.back();
   }
 }

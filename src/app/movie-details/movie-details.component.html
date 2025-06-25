@@ -13,9 +13,16 @@
 
   <!-- Details Card -->
   <div *ngIf="!isLoading && !errorMessage && movie" class="details-card">
+    <div class="mb-3">
+      <button class="btn btn-secondary" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+    </div>
+
     <img *ngIf="movie.posterBase64" [src]="'data:image/jpeg;base64,' + movie.posterBase64" [alt]="movie.title"
       class="movie-poster">
-    <div *ngIf="!movie.posterBase64" class="text-center text-muted mb-3" style="min-height:200px;display:flex;align-items:center;justify-content:center;">
+    <div *ngIf="!movie.posterBase64" class="text-center text-muted mb-3"
+      style="min-height:200px;display:flex;align-items:center;justify-content:center;">
       No image available
     </div>
 
@@ -33,7 +40,20 @@
         <div class="info-grid">
           <div class="info-item">
             <i class="fas fa-star"></i>
-            <span>Rating: {{ averageRatingRounded || 'N/A' }}</span>
+            <span>
+              <ng-container *ngIf="averageRatingRounded > 0; else noRating">
+                <ng-container *ngFor="let star of [].constructor(averageRatingRounded)">
+                  <i class="fas fa-star text-warning"></i>
+                </ng-container>
+                <ng-container *ngFor="let star of [].constructor(5-averageRatingRounded)">
+                  <i class="far fa-star text-warning"></i>
+                </ng-container>
+                <span class="ms-2">{{ averageRatingRounded }}/5</span>
+              </ng-container>
+              <ng-template #noRating>
+                <span class="text-muted">No ratings yet</span>
+              </ng-template>
+            </span>
           </div>
           <div class="info-item">
             <i class="fas fa-clock"></i>
@@ -50,30 +70,15 @@
         </div>
       </div>
 
-      <!-- Overall Rating Section -->
+      <!-- Like/Rate Section -->
       <div class="info-section">
-        <h2 class="section-title">Overall Rating</h2>
-        <div class="d-flex align-items-center mb-2">
-          <ng-container *ngIf="averageRatingRounded > 0; else noRating">
-            <ng-container *ngFor="let star of [].constructor(averageRatingRounded)">
-              <i class="fas fa-star text-warning"></i>
-            </ng-container>
-            <ng-container *ngFor="let star of [].constructor(5-averageRatingRounded)">
-              <i class="far fa-star text-warning"></i>
-            </ng-container>
-            <span class="ms-2">{{ averageRatingRounded }}/5</span>
-          </ng-container>
-          <ng-template #noRating>
-            <span class="text-muted">No ratings yet</span>
-          </ng-template>
-        </div>
-      </div>
-
-      <!-- Today's Showtimes Section (optional: replace with dynamic if available) -->
-      <div class="info-section">
-        <h2 class="section-title">Today's Showtimes</h2>
-        <div class="d-flex flex-wrap gap-2 mb-3">
-          <span class="text-muted">Showtimes are managed by admin and fetched from the backend API.</span>
+        <h2 class="section-title">Rate this Movie</h2>
+        <div class="d-flex align-items-center mb-3">
+          <button class="btn btn-outline-success me-2" [disabled]="isSubmittingLike" (click)="likeMovie($event)">
+            <i class="fas fa-thumbs-up"></i> Like
+          </button>
+          <span class="ms-2"><i class="fas fa-heart text-danger"></i> {{ totalLikes }} Likes</span>
+          <span *ngIf="userHasLiked" class="text-success ms-2">You liked this movie!</span>
         </div>
       </div>
 

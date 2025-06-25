@@ -1,2 +1,31 @@
-<h2>User Management</h2>
-<!-- User management UI goes here -->
+<h2 class="mb-4 text-primary">User Management</h2>
+<div *ngIf="isLoading" class="alert alert-info">Loading users...</div>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<div class="table-responsive">
+    <table *ngIf="!isLoading && !error && users.length > 0" class="table table-bordered table-hover bg-white">
+        <thead class="thead-dark">
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+                <td>{{ user.userId }}</td>
+                <td>{{ user.fullName }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <select [ngModel]="user.role" (ngModelChange)="changeRole(user, $event)"
+                        class="form-control form-control-sm">
+                        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+                    </select>
+                </td>
+                <!-- Add more fields as needed -->
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div *ngIf="!isLoading && !error && users.length === 0" class="alert alert-warning">No users found.</div>

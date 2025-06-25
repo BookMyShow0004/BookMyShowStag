@@ -264,4 +264,8 @@ export class TheatresComponent implements OnInit {
   handleError(message: string): void {
     this.alertService.showAlert(message);
   }
+
+  goBack() {
+    window.history.back();
+  }
 }

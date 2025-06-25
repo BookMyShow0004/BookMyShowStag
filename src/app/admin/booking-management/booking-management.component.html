@@ -1,2 +1,36 @@
-<h2>Booking Management</h2>
-<!-- Booking management UI goes here -->
+<h2 class="mb-4 text-primary">Booking Management</h2>
+<div *ngIf="isLoading" class="alert alert-info">Loading bookings...</div>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<div class="table-responsive">
+    <table *ngIf="!isLoading && !error && bookings.length > 0" class="table table-bordered table-hover bg-white">
+        <thead class="thead-dark">
+            <tr>
+                <th>Booking ID</th>
+                <th>User Name</th>
+                <th>Movie Title</th>
+                <th>Theatre Name</th>
+                <th>Booking Time</th>
+                <th>Seat Numbers</th>
+                <th>Total Amount</th>
+                <th>Action</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let booking of bookings">
+                <td>{{ booking.bookingId }}</td>
+                <td>{{ booking.userFullName }}</td>
+                <td>{{ booking.movieTitle }}</td>
+                <td>{{ booking.theatreName }}</td>
+                <td>{{ booking.bookingTime | date:'short' }}</td>
+                <td>{{ booking.seatNumbers.join(', ') }}</td>
+                <td>{{ booking.totalAmount | currency }}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" (click)="cancelBooking(booking.bookingId)">Cancel</button>
+                </td>
+                <!-- Add more fields as needed -->
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div *ngIf="!isLoading && !error && bookings.length === 0" class="alert alert-warning">No bookings found.</div>
