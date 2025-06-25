@@ -24,7 +24,7 @@
                 <td>{{ booking.theatreName }}</td>
                 <td>{{ booking.bookingTime | date:'short' }}</td>
                 <td>{{ booking.seatNumbers.join(', ') }}</td>
-                <td>{{ booking.totalAmount | currency }}</td>
+                <td>{{ booking.totalAmount | currency : 'INR' }}</td>
                 <td>
                     <button class="btn btn-danger btn-sm" (click)="cancelBooking(booking.bookingId)">Cancel</button>
                 </td>
