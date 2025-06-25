@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MovieService, Theatre } from '../services/movie.service';
+import { MovieService, Theatre, Seat } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertService } from '../shared/alert.service';
@@ -15,6 +15,8 @@ export class TheatresComponent implements OnInit {
   isLoading: boolean = true;
   errorMessage: string = '';
   currentUser: any = null;
+  movieId: number | null = null;
+  movieTitle: string | null = null;
 
   // Search and Filter
   searchQuery: string = '';
@@ -32,6 +34,11 @@ export class TheatresComponent implements OnInit {
   sortBy: 'name' | 'rating' | 'location' = 'name';
   sortOrder: 'asc' | 'desc' = 'asc';
 
+  // Showtime and Seat selection
+  selectedShow: { theatreId: number, showTime: string } | null = null;
+  showSeats: Seat[] = [];
+  showSeatPrices: { [seatId: number]: number } = {};
+
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
@@ -42,6 +49,18 @@ export class TheatresComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    // Get movieId from route params
+    this.movieId = Number(this.route.snapshot.paramMap.get('id'));
+    if (this.movieId) {
+      this.movieService.getMovieById(this.movieId).subscribe({
+        next: (movie) => {
+          this.movieTitle = movie.title;
+        },
+        error: () => {
+          this.movieTitle = null;
+        }
+      });
+    }
     this.loadTheatres();
   }
 
@@ -107,6 +126,26 @@ export class TheatresComponent implements OnInit {
 
   onSortChange(): void {
     this.applySorting();
+  }
+
+  onShowtimeClick(theatre: Theatre, showTime: string): void {
+    this.selectedShow = { theatreId: theatre.theatreId, showTime };
+    this.showSeats = [];
+    this.showSeatPrices = {};
+    if (this.movieId) {
+      this.movieService.getSeatsForShow(this.movieId, theatre.theatreId, showTime).subscribe({
+        next: (seats) => {
+          this.showSeats = seats;
+          // If price is available in seat object, map it; else, set a default
+          seats.forEach(seat => {
+            this.showSeatPrices[seat.seatId] = (seat as any).price || 200; // Default price if not present
+          });
+        },
+        error: () => {
+          this.showSeats = [];
+        }
+      });
+    }
   }
 
   applyFilters(): void {

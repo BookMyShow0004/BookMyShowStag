@@ -111,7 +111,7 @@
                     <td>{{ getMovieTitleByShow(show) }}</td>
                     <td>{{ getTheatreNameByShow(show) }}</td>
                     <td>{{ show.showDateTime | date:'short' }}</td>
-                    <td>{{ show.ticketPrice | currency }}</td>
+                    <td>{{ show.ticketPrice | currency:'INR' }}</td>
                     <td *ngIf="shows.length > 0">
                       <button class="btn btn-sm btn-primary mr-2" (click)="editShow(show)"><i class="fas fa-edit"></i> Edit</button>
                       <button class="btn btn-sm btn-danger" (click)="deleteShow(show)"><i class="fas fa-trash"></i> Delete</button>

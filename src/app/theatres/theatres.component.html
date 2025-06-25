@@ -1,6 +1,9 @@
 <div class="theatres-container">
   <header class="theatres-header">
     <h1 class="header-title">Find a Theatre Near You</h1>
+    <div *ngIf="movieTitle" class="selected-movie" style="margin-bottom: 1rem;">
+      <span>Booking for: <strong>{{ movieTitle }}</strong></span>
+    </div>
     <div class="search-bar">
       <input 
         type="text" 
@@ -34,10 +37,10 @@
       </div>
       <div class="theatre-card-body">
         <h3 class="section-title">Today's Showtimes</h3>
-        <div class="showtimes-grid">
-          <button class="showtime-btn" *ngFor="let time of theatre.showTimes">
+        <div class="showtimes-grid d-flex flex-wrap">
+          <span class="badge badge-pill badge-primary mr-2 mb-2 px-3 py-2" *ngFor="let time of theatre.showTimes" style="font-size:1rem; font-weight:500; border:1px solid #007bff; background-color:#e9f5ff; color:#007bff;">
             {{ time }}
-          </button>
+          </span>
         </div>
       </div>
     </div>

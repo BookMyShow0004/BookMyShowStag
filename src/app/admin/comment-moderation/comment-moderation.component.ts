@@ -26,7 +26,7 @@ export class CommentModerationComponent implements OnInit {
       this.movies.forEach(movie => this.movieTitleMap.set(movie.movieId, movie.title));
 
       // Then get comments
-      this.movieService.getMovieComments(this.movies[0].movieId).subscribe(comments => {
+      this.movieService.getAllMovieComments().subscribe(comments => {
         this.comments = comments;
         this.isLoading = false;
       });
