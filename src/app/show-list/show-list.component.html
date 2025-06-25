@@ -1,22 +1,27 @@
 <div class="show-list-container">
   <div class="d-flex align-items-center mb-3">
     <div *ngIf="shows.length > 0" class="mr-4">
-      <span class="movie-title font-weight-bold" style="font-size:1.4rem; color:#2c3e50; letter-spacing:1px; text-shadow:0 1px 2px #e0e0e0;">
+      <span class="movie-title font-weight-bold"
+        style="font-size:1.4rem; color:#2c3e50; letter-spacing:1px; text-shadow:0 1px 2px #e0e0e0;">
         {{ shows[0].movieTitle }}
       </span>
-      <span class="theatre-title text-muted ml-3 px-3 py-1" style="background:#f1f3f6; border-radius:1.5rem; font-size:1.1rem; font-weight:500; border:1px solid #b0bec5;">
+      <span class="theatre-title text-muted ml-3 px-3 py-1"
+        style="background:#f1f3f6; border-radius:1.5rem; font-size:1.1rem; font-weight:500; border:1px solid #b0bec5;">
         <i class="fas fa-map-marker-alt" style="color:#e74c3c;"></i> {{ shows[0].theatreName }}
       </span>
     </div>
   </div>
+  <div class="mb-3">
+    <button class="btn btn-secondary" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+  </div>
   <h2 class="mb-4">Available Shows</h2>
   <div class="mb-3" *ngIf="dateFilters.length > 0">
     <div style="overflow-x: auto; white-space: nowrap;">
-      <button *ngFor="let date of dateFilters"
-              class="btn btn-outline-primary mr-2 mb-2"
-              [ngClass]="{ 'active': selectedDate === date }"
-              (click)="onDateFilterChange(date)"
-              style="min-width: 120px; display: inline-block;">
+      <button *ngFor="let date of dateFilters" class="btn btn-outline-primary mr-2 mb-2"
+        [ngClass]="{ 'active': selectedDate === date }" (click)="onDateFilterChange(date)"
+        style="min-width: 120px; display: inline-block;">
         {{ date | date:'d MMM' }}
       </button>
     </div>
@@ -29,16 +34,17 @@
   <div *ngIf="!isLoading && filteredShows.length > 0">
     <div class="show-card" *ngFor="let show of filteredShows">
       <div class="show-info">
-        <div class="show-datetime mb-2"><i class="fas fa-calendar-alt"></i> {{ show.showDateTime | date:'fullDate':'Asia/Kolkata' }}</div>
-        <div class="show-time mb-2"><i class="fas fa-clock"></i> {{ show.showDateTime | date:'shortTime':'Asia/Kolkata' }}</div>
+        <div class="show-datetime mb-2"><i class="fas fa-calendar-alt"></i> {{ show.showDateTime |
+          date:'fullDate':'Asia/Kolkata' }}</div>
+        <div class="show-time mb-2"><i class="fas fa-clock"></i> {{ show.showDateTime | date:'shortTime':'Asia/Kolkata'
+          }}</div>
         <div class="show-price"><i class="fas fa-rupee-sign"></i> {{ show.ticketPrice }}</div>
       </div>
-      <button class="btn btn-primary select-btn"
-              (click)="selectShow(show)"
-              [disabled]="isShowStarted(show)">
+      <button class="btn btn-primary select-btn" (click)="selectShow(show)" [disabled]="isShowStarted(show)">
         {{ isShowStarted(show) ? 'Show Started' : 'Select Show' }}
       </button>
     </div>
   </div>
-  <div *ngIf="!isLoading && filteredShows.length === 0 && !errorMessage" class="text-muted">No shows found for this date.</div>
+  <div *ngIf="!isLoading && filteredShows.length === 0 && !errorMessage" class="text-muted">No shows found for this
+    date.</div>
 </div>

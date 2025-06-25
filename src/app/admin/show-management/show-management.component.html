@@ -34,7 +34,8 @@
               <!-- Movie Dropdown -->
               <div class="mb-3">
                 <label for="movie" class="form-label">Movie</label>
-                <select id="movie" name="movie" [(ngModel)]="showData.movieId" [ngModelOptions]="{standalone: true}" required class="form-select">
+                <select id="movie" name="movie" [(ngModel)]="showData.movieId" [ngModelOptions]="{standalone: true}"
+                  required class="form-select">
                   <option [ngValue]="0" disabled>Select a movie</option>
                   <option *ngFor="let movie of movies" [ngValue]="movie.movieId">{{ movie.title }}</option>
                 </select>
@@ -43,7 +44,8 @@
               <!-- Theatre Dropdown -->
               <div class="mb-3">
                 <label for="theatre" class="form-label">Theatre</label>
-                <select id="theatre" name="theatre" [(ngModel)]="showData.theatreId" [ngModelOptions]="{standalone: true}" required class="form-select">
+                <select id="theatre" name="theatre" [(ngModel)]="showData.theatreId"
+                  [ngModelOptions]="{standalone: true}" required class="form-select">
                   <option [ngValue]="0" disabled>Select a theatre</option>
                   <option *ngFor="let theatre of theatres" [ngValue]="+theatre.theatreId">{{ theatre.name }}</option>
                 </select>
@@ -52,13 +54,16 @@
               <!-- DateTime Picker -->
               <div class="mb-3">
                 <label for="showDateTime" class="form-label">Show Date & Time</label>
-                <input type="datetime-local" id="showDateTime" name="showDateTime" [(ngModel)]="showData.showDateTime" [ngModelOptions]="{standalone: true}" required class="form-control">
+                <input type="datetime-local" id="showDateTime" name="showDateTime" [(ngModel)]="showData.showDateTime"
+                  [ngModelOptions]="{standalone: true}" required class="form-control">
               </div>
 
               <!-- Ticket Price -->
               <div class="mb-3">
                 <label for="ticketPrice" class="form-label">Ticket Price</label>
-                <input type="number" id="ticketPrice" name="ticketPrice" [(ngModel)]="showData.ticketPrice" [ngModelOptions]="{standalone: true}" required min="1" step="0.01" class="form-control" placeholder="Enter ticket price">
+                <input type="number" id="ticketPrice" name="ticketPrice" [(ngModel)]="showData.ticketPrice"
+                  [ngModelOptions]="{standalone: true}" required min="1" step="0.01" class="form-control"
+                  placeholder="Enter ticket price">
               </div>
 
               <!-- Submit Button -->
@@ -113,8 +118,18 @@
                     <td>{{ show.showDateTime | date:'short' }}</td>
                     <td>{{ show.ticketPrice | currency:'INR' }}</td>
                     <td *ngIf="shows.length > 0">
-                      <button class="btn btn-sm btn-primary mr-2" (click)="editShow(show)"><i class="fas fa-edit"></i> Edit</button>
-                      <button class="btn btn-sm btn-danger" (click)="deleteShow(show)"><i class="fas fa-trash"></i> Delete</button>
+                      <div class="d-flex align-items-center">
+                        <button type="button"
+                          class="btn btn-sm btn-primary px-3 py-2 d-flex align-items-center justify-content-center me-2"
+                          (click)="editShow(show)">
+                          <i class="fas fa-edit me-1"></i> Edit
+                        </button>
+                        <button type="button"
+                          class="btn btn-sm btn-danger px-3 py-2 d-flex align-items-center justify-content-center"
+                          (click)="deleteShow(show)">
+                          <i class="fas fa-trash me-1"></i> Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>

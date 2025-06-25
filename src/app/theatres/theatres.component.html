@@ -1,23 +1,26 @@
 <div class="theatres-container">
+  <!-- Back Button -->
+  <div class="mb-3">
+    <button class="btn btn-secondary" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+  </div>
+
   <header class="theatres-header">
     <h1 class="header-title">Find a Theatre Near You</h1>
     <div *ngIf="movieTitle" class="selected-movie" style="margin-bottom: 1rem;">
       <span>Booking for: <strong>{{ movieTitle }}</strong></span>
     </div>
     <div class="search-bar">
-      <input 
-        type="text" 
-        class="search-input" 
-        placeholder="Search by theatre name or location..."
-        [(ngModel)]="searchQuery"
-        (input)="onSearch()">
+      <input type="text" class="search-input" placeholder="Search by theatre name or location..."
+        [(ngModel)]="searchQuery" (input)="onSearch()">
     </div>
   </header>
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-state">
-      <i class="fas fa-spinner fa-spin"></i>
-      <p>Loading theatres...</p>
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Loading theatres...</p>
   </div>
 
   <!-- Error State -->
@@ -28,17 +31,19 @@
 
   <!-- Theatres Grid -->
   <div *ngIf="!isLoading && !errorMessage && filteredTheatres.length > 0; else noTheatres" class="theatres-grid">
-    <div class="theatre-card" *ngFor="let theatre of filteredTheatres" (click)="goToShowList(theatre)" style="cursor:pointer;">
+    <div class="theatre-card" *ngFor="let theatre of filteredTheatres" (click)="goToShowList(theatre)"
+      style="cursor:pointer;">
       <div class="theatre-card-header">
         <h2 class="theatre-name">{{ theatre.name }}</h2>
         <p class="theatre-location">
-            <i class="fas fa-map-marker-alt"></i> {{ theatre.address }}
+          <i class="fas fa-map-marker-alt"></i> {{ theatre.address }}
         </p>
       </div>
       <div class="theatre-card-body">
         <h3 class="section-title">Today's Showtimes</h3>
         <div class="showtimes-grid d-flex flex-wrap">
-          <span class="badge badge-pill badge-primary mr-2 mb-2 px-3 py-2" *ngFor="let time of theatre.showTimes" style="font-size:1rem; font-weight:500; border:1px solid #007bff; background-color:#e9f5ff; color:#007bff;">
+          <span class="badge badge-pill badge-primary mr-2 mb-2 px-3 py-2" *ngFor="let time of theatre.showTimes"
+            style="font-size:1rem; font-weight:500; border:1px solid #007bff; background-color:#e9f5ff; color:#007bff;">
             {{ time }}
           </span>
         </div>

@@ -43,6 +43,7 @@ export interface Booking {
   bookingTime: string;
   totalAmount: number;
   seatNumbers: string[];
+  status?: string; // Optional status property for cancellation state
 }
 
 export interface Theatre {
@@ -203,6 +204,10 @@ export class MovieService {
 
   likeComment(commentId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/Comments/${commentId}/like`, {});
+  }
+
+  likeMovie(movieId: number): Observable<any> {
+    return this.http.post(`https://vb7dqrjl-5069.inc1.devtunnels.ms/api/Movies/${movieId}/like`, {});
   }
 
   getUserBookings(userId: number): Observable<Booking[]> {

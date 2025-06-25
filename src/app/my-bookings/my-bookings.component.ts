@@ -162,26 +162,18 @@ export class MyBookingsComponent implements OnInit {
     this.newDate = '';
   }
 
-  cancelBooking(): void {
-    if (!this.selectedBooking) return;
+  cancelBooking(bookingId: number) {
     this.isProcessing = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.movieService.cancelBooking(this.selectedBooking.bookingId).subscribe({
-      next: (response) => {
+    this.movieService.cancelBooking(bookingId).subscribe({
+      next: () => {
+        const booking = this.bookings.find(b => b.bookingId === bookingId);
+        if (booking) booking.status = 'cancelled';
+        this.successMessage = 'Booking cancelled successfully.';
         this.isProcessing = false;
-        if (response.success) {
-          this.successMessage = response.message;
-          this.closeCancelModal();
-          this.loadBookings();
-        } else {
-          this.errorMessage = response.message;
-        }
       },
-      error: (error) => {
+      error: () => {
+        this.errorMessage = 'Failed to cancel booking.';
         this.isProcessing = false;
-        this.errorMessage = 'Failed to cancel booking';
-        console.error('Error cancelling booking:', error);
       }
     });
   }

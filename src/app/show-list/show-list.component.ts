@@ -24,7 +24,7 @@ export class ShowListComponent implements OnInit, OnDestroy {
     private movieService: MovieService,
     private router: Router,
     private alertService: AlertService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const movieId = Number(this.route.snapshot.paramMap.get('movieId'));
@@ -130,5 +130,9 @@ export class ShowListComponent implements OnInit, OnDestroy {
       this.selectedDate = this.dateFilters[idx + 1];
       this.applyDateFilter();
     }
+  }
+
+  goBack() {
+    window.history.back();
   }
 }
