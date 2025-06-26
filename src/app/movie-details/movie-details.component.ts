@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService, Movie, MovieReview, MovieComment } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
+import { AlertService } from '../shared/alert.service';
 
 @Component({
   selector: 'app-movie-details',
@@ -38,11 +39,15 @@ export class MovieDetailsComponent implements OnInit {
   isSubmittingLike: boolean = false;
   totalLikes: number = 0;
 
+  // Check if the user has already commented
+  hasAlreadyCommented: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private movieService: MovieService,
-    private authService: AuthService
+    private authService: AuthService,
+    private alertService: AlertService
   ) { }
 
   ngOnInit(): void {
@@ -55,10 +60,15 @@ export class MovieDetailsComponent implements OnInit {
     this.movieService.getMovieById(movieId).subscribe({
       next: (movie) => {
         this.movie = movie;
-        this.totalLikes = (movie as any).totalLikes || 0;
-        // Remove old averageRatingRounded logic, let reviews API control it
+        // Fetch total likes from API
+        this.movieService.getTotalLikes(movieId).subscribe(count => {
+          this.totalLikes = count;
+        });
+        // Check if user has already liked
+        this.userHasLiked = false; // Default to false, since getUserLikeForMovie is removed
         if (movie) {
           this.loadReviews(movieId);
+          this.loadComments(movieId);
         }
         this.isLoading = false;
       },
@@ -93,9 +103,18 @@ export class MovieDetailsComponent implements OnInit {
     this.movieService.getMovieComments(movieId).subscribe({
       next: (comments) => {
         this.comments = comments;
+        // Set hasAlreadyCommented based on current user userId (not userName)
+        if (this.currentUser) {
+          this.hasAlreadyCommented = this.comments.some(
+            c => c.userId === this.currentUser.userId
+          );
+        } else {
+          this.hasAlreadyCommented = false;
+        }
       },
       error: (error) => {
         console.error('Error loading comments:', error);
+        this.hasAlreadyCommented = false;
       }
     });
   }
@@ -151,12 +170,21 @@ export class MovieDetailsComponent implements OnInit {
 
   submitComment(): void {
     if (!this.movie || !this.currentUser) {
-      this.errorMessage = 'Please login to comment on this movie';
+      this.alertService.showAlert('Please login to comment on this movie');
       return;
     }
 
     if (!this.newComment.trim()) {
-      this.errorMessage = 'Please enter a comment';
+      this.alertService.showAlert('Please enter a comment');
+      return;
+    }
+
+    // Check if the current user has already commented on this movie
+    const alreadyCommented = this.comments.some(
+      c => c.userId === this.currentUser.userId
+    );
+    if (alreadyCommented) {
+      this.alertService.showAlert('You have already commented on this movie.');
       return;
     }
 
@@ -172,9 +200,8 @@ export class MovieDetailsComponent implements OnInit {
     this.movieService.addComment(commentRequest).subscribe({
       next: (response: any) => {
         this.isSubmittingComment = false;
-        // Accept both { success: true } or just a successful response
         if (response?.success === false) {
-          this.errorMessage = response.message || 'Failed to add comment';
+          this.alertService.showAlert(response.message || 'Failed to add comment');
         } else {
           this.showCommentForm = false;
           this.newComment = '';
@@ -183,7 +210,7 @@ export class MovieDetailsComponent implements OnInit {
       },
       error: (error: any) => {
         this.isSubmittingComment = false;
-        this.errorMessage = 'Failed to add comment';
+        this.alertService.showAlert('Failed to add comment');
         console.error('Error submitting comment:', error);
       }
     });
@@ -230,16 +257,19 @@ export class MovieDetailsComponent implements OnInit {
       event.preventDefault();
       event.stopPropagation();
     }
-    if (!this.movie || this.userHasLiked) return;
+    if (!this.movie || this.userHasLiked || !this.currentUser) return;
     this.isSubmittingLike = true;
-    this.movieService.likeMovie(this.movie.movieId).subscribe({
-      next: () => {
+    this.movieService.addLike(this.movie.movieId, this.currentUser.userId).subscribe({
+      next: (response: any) => {
         this.userHasLiked = true;
         this.isSubmittingLike = false;
-        this.totalLikes++;
+        this.movieService.getTotalLikes(this.movie!.movieId).subscribe(count => {
+          this.totalLikes = count;
+        });
+        this.alertService.showAlert('You liked this movie!');
       },
-      error: () => {
-        this.errorMessage = 'Failed to like the movie.';
+      error: (error: any) => {
+        this.alertService.showAlert('Failed to like the movie.');
         this.isSubmittingLike = false;
       }
     });
@@ -258,61 +288,16 @@ export class MovieDetailsComponent implements OnInit {
     }
   }
 
-  getStarRating(rating: number): number[] {
-    return Array.from({ length: 5 }, (_, i) => i < rating ? 1 : 0);
-  }
-
-  formatDate(date: Date): string {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }
-
-  toggleRatingForm(): void {
-    if (!this.currentUser) {
-      this.errorMessage = 'Please login to rate this movie';
-      return;
-    }
-    this.showRatingForm = !this.showRatingForm;
-    this.errorMessage = '';
-  }
-
-  toggleCommentForm(): void {
-    if (!this.currentUser) {
-      this.errorMessage = 'Please login to comment on this movie';
-      return;
-    }
-    this.showCommentForm = !this.showCommentForm;
-    this.errorMessage = '';
-  }
-
-  getGenreColor(genre: string): string {
-    const colors: { [key: string]: string } = {
-      'Action': '#ff6b6b',
-      'Comedy': '#4ecdc4',
-      'Drama': '#45b7d1',
-      'Horror': '#96ceb4',
-      'Romance': '#feca57',
-      'Thriller': '#ff9ff3',
-      'Sci-Fi': '#54a0ff'
-    };
-    return colors[genre] || '#667eea';
+  goBack(): void {
+    window.history.back();
   }
 
   goToTheatres(): void {
-    // Get the current movieId from the route params
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
-    // Navigate to the theatres page with the movieId as a route param
     this.router.navigate(['/theatres', movieId]);
   }
 
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
-  }
-
-  goBack() {
-    window.history.back();
   }
 }

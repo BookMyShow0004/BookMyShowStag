@@ -29,6 +29,7 @@ export interface MovieReview {
 
 export interface MovieComment {
   commentId: number;
+  userId: number; // <-- Add this line
   userName: string;
   movieTitle: string;
   content: string;
@@ -240,5 +241,14 @@ export class MovieService {
 
   getUserBookingsByUserId(userId: number): Observable<Booking[]> {
     return this.http.get<Booking[]>(`${this.apiUrl}/Bookings/ByUser/${userId}`);
+  }
+
+  // Likes
+  addLike(movieId: number, userId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/Likes`, { movieId, userId }, { responseType: 'text' });
+  }
+
+  getTotalLikes(movieId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/Likes/count/${movieId}`);
   }
 }

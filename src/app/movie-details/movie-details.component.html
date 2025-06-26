@@ -74,7 +74,7 @@
       <div class="info-section">
         <h2 class="section-title">Rate this Movie</h2>
         <div class="d-flex align-items-center mb-3">
-          <button class="btn btn-outline-success me-2" [disabled]="isSubmittingLike" (click)="likeMovie($event)">
+          <button class="btn btn-outline-success me-2" [disabled]="isSubmittingLike || userHasLiked" (click)="likeMovie($event)">
             <i class="fas fa-thumbs-up"></i> Like
           </button>
           <span class="ms-2"><i class="fas fa-heart text-danger"></i> {{ totalLikes }} Likes</span>
@@ -87,9 +87,10 @@
         <h2 class="section-title">Comments</h2>
         <div class="mb-3">
           <textarea class="form-control mb-2" [(ngModel)]="newComment" placeholder="Add a comment..."
-            [disabled]="isSubmittingComment"></textarea>
+            [disabled]="isSubmittingComment || hasAlreadyCommented"></textarea>
           <button class="btn btn-primary" type="button" (click)="submitComment()"
-            [disabled]="isSubmittingComment || !newComment.trim()">Submit Comment</button>
+            [disabled]="isSubmittingComment || !newComment.trim() || hasAlreadyCommented">Submit Comment</button>
+          <div *ngIf="hasAlreadyCommented" class="text-warning mt-1">You have already commented on this movie.</div>
           <div *ngIf="errorMessage && isSubmittingComment" class="text-danger mt-1">{{ errorMessage }}</div>
         </div>
         <div *ngFor="let comment of comments" class="border rounded p-2 mb-2">
