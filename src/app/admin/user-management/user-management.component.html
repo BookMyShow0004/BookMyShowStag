@@ -1,31 +1,91 @@
 <h2 class="mb-4 text-primary">User Management</h2>
-<div *ngIf="isLoading" class="alert alert-info">Loading users...</div>
-<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-<div class="table-responsive">
-    <table *ngIf="!isLoading && !error && users.length > 0" class="table table-bordered table-hover bg-white">
-        <thead class="thead-dark">
-            <tr>
+<div class="row justify-content-center">
+  <!-- Edit User Card -->
+  <div class="col-md-5">
+    <div class="card shadow mb-4">
+      <div class="card-header d-flex align-items-center"
+        style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #fff; font-weight: bold; font-size: 1.15rem;">
+        <i class="fas fa-edit"></i>&nbsp;
+        <span>Edit User</span>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="userForm" (ngSubmit)="onUserFormSubmit()">
+          <div class="form-group mb-3">
+            <label for="fullName">Full Name</label>
+            <input id="fullName" class="form-control" formControlName="fullName" placeholder="e.g., John Doe">
+            <div *ngIf="userForm.get('fullName')?.invalid && userForm.get('fullName')?.touched" class="text-danger small">
+              Name is required.</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="email">Email</label>
+            <input id="email" class="form-control" formControlName="email" placeholder="e.g., john@example.com">
+            <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-danger small">
+              Valid email is required.</div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="role">Role</label>
+            <select id="role" class="form-control" formControlName="role">
+              <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+            </select>
+          </div>
+          <div class="form-group mb-3">
+            <label for="city">City</label>
+            <select id="city" class="form-control" formControlName="cityId">
+              <option value="" disabled>Select a city</option>
+              <option *ngFor="let city of cities" [value]="city.cityId">{{ city.cityName }}</option>
+            </select>
+            <div *ngIf="userForm.get('cityId')?.invalid && userForm.get('cityId')?.touched" class="text-danger small">
+              City is required.</div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid || isLoading">
+              {{ isLoading ? 'Saving...' : 'Update User' }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="hideUserForm()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- User List Card -->
+  <div class="col-md-7">
+    <div class="card shadow mb-4">
+      <div class="card-header d-flex align-items-center"
+        style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #fff; font-weight: bold; font-size: 1.15rem;">
+        <i class="fas fa-list"></i>&nbsp;
+        <span>Existing Users</span>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover bg-white">
+            <thead class="thead-dark">
+              <tr>
                 <th>User ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
-                <!-- Add more columns as needed -->
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let user of users">
+                <th>City</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users">
                 <td>{{ user.userId }}</td>
                 <td>{{ user.fullName }}</td>
                 <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ getCityName(user.cityId, user.city) }}</td>
                 <td>
-                    <select [ngModel]="user.role" (ngModelChange)="changeRole(user, $event)"
-                        class="form-control form-control-sm">
-                        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-                    </select>
+                  <button class="btn btn-sm btn-outline-primary mr-2" (click)="startEdit(user)"><i class="fas fa-edit"></i></button>
+                  <button class="btn btn-sm btn-outline-danger ml-2" (click)="deleteUser(user.userId)"><i class="fas fa-trash"></i></button>
                 </td>
-                <!-- Add more fields as needed -->
-            </tr>
-        </tbody>
-    </table>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="!isLoading && !error && users.length === 0" class="alert alert-warning">No users found.</div>
+      </div>
+    </div>
+  </div>
 </div>
-<div *ngIf="!isLoading && !error && users.length === 0" class="alert alert-warning">No users found.</div>

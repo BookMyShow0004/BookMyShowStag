@@ -49,7 +49,7 @@
           <div class="detail-item">
             <i class="fas fa-map-marker-alt"></i>
             <div>
-              <strong>City:</strong> {{ currentUser?.cityId }}
+              <strong>City:</strong> {{ currentUser?.cityId || currentUser?.city }}
             </div>
           </div>
           <div class="form-actions">
@@ -65,10 +65,14 @@
               <input type="text" id="name" class="form-control" [(ngModel)]="profileData.name" name="name" required>
             </div>
             <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control" [(ngModel)]="profileData.email" name="email" required>
+            </div>
+            <div class="form-group">
               <label for="city">City</label>
               <select id="city" class="form-control" [(ngModel)]="profileData.city" name="city" required>
                 <option value="">Select your city</option>
-                <option *ngFor="let city of cities" [value]="city.cityId">{{ city.cityName }}</option>
+                <option *ngFor="let city of cities" [value]="city.cityName">{{ city.cityName }}</option>
               </select>
             </div>
           </div>

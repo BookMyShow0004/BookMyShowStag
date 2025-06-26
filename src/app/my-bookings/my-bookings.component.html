@@ -40,7 +40,11 @@
           </div>
           <div class="detail-item">
             <span>Date & Time:</span>
-            <strong>{{ booking.bookingTime | date:'fullDate' }} {{ booking.bookingTime }}</strong>
+            <strong>{{ booking.bookingTime | date:'fullDate' }} {{ booking.bookingTime | date:'shortTime' }}</strong>
+          </div>
+          <div class="detail-item">
+            <span>Show Date & Time:</span>
+            <strong>{{ booking.showTime | date:'short' }}</strong>
           </div>
           <div class="detail-item">
             <span>Seats:</span>

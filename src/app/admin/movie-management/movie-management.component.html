@@ -42,7 +42,7 @@
           </div>
           <div class="form-group mb-3">
             <label for="posterFile">Poster Image</label>
-            <input id="posterFile" class="form-control" type="file" (change)="onFileChange($event)">
+            <input id="posterFile" class="form-control" type="file" (change)="onFileChange($event)" formControlName="posterFile">
             <div *ngIf="movieForm.get('posterFile')?.invalid && movieForm.get('posterFile')?.touched"
               class="text-danger small">Poster image is required.</div>
           </div>

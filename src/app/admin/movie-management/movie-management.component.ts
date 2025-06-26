@@ -15,6 +15,7 @@ export class MovieManagementComponent implements OnInit {
   editMode = false;
   isLoading = false;
   selectedmovieId: number | null = null;
+  currentPoster: string = '';
 
   constructor(
     private movieService: MovieService,
@@ -28,6 +29,7 @@ export class MovieManagementComponent implements OnInit {
       genre: ['', Validators.required],
       language: ['', Validators.required],
       releaseDate: ['', Validators.required],
+      posterFile: [null] // Remove Validators.required for edit flexibility
     });
   }
 
@@ -46,6 +48,8 @@ export class MovieManagementComponent implements OnInit {
     this.editMode = false;
     this.movieForm.reset();
     this.isFormVisible = true;
+    // Explicitly clear file input
+    this.clearFileInput();
   }
 
   hideMovieForm(): void {
@@ -63,9 +67,12 @@ export class MovieManagementComponent implements OnInit {
       durationMins: movie.durationMins,
       genre: movie.genre,
       language: movie.language,
-      releaseDate: movie.releaseDate,
-      posterFile: null // File input cannot be prefilled
+      releaseDate: movie.releaseDate
+      // Do NOT patch posterFile
     });
+    this.clearFileInput();
+    // Store the current posterBase64 or poster URL for fallback
+    this.currentPoster = movie.posterBase64 || '';
   }
 
   deleteMovie(id: number): void {
@@ -85,12 +92,30 @@ export class MovieManagementComponent implements OnInit {
   onFileChange(event: any) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
+      // Validate file type (JPEG/PNG) and size (max 2MB)
+      const validTypes = ['image/jpeg', 'image/png'];
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      if (!validTypes.includes(file.type)) {
+        this.alertService.showAlert('Only JPEG and PNG images are allowed.');
+        this.clearFileInput();
+        return;
+      }
+      if (file.size > maxSize) {
+        this.alertService.showAlert('Image size must be less than 2MB.');
+        this.clearFileInput();
+        return;
+      }
       this.movieForm.patchValue({ posterFile: file });
+      this.movieForm.get('posterFile')?.markAsDirty();
     }
   }
 
   onFormSubmit(): void {
-    if (this.movieForm.invalid) {
+    // For edit: allow posterFile to be empty, but for add: require it
+    if (
+      this.movieForm.invalid ||
+      (!this.editMode && !this.movieForm.value.posterFile)
+    ) {
       this.alertService.showAlert('Please fill all required fields.');
       return;
     }
@@ -98,7 +123,7 @@ export class MovieManagementComponent implements OnInit {
     const formData = new FormData();
     Object.entries(this.movieForm.value).forEach(([key, value]) => {
       if (key === 'posterFile' && value instanceof File) {
-        formData.append(key, value);
+        formData.append('PosterFile', value); // Use correct field name for API
       } else if (key !== 'posterFile' && value !== null && value !== undefined) {
         formData.append(key, value.toString());
       }
@@ -135,7 +160,15 @@ export class MovieManagementComponent implements OnInit {
 
   finalizeFormSubmission(): void {
     this.isLoading = false;
+    this.movieForm.reset();
+    this.clearFileInput();
     this.hideMovieForm();
     this.loadMovies();
+  }
+
+  clearFileInput(): void {
+    // Clear the file input manually (if you use a template ref, e.g. #fileInput)
+    const fileInput = document.getElementById('posterFile') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
   }
 }
