@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService, User } from '../../services/user.service';
+import { CityService, City } from '../../services/city.service';
+import { AlertService } from '../../shared/alert.service';
 
 @Component({
   selector: 'app-user-management',
@@ -9,33 +11,48 @@ import { UserService, User } from '../../services/user.service';
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
+  cities: City[] = [];
   isLoading = true;
   error: string | null = null;
   roles: string[] = ['User', 'Admin'];
   editUserId: number | null = null;
-  editUser: User = { userId: 0, fullName: '', email: '', role: '' };
+  editUser: User = { userId: 0, fullName: '', email: '', role: '', cityId: 0 };
 
   userForm: FormGroup;
   userEditMode = false;
   editingUserId: number | null = null;
 
-  constructor(private userService: UserService, private fb: FormBuilder) {
+  constructor(private userService: UserService, private fb: FormBuilder, private cityService: CityService, private alertService: AlertService) {
     this.userForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      role: ['', Validators.required]
+      role: ['', Validators.required],
+      cityId: ['', Validators.required]
     });
   }
 
   ngOnInit() {
     this.fetchUsers();
+    this.cityService.getCities().subscribe({
+      next: (cities) => { this.cities = cities; },
+      error: () => { this.error = 'Failed to load cities'; }
+    });
   }
 
   fetchUsers() {
     this.isLoading = true;
     this.userService.getUsers().subscribe({
       next: (data) => {
-        this.users = data;
+        // The API returns city as a string, not cityId
+        this.users = data.map(u => {
+          // Try to map city string to cityId if possible
+          const cityObj = this.cities.find(c => c.cityName === u.city);
+          return {
+            ...u,
+            cityId: cityObj ? cityObj.cityId : 0, // fallback to 0 if not found
+            city: u.city // always keep city string for display
+          };
+        });
         this.isLoading = false;
       },
       error: (err) => {
@@ -45,22 +62,37 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
+  getCityName(cityId: number, city?: string): string {
+    // Prefer city name from cityId, fallback to city string from API
+    const cityObj = this.cities.find(c => c.cityId === cityId);
+    return cityObj ? cityObj.cityName : (city || '');
+  }
+
   onUserFormSubmit() {
     if (this.userForm.invalid) return;
     const formValue = this.userForm.value;
     this.isLoading = true;
     if (this.userEditMode && this.editingUserId !== null) {
       // Edit existing user
-      const updatedUser: User = {
+      const updatedUser = {
         userId: this.editingUserId,
-        ...formValue
+        fullName: formValue.fullName,
+        email: formValue.email,
+        role: formValue.role,
+        cityId: +formValue.cityId
       };
-      this.userService.updateUser(updatedUser).subscribe({
-        next: () => {
+      this.userService.adminUpdateUser(updatedUser).subscribe({
+        next: (updatedUserFromApi) => {
           const idx = this.users.findIndex(u => u.userId === this.editingUserId);
-          if (idx > -1) this.users[idx] = updatedUser;
+          // Find city name for the updated cityId
+          const cityObj = this.cities.find(c => c.cityId === updatedUserFromApi.cityId);
+          const cityName = cityObj ? cityObj.cityName : '';
+          // Patch the updated user with city string for list display
+          const patchedUser = { ...updatedUserFromApi, city: cityName };
+          if (idx > -1) this.users[idx] = patchedUser;
           this.hideUserForm();
           this.isLoading = false;
+          this.alertService.showAlert('User updated successfully!');
         },
         error: () => {
           this.error = 'Failed to update user';
@@ -71,7 +103,11 @@ export class UserManagementComponent implements OnInit {
       // Add new user
       this.userService.addUser(formValue).subscribe({
         next: (newUser) => {
-          this.users.push(newUser);
+          // Patch city for consistency
+          const cityObj = this.cities.find(c => c.cityId === newUser.cityId);
+          const cityName = cityObj ? cityObj.cityName : '';
+          const patchedUser = { ...newUser, city: cityName };
+          this.users.push(patchedUser);
           this.hideUserForm();
           this.isLoading = false;
         },
@@ -91,33 +127,9 @@ export class UserManagementComponent implements OnInit {
     this.userForm.patchValue({
       fullName: user.fullName,
       email: user.email,
-      role: user.role
+      role: user.role,
+      cityId: user.cityId
     });
-  }
-
-  saveEdit(user: User) {
-    // Only update if something changed
-    if (
-      user.fullName !== this.editUser.fullName ||
-      user.role !== this.editUser.role
-    ) {
-      this.userService.updateUser(this.editUser).subscribe({
-        next: () => {
-          user.fullName = this.editUser.fullName;
-          user.role = this.editUser.role;
-          this.editUserId = null;
-        },
-        error: () => {
-          this.error = 'Failed to update user';
-        }
-      });
-    } else {
-      this.editUserId = null;
-    }
-  }
-
-  cancelEdit() {
-    this.editUserId = null;
   }
 
   hideUserForm() {
@@ -137,18 +149,6 @@ export class UserManagementComponent implements OnInit {
       error: () => {
         this.error = 'Failed to delete user';
         this.isLoading = false;
-      }
-    });
-  }
-
-  changeRole(user: User, newRole: string) {
-    if (user.role === newRole) return;
-    this.userService.updateUserRole(user.userId, newRole).subscribe({
-      next: () => {
-        user.role = newRole;
-      },
-      error: () => {
-        this.error = 'Failed to update role';
       }
     });
   }

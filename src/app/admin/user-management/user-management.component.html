@@ -28,6 +28,15 @@
               <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
             </select>
           </div>
+          <div class="form-group mb-3">
+            <label for="city">City</label>
+            <select id="city" class="form-control" formControlName="cityId">
+              <option value="" disabled>Select a city</option>
+              <option *ngFor="let city of cities" [value]="city.cityId">{{ city.cityName }}</option>
+            </select>
+            <div *ngIf="userForm.get('cityId')?.invalid && userForm.get('cityId')?.touched" class="text-danger small">
+              City is required.</div>
+          </div>
           <div class="d-flex justify-content-between">
             <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid || isLoading">
               {{ isLoading ? 'Saving...' : (userEditMode ? 'Update User' : 'Add User') }}
@@ -56,6 +65,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>City</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -64,11 +74,8 @@
                 <td>{{ user.userId }}</td>
                 <td>{{ user.fullName }}</td>
                 <td>{{ user.email }}</td>
-                <td>
-                  <select [ngModel]="user.role" (ngModelChange)="changeRole(user, $event)" class="form-control form-control-sm">
-                    <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-                  </select>
-                </td>
+                <td>{{ user.role }}</td>
+                <td>{{ getCityName(user.cityId, user.city) }}</td>
                 <td>
                   <button class="btn btn-sm btn-outline-primary mr-2" (click)="startEdit(user)"><i class="fas fa-edit"></i></button>
                   <button class="btn btn-sm btn-outline-danger ml-2" (click)="deleteUser(user.userId)"><i class="fas fa-trash"></i></button>

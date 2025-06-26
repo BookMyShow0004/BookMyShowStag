@@ -41,6 +41,7 @@ export interface Booking {
   userFullName: string;
   movieTitle: string;
   theatreName: string;
+  showTime: string;
   bookingTime: string;
   totalAmount: number;
   seatNumbers: string[];
