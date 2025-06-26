@@ -93,7 +93,7 @@
 
 .card-img-top {
   height: 320px;
-  object-fit: cover;
+  object-fit: fill !important;
 }
 
 /* Hide scrollbar for horizontal scroll (suggested movies) */

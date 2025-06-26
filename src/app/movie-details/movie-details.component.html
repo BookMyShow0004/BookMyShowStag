@@ -80,6 +80,42 @@
           <span class="ms-2"><i class="fas fa-heart text-danger"></i> {{ totalLikes }} Likes</span>
           <span *ngIf="userHasLiked" class="text-success ms-2">You liked this movie!</span>
         </div>
+        <button class="btn btn-warning" *ngIf="currentUser && canSubmitReview()" (click)="openReviewModal()">
+          <i class="fas fa-star"></i> Write a Review
+        </button>
+      </div>
+
+      <!-- Review Modal -->
+      <div class="modal-backdrop" *ngIf="showReviewModal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);z-index:1050;"></div>
+      <div class="modal d-block" tabindex="-1" *ngIf="showReviewModal" style="z-index:1060;">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Write a Review</h5>
+              <button type="button" class="btn-close" (click)="closeReviewModal()"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3 text-center">
+                <ng-container *ngFor="let star of [1,2,3,4,5]">
+                  <i class="fa-star" [ngClass]="reviewRating >= star ? 'fas text-warning' : 'far text-secondary'" style="font-size:2rem;cursor:pointer;" (click)="setReviewRating(star)"></i>
+                </ng-container>
+                <div class="mt-2">{{ reviewRating }}/5</div>
+              </div>
+              <div class="mb-3">
+                <textarea class="form-control" [(ngModel)]="reviewComment" rows="3" placeholder="Write your review..."></textarea>
+              </div>
+              <div *ngIf="reviewError" class="alert alert-danger">{{ reviewError }}</div>
+              <div *ngIf="reviewSuccess" class="alert alert-success">{{ reviewSuccess }}</div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeReviewModal()">Cancel</button>
+              <button type="button" class="btn btn-primary" [disabled]="reviewSubmitting || !reviewRating" (click)="submitReview()">
+                <span *ngIf="reviewSubmitting"><i class="fas fa-spinner fa-spin"></i> Submitting...</span>
+                <span *ngIf="!reviewSubmitting">Submit Review</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Comments Section (keep as is or bind to comments array) -->

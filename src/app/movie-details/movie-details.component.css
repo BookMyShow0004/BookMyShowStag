@@ -132,3 +132,50 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Modal Styles */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 1050;
+}
+.modal.d-block {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  z-index: 1060;
+  background: transparent;
+}
+.modal-dialog {
+  margin: 5rem auto;
+  max-width: 500px;
+}
+.modal-content {
+  border-radius: 1rem;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.modal-header {
+  border-bottom: 1px solid #e9ecef;
+}
+.modal-footer {
+  border-top: 1px solid #e9ecef;
+}
+
+/* Star Rating Styles */
+.fa-star {
+  transition: color 0.2s;
+}
+.fas.text-warning {
+  color: #ffc107 !important;
+}
+.far.text-secondary {
+  color: #e4e5e9 !important;
+}

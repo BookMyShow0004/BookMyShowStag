@@ -42,6 +42,14 @@ export class MovieDetailsComponent implements OnInit {
   // Check if the user has already commented
   hasAlreadyCommented: boolean = false;
 
+  // Review Modal State
+  showReviewModal: boolean = false;
+  reviewRating: number = 0;
+  reviewComment: string = '';
+  reviewSubmitting: boolean = false;
+  reviewError: string = '';
+  reviewSuccess: string = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -269,7 +277,8 @@ export class MovieDetailsComponent implements OnInit {
         this.alertService.showAlert('You liked this movie!');
       },
       error: (error: any) => {
-        this.alertService.showAlert('Failed to like the movie.');
+        console.log(error);
+        this.alertService.showAlert(error.error);
         this.isSubmittingLike = false;
       }
     });
@@ -299,5 +308,58 @@ export class MovieDetailsComponent implements OnInit {
 
   goToDashboard(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+  openReviewModal(): void {
+    this.reviewRating = 0;
+    this.reviewComment = '';
+    this.reviewError = '';
+    this.reviewSuccess = '';
+    this.showReviewModal = true;
+  }
+
+  closeReviewModal(): void {
+    this.showReviewModal = false;
+  }
+
+  setReviewRating(rating: number): void {
+    this.reviewRating = rating;
+  }
+
+  canSubmitReview(): boolean {
+    if (!this.currentUser || !this.movie) return false;
+    // Prevent multiple reviews by the same user for the same movie
+    return !this.reviews.some(r => r.userId === this.currentUser.userId);
+  }
+
+  submitReview(): void {
+    if (!this.currentUser || !this.movie) {
+      this.reviewError = 'Please login to submit a review.';
+      return;
+    }
+    if (!this.reviewRating) {
+      this.reviewError = 'Please select a rating.';
+      return;
+    }
+    this.reviewSubmitting = true;
+    this.reviewError = '';
+    const review = {
+      movieId: this.movie.movieId,
+      userId: this.currentUser.userId,
+      rating: this.reviewRating,
+      comment: this.reviewComment
+    };
+    this.movieService.addReview(review).subscribe({
+      next: () => {
+        this.reviewSuccess = 'Review submitted successfully!';
+        this.reviewSubmitting = false;
+        this.showReviewModal = false;
+        this.loadReviews(this.movie!.movieId);
+      },
+      error: () => {
+        this.reviewError = 'Failed to submit review.';
+        this.reviewSubmitting = false;
+      }
+    });
   }
 }

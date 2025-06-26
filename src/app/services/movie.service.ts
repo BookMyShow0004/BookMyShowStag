@@ -126,7 +126,7 @@ export class MovieService {
   }
 
   addReview(review: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Reviews`, review);
+    return this.http.post(`${this.apiUrl}/Reviews`, review,{responseType:'text'});
   }
 
   updateReview(id: number, review: any): Observable<any> {
