@@ -27,4 +27,16 @@ export class UserService {
     updateUserRole(userId: number, newRole: string): Observable<any> {
         return this.http.put(`${this.apiUrl}/${userId}/role`, { role: newRole });
     }
+
+    updateUser(user: User): Observable<any> {
+        return this.http.put(`${this.apiUrl}/${user.userId}`, user, { responseType: 'text' as 'json' });
+    }
+
+    addUser(user: Partial<User>): Observable<User> {
+        return this.http.post<User>(this.apiUrl, user);
+    }
+
+    deleteUser(userId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${userId}`, { responseType: 'text' as 'json' });
+    }
 }

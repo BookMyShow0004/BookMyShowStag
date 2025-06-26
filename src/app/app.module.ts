@@ -18,6 +18,7 @@ import { ShowListComponent } from './show-list/show-list.component';
 import { SeatSelectionComponent } from './seat-selection/seat-selection.component';
 import { TheatresComponent } from './theatres/theatres.component';
 import { BookingComponent } from './booking/booking.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { BookingComponent } from './booking/booking.component';
     MyBookingsComponent,
     ShowListComponent,
     SeatSelectionComponent,
-    BookingComponent
+    BookingComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
