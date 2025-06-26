@@ -93,26 +93,10 @@ export class UserManagementComponent implements OnInit {
           this.hideUserForm();
           this.isLoading = false;
           this.alertService.showAlert('User updated successfully!');
+          this.fetchUsers();
         },
         error: () => {
           this.error = 'Failed to update user';
-          this.isLoading = false;
-        }
-      });
-    } else {
-      // Add new user
-      this.userService.addUser(formValue).subscribe({
-        next: (newUser) => {
-          // Patch city for consistency
-          const cityObj = this.cities.find(c => c.cityId === newUser.cityId);
-          const cityName = cityObj ? cityObj.cityName : '';
-          const patchedUser = { ...newUser, city: cityName };
-          this.users.push(patchedUser);
-          this.hideUserForm();
-          this.isLoading = false;
-        },
-        error: () => {
-          this.error = 'Failed to add user';
           this.isLoading = false;
         }
       });

@@ -1,12 +1,12 @@
 <h2 class="mb-4 text-primary">User Management</h2>
 <div class="row justify-content-center">
-  <!-- Add/Edit User Card -->
+  <!-- Edit User Card -->
   <div class="col-md-5">
     <div class="card shadow mb-4">
       <div class="card-header d-flex align-items-center"
         style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #fff; font-weight: bold; font-size: 1.15rem;">
-        <i class="fas fa-plus-circle"></i>&nbsp;
-        <span>{{ userEditMode ? 'Edit User' : 'Add New User' }}</span>
+        <i class="fas fa-edit"></i>&nbsp;
+        <span>Edit User</span>
       </div>
       <div class="card-body">
         <form [formGroup]="userForm" (ngSubmit)="onUserFormSubmit()">
@@ -39,7 +39,7 @@
           </div>
           <div class="d-flex justify-content-between">
             <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid || isLoading">
-              {{ isLoading ? 'Saving...' : (userEditMode ? 'Update User' : 'Add User') }}
+              {{ isLoading ? 'Saving...' : 'Update User' }}
             </button>
             <button type="button" class="btn btn-secondary" (click)="hideUserForm()">Cancel</button>
           </div>

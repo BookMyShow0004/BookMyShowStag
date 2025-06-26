@@ -16,12 +16,13 @@ export class ProfileComponent implements OnInit {
   successMessage: string = '';
 
   // Profile form data
-  profileData: UpdateProfileRequest = {
+  profileData: UpdateProfileRequest  = {
     name: '',
     phone: '',
     city: '',
     dateOfBirth: '',
-    gender: ''
+    gender: '',
+    email: ''
   };
 
   // Password change form data
@@ -53,7 +54,8 @@ export class ProfileComponent implements OnInit {
         phone: this.currentUser.phone || '',
         city: this.currentUser.city || '',
         dateOfBirth: this.currentUser.dateOfBirth ? new Date(this.currentUser.dateOfBirth).toISOString().split('T')[0] : '',
-        gender: this.currentUser.gender || 'Not specified'
+        gender: this.currentUser.gender || 'Not specified',
+        email: this.currentUser.email || ''
       };
     }
   }
@@ -89,7 +91,26 @@ export class ProfileComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.authService.updateProfile(this.profileData).subscribe({
+    // Prepare the request body as required by the new API
+    const selectedCity = this.cities.find(c => c.cityName === this.profileData.city);
+    const cityId = selectedCity ? selectedCity.cityId : null;
+    const updateRequest = {
+      name: this.profileData.name,
+      phone: this.profileData.phone,
+      city: this.profileData.city,
+      dateOfBirth: this.profileData.dateOfBirth,
+      gender: this.profileData.gender,
+      avatar: this.profileData.avatar,
+      email: this.profileData.email,
+      // For the API body
+      cityId: cityId
+    };
+
+    // Call the updated AuthService method
+    this.authService.updateProfile({
+      ...updateRequest,
+      city: this.profileData.city // keep for local update
+    }).subscribe({
       next: (response) => {
         this.isLoading = false;
         if (response.success) {
@@ -166,12 +187,14 @@ export class ProfileComponent implements OnInit {
       this.errorMessage = 'Name is required';
       return false;
     }
-
+    if (!this.profileData.email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(this.profileData.email)) {
+      this.errorMessage = 'Valid email is required';
+      return false;
+    }
     if (!this.profileData.city) {
       this.errorMessage = 'Please select a city';
       return false;
     }
-
     return true;
   }
 

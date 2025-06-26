@@ -52,6 +52,7 @@ export interface UpdateProfileRequest {
   dateOfBirth?: string;
   gender?: string;
   avatar?: string;
+  email?: string; // Optional, used for profile update
 }
 
 @Injectable({
@@ -200,31 +201,63 @@ export class AuthService {
     if (!currentUser) {
       return of({ success: false, message: 'User not authenticated' });
     }
-    // Use the backend API to update the user profile
-    return this.http.put(`${this.apiUrl}/Users/${currentUser.userId}`, {
-      UserId: currentUser.userId,
-      FullName: request.name,
-      Email: currentUser.email,
-      CityId: currentUser.cityId,
-      // Add other fields as needed
-    }, { responseType: 'text' }).pipe(
-      map((response: any) => ({ success: true, message: response, user: { ...currentUser, fullName: request.name, phone: request.phone, city: request.city, dateOfBirth: request.dateOfBirth, gender: request.gender, avatar: request.avatar } })),
-      tap((result) => {
-        if (result.success && result.user) {
-          this.currentUserSubject.next(result.user);
-          localStorage.setItem('currentUser', JSON.stringify(result.user));
-          sessionStorage.setItem('currentUser', JSON.stringify(result.user));
-        }
-      }),
-      catchError((error) => {
-        const message = typeof error.error === 'string' ? error.error : error.error?.message || 'Profile update failed.';
-        return of({ success: false, message });
+    // Use the new backend API to update the user profile
+    const body = {
+      userId: currentUser.userId,
+      fullName: request.name,
+      email: currentUser.email,
+      cityId: currentUser.cityId,
+    };
+    return this.http
+      .put(`${this.apiUrl}/Users/Profile/${currentUser.userId}`, body, {
+        responseType: 'text',
       })
-    );
+      .pipe(
+        map((response: any) => ({
+          success: true,
+          message: response,
+          user: {
+            ...currentUser,
+            fullName: request.name,
+            phone: request.phone,
+            city: request.city,
+            dateOfBirth: request.dateOfBirth,
+            gender: request.gender,
+            avatar: request.avatar,
+          },
+        })),
+        tap((result) => {
+          if (result.success && result.user) {
+            this.currentUserSubject.next(result.user);
+            localStorage.setItem('currentUser', JSON.stringify(result.user));
+            sessionStorage.setItem('currentUser', JSON.stringify(result.user));
+          }
+        }),
+        catchError((error) => {
+          const message =
+            typeof error.error === 'string'
+              ? error.error
+              : error.error?.message || 'Profile update failed.';
+          return of({ success: false, message });
+        })
+      );
   }
 
   getCurrentUser(): User | null {
-    return this.currentUserSubject.value;
+    const currentUser = this.currentUserSubject.value;
+    if (!currentUser) return null;
+    // Fetch the latest user data from the backend using userId
+    this.http.get<User>(`${this.apiUrl}/Users/${currentUser.userId}`).subscribe({
+      next: (user) => {
+        this.currentUserSubject.next(user);
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+      },
+      error: (err) => {
+        // Optionally handle error, fallback to cached user
+      }
+    });
+    return currentUser;
   }
 
   isLoggedIn(): boolean {
