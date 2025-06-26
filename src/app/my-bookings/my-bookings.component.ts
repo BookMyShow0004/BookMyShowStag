@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService, Booking } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-bookings',
@@ -37,7 +38,8 @@ export class MyBookingsComponent implements OnInit {
 
   constructor(
     private movieService: MovieService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -162,7 +164,8 @@ export class MyBookingsComponent implements OnInit {
     this.newDate = '';
   }
 
-  cancelBooking(bookingId: number) {
+  cancelBooking(bookingId: number, event?: Event) {
+    if (event) event.preventDefault();
     this.isProcessing = true;
     this.movieService.cancelBooking(bookingId).subscribe({
       next: () => {
@@ -171,9 +174,10 @@ export class MyBookingsComponent implements OnInit {
         this.successMessage = 'Booking cancelled successfully.';
         this.isProcessing = false;
       },
-      error: () => {
+      error: (err) => {
         this.errorMessage = 'Failed to cancel booking.';
         this.isProcessing = false;
+        console.error('Cancel booking error:', err);
       }
     });
   }
@@ -222,5 +226,26 @@ export class MyBookingsComponent implements OnInit {
 
   getTotalCount(): number {
     return this.bookings.length;
+  }
+
+  goToRescheduleShows(booking: Booking) {
+    // Assuming booking has movieId and theatreId, if not, fetch them
+    const movieId = (booking as any).movieId || this.getMovieIdFromBooking(booking);
+    const theatreId = (booking as any).theatreId || this.getTheatreIdFromBooking(booking);
+    if (movieId && theatreId) {
+      this.router.navigate(['/shows', movieId, theatreId]);
+    } else {
+      alert('Movie or Theatre information missing for this booking.');
+    }
+  }
+
+  // Helper methods if needed
+  getMovieIdFromBooking(booking: Booking): number | null {
+    // If booking.movieId is not present, try to map from movieTitle
+    // You may need to implement a lookup if only movieTitle is present
+    return (booking as any).movieId || null;
+  }
+  getTheatreIdFromBooking(booking: Booking): number | null {
+    return (booking as any).theatreId || null;
   }
 }

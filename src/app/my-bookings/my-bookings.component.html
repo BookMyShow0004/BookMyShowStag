@@ -15,6 +15,12 @@
     <p>{{ errorMessage }}</p>
   </div>
 
+  <!-- Success State -->
+  <div *ngIf="successMessage && !isLoading" class="success-state">
+    <i class="fas fa-check-circle"></i>
+    <p>{{ successMessage }}</p>
+  </div>
+
   <div *ngIf="!isLoading && !errorMessage">
     <!-- Tabs -->
     <nav class="tabs-nav">
@@ -55,8 +61,12 @@
             <strong>₹{{ booking.totalAmount }}</strong>
           </div>
           <div class="mt-2" *ngIf="booking.status !== 'cancelled'">
-            <button class="btn btn-danger btn-sm" [disabled]="isProcessing" (click)="cancelBooking(booking.bookingId)">
+            <button class="btn btn-danger btn-sm" type="button" [disabled]="isProcessing"
+              (click)="cancelBooking(booking.bookingId, $event)">
               <i class="fas fa-times"></i> Cancel Booking
+            </button>
+            <button class="btn btn-primary btn-sm ms-2" type="button" (click)="goToRescheduleShows(booking)">
+              <i class="fas fa-calendar-alt"></i> Reschedule
             </button>
           </div>
           <div class="mt-2 text-success" *ngIf="booking.status === 'cancelled'">

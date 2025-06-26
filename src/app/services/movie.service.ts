@@ -126,7 +126,7 @@ export class MovieService {
   }
 
   addReview(review: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Reviews`, review,{responseType:'text'});
+    return this.http.post(`${this.apiUrl}/Reviews`, review, { responseType: 'text' });
   }
 
   updateReview(id: number, review: any): Observable<any> {
@@ -216,8 +216,9 @@ export class MovieService {
     return this.http.get<Booking[]>(`${this.apiUrl}/Bookings?userId=${userId}`);
   }
 
+
   cancelBooking(bookingId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/Bookings/${bookingId}/cancel`, {});
+    return this.http.delete(`${this.apiUrl}/Bookings/Cancel/${bookingId}`, { responseType: 'text' });
   }
 
   rescheduleBooking(bookingId: number, newShowTime: string, newDate: string): Observable<any> {
