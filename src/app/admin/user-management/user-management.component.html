@@ -75,7 +75,7 @@
                 <td>{{ user.fullName }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.role }}</td>
-                <td>{{ getCityName(user.cityId, user.city) }}</td>
+                <td>{{ user.cityName }}</td>
                 <td>
                   <button class="btn btn-sm btn-outline-primary mr-2" (click)="startEdit(user)"><i class="fas fa-edit"></i></button>
                   <button class="btn btn-sm btn-outline-danger ml-2" (click)="deleteUser(user.userId)"><i class="fas fa-trash"></i></button>

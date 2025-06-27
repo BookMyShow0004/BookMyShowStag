@@ -58,7 +58,7 @@
           *ngIf="filteredMovies.length > 0; else noMovies">
           <div class="col" *ngFor="let movie of filteredMovies; trackBy: trackBymovieId">
             <div class="card h-100 shadow-lg border-0 movie-card-hover position-relative overflow-hidden">
-              <img [src]="movie.posterBase64 ? ('data:image/jpeg;base64,' + movie.posterBase64) : ''" class="card-img-top movie-poster-img" [alt]="movie.title"
+              <img [src]="movie.posterBase64 ? ('data:image/jpeg;base64,' + movie.posterBase64) : ''" class="card-img-top movie-poster-img object-fit-cover" [alt]="movie.title"
                 (click)="goToMovieDetails(movie)">
               <div class="card-body bg-white">
                 <h5 class="card-title text-truncate font-weight-bold mb-1">{{ movie.title }}</h5>

@@ -11,6 +11,7 @@ import { AlertService } from '../../shared/alert.service';
 export class MovieManagementComponent implements OnInit {
   movies: Movie[] = [];
   movieForm: FormGroup;
+  selectedPosterFile: File | null = null;
   isFormVisible = false;
   editMode = false;
   isLoading = false;
@@ -28,8 +29,8 @@ export class MovieManagementComponent implements OnInit {
       durationMins: [0, Validators.required],
       genre: ['', Validators.required],
       language: ['', Validators.required],
-      releaseDate: ['', Validators.required],
-      posterFile: [null] // Remove Validators.required for edit flexibility
+      releaseDate: ['', Validators.required]
+      // posterFile removed from form group
     });
   }
 
@@ -67,10 +68,10 @@ export class MovieManagementComponent implements OnInit {
       durationMins: movie.durationMins,
       genre: movie.genre,
       language: movie.language,
-      releaseDate: movie.releaseDate,
-      posterFile: null // Explicitly set to null for edit, so user can optionally select a new image
+      releaseDate: movie.releaseDate
     });
-    this.clearFileInput();
+    this.selectedPosterFile = null;
+    // Do NOT clear file input here; let user select a file if they want to update image
   }
 
   deleteMovie(id: number): void {
@@ -103,8 +104,7 @@ export class MovieManagementComponent implements OnInit {
         this.clearFileInput();
         return;
       }
-      this.movieForm.patchValue({ posterFile: file });
-      this.movieForm.get('posterFile')?.markAsDirty();
+      this.selectedPosterFile = file;
     }
   }
 
@@ -112,7 +112,7 @@ export class MovieManagementComponent implements OnInit {
     // For add: require posterFile, for edit: optional
     if (
       this.movieForm.invalid ||
-      (!this.editMode && !this.movieForm.value.posterFile)
+      (!this.editMode && !this.selectedPosterFile)
     ) {
       this.alertService.showAlert('Please fill all required fields.' + (!this.editMode ? ' and select an image.' : ''));
       return;
@@ -120,16 +120,23 @@ export class MovieManagementComponent implements OnInit {
     this.isLoading = true;
     const formData = new FormData();
     for (const [key, value] of Object.entries(this.movieForm.value)) {
-      if (key === 'posterFile' && value instanceof File) {
-        formData.append('PosterFile', value); // Use correct field name for API
-      } else if (key !== 'posterFile' && value !== null && value !== undefined) {
+      if (value !== null && value !== undefined) {
         formData.append(key, value.toString());
       }
+    }
+    if (this.selectedPosterFile) {
+      formData.append('PosterFile', this.selectedPosterFile);
+      console.log('Appending file:', this.selectedPosterFile);
     }
     // Set createdByUserId from localStorage
     const currentUser = localStorage.getItem('currentUser');
     const userId = currentUser ? JSON.parse(currentUser).userId : null;
     formData.append('createdByUserId', userId);
+    // Debug: log all FormData entries
+    // @ts-ignore
+    for (const pair of (formData as any).entries()) {
+      console.log('FormData:', pair[0], pair[1]);
+    }
     if (this.editMode && this.selectedmovieId) {
       this.movieService.updateMovie(this.selectedmovieId, formData).subscribe({
         next: () => {

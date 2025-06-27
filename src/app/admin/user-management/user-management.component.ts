@@ -11,7 +11,7 @@ import { AlertService } from '../../shared/alert.service';
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
-  cities: City[] = [];
+  cities: any[] = [];
   isLoading = true;
   error: string | null = null;
   roles: string[] = ['User', 'Admin'];
@@ -33,7 +33,11 @@ export class UserManagementComponent implements OnInit {
 
   ngOnInit() {
     this.fetchUsers();
-    this.cityService.getCities().subscribe({
+   this.fetchCities();
+  }
+
+  fetchCities() {
+     this.cityService.getCities().subscribe({
       next: (cities) => { this.cities = cities; },
       error: () => { this.error = 'Failed to load cities'; }
     });
@@ -44,9 +48,13 @@ export class UserManagementComponent implements OnInit {
     this.userService.getUsers().subscribe({
       next: (data) => {
         // The API returns city as a string, not cityId
+        
+        console.log(this.cities);
         this.users = data.map(u => {
+          // console.log(data)
           // Try to map city string to cityId if possible
           const cityObj = this.cities.find(c => c.cityName === u.city);
+
           return {
             ...u,
             cityId: cityObj ? cityObj.cityId : 0, // fallback to 0 if not found
@@ -60,12 +68,6 @@ export class UserManagementComponent implements OnInit {
         this.isLoading = false;
       }
     });
-  }
-
-  getCityName(cityId: number, city?: string): string {
-    // Prefer city name from cityId, fallback to city string from API
-    const cityObj = this.cities.find(c => c.cityId === cityId);
-    return cityObj ? cityObj.cityName : (city || '');
   }
 
   onUserFormSubmit() {

@@ -10,6 +10,7 @@ export interface User {
     cityId: number;
     city?: string; // Optional, for display if needed
     createdAt?: string;
+    cityName?: string; // Added for convenience, if city name is needed directly
     // Add other user fields as needed
 }
 

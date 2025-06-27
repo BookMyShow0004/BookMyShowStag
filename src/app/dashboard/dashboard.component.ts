@@ -34,7 +34,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   languages: string[] = ['English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada'];
 
   // Sidebar
-  showSidebar: boolean = true;
+  showSidebar: boolean = false;
 
   constructor(
     private movieService: MovieService,

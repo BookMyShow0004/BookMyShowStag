@@ -19,7 +19,7 @@ const routes: Routes = [
     component: LayoutComponent,
     canActivate: [AdminAuthGuard],
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: 'users', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'movies', component: MovieManagementComponent },
       { path: 'theatres', component: TheatreManagementComponent },
