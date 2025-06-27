@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedGenres: string[] = [];
   selectedLanguage: string = '';
   selectedRating: number = 0;
-  sortBy: 'name' | 'rating' | 'releaseDate' | 'price' = 'name';
+  sortBy: '' | 'name' | 'nameDesc' | 'rating' | 'releaseDate' | 'releaseDateAsc' | 'price' = '';
   showFilters: boolean = false;
 
   // Booking Modal
@@ -151,20 +151,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   applySorting(): void {
-    this.filteredMovies.sort((a, b) => {
-      let comparison = 0;
-
-      switch (this.sortBy) {
-        case 'name':
-          comparison = a.title.localeCompare(b.title);
-          break;
-        case 'releaseDate':
-          comparison = new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime();
-          break;
-      }
-
-      return comparison;
-    });
+    const normalize = (str: string) => str ? str.trim() : '';
+    switch (this.sortBy) {
+      case 'name':
+        this.filteredMovies.sort((a, b) => normalize(a.title).localeCompare(normalize(b.title), undefined, { numeric: true, sensitivity: 'base' }));
+        break;
+      case 'nameDesc':
+        this.filteredMovies.sort((a, b) => normalize(b.title).localeCompare(normalize(a.title), undefined, { numeric: true, sensitivity: 'base' }));
+        break;
+      case 'rating':
+        this.filteredMovies.sort((a, b) => (b.averageRatingRounded ?? 0) - (a.averageRatingRounded ?? 0));
+        break;
+      case 'releaseDate':
+        this.filteredMovies.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
+        break;
+      case 'releaseDateAsc':
+        this.filteredMovies.sort((a, b) => new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime());
+        break;
+      default:
+        // No sorting (default order)
+        break;
+    }
   }
 
   clearFilters(): void {

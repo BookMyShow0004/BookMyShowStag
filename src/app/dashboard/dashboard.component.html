@@ -63,6 +63,18 @@
               <option *ngFor="let l of languages" [value]="l">{{l}}</option>
             </select>
           </div>
+          <!-- Sort Button -->
+          <div class="input-group shadow-sm rounded-pill" style="width: 200px; min-width: 120px; margin-right: 12px;">
+            <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
+              [(ngModel)]="sortBy" (change)="onSortChange()">
+              <option value="">Sort: Default</option>
+              <option value="name">Sort: Title (A-Z)</option>
+              <option value="nameDesc">Sort: Title (Z-A)</option>
+              <option value="rating">Sort: Rating (High-Low)</option>
+              <option value="releaseDate">Sort: Release Date (New-Old)</option>
+              <option value="releaseDateAsc">Sort: Release Date (Old-New)</option>
+            </select>
+          </div>
         </div>
       </div>
 
