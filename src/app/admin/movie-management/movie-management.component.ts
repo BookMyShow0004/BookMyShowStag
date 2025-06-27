@@ -67,12 +67,10 @@ export class MovieManagementComponent implements OnInit {
       durationMins: movie.durationMins,
       genre: movie.genre,
       language: movie.language,
-      releaseDate: movie.releaseDate
-      // Do NOT patch posterFile
+      releaseDate: movie.releaseDate,
+      posterFile: null // Explicitly set to null for edit, so user can optionally select a new image
     });
     this.clearFileInput();
-    // Store the current posterBase64 or poster URL for fallback
-    this.currentPoster = movie.posterBase64 || '';
   }
 
   deleteMovie(id: number): void {
@@ -110,24 +108,24 @@ export class MovieManagementComponent implements OnInit {
     }
   }
 
-  onFormSubmit(): void {
-    // For edit: allow posterFile to be empty, but for add: require it
+  async onFormSubmit(): Promise<void> {
+    // For add: require posterFile, for edit: optional
     if (
       this.movieForm.invalid ||
       (!this.editMode && !this.movieForm.value.posterFile)
     ) {
-      this.alertService.showAlert('Please fill all required fields.');
+      this.alertService.showAlert('Please fill all required fields.' + (!this.editMode ? ' and select an image.' : ''));
       return;
     }
     this.isLoading = true;
     const formData = new FormData();
-    Object.entries(this.movieForm.value).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(this.movieForm.value)) {
       if (key === 'posterFile' && value instanceof File) {
         formData.append('PosterFile', value); // Use correct field name for API
       } else if (key !== 'posterFile' && value !== null && value !== undefined) {
         formData.append(key, value.toString());
       }
-    });
+    }
     // Set createdByUserId from localStorage
     const currentUser = localStorage.getItem('currentUser');
     const userId = currentUser ? JSON.parse(currentUser).userId : null;
@@ -156,6 +154,18 @@ export class MovieManagementComponent implements OnInit {
         }
       });
     }
+  }
+
+  base64ToBlob(base64: string, mime: string): Blob {
+    // Remove data URL prefix if present
+    const base64Data = base64.split(',')[1] || base64;
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mime });
   }
 
   finalizeFormSubmission(): void {
