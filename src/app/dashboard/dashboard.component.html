@@ -1,62 +1,95 @@
 <div class="container-fluid py-4 bg-light min-vh-100">
-
-  <!-- Search and Filter Bar -->
-  <div class="row mb-4 mt-4 justify-content-center align-items-center">
-    <div class="col-12 col-md-6 col-lg-5 mb-2 d-flex">
-      <div class="input-group shadow-sm rounded-pill flex-grow-1" style="min-width: 0;">
-        <input type="text" class="form-control border-0 rounded-pill"
-          style="border-radius: 50px !important; min-width: 0;"
-          placeholder="Search movies by title, genre, or description..." [(ngModel)]="searchQuery" (input)="onSearch()">
-      </div>
-      <div style="width: 24px;"></div>
-      <div class="input-group shadow-sm rounded-pill" style="width: 180px; min-width: 120px;">
-        <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
-          [(ngModel)]="selectedRating" (change)="onFilterChange()">
-          <option value="0">All Ratings</option>
-          <option *ngFor="let r of [5,4,3,2,1]" [value]="r">{{r}}+ stars</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <!-- All Movies Grid -->
-  <div class="mb-5">
-    <h2 class="mb-4 text-primary font-weight-bold text-center">All Movies</h2>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 m-auto row-cols-lg-4 row-cols-xl-5 g-4"
-      *ngIf="filteredMovies.length > 0; else noMovies">
-      <div class="col" *ngFor="let movie of filteredMovies; trackBy: trackBymovieId">
-        <div class="card h-100 shadow-lg border-0 movie-card-hover position-relative overflow-hidden">
-          <img [src]="movie.posterBase64 ? ('data:image/jpeg;base64,' + movie.posterBase64) : ''" class="card-img-top movie-poster-img" [alt]="movie.title"
-            (click)="goToMovieDetails(movie)">
-          <div class="card-body bg-white">
-            <h5 class="card-title text-truncate font-weight-bold mb-1">{{ movie.title }}</h5>
-            <p class="card-text text-muted mb-2">{{ movie.genre }}</p>
-            <div class="d-flex justify-content-between align-items-center text-muted small mb-2">
-              <span><i class="fas fa-clock me-1"></i>{{ movie.durationMins }} mins</span>
-            </div>
-            <div class="d-flex align-items-center mb-2">
-              <i class="fas fa-star text-warning mr-1"></i>
-              <span class="font-weight-bold rating-badge">
-                {{ (movie.averageRatingRounded !== undefined && movie.averageRatingRounded > 0) ?
-                (movie.averageRatingRounded + '/5') : 'No ratings' }}
-              </span>
-            </div>
+  <div class="row">
+    <!-- Sidebar: Top Rated Movies -->
+    <ng-container *ngIf="showSidebar">
+      <div class="col-12 col-md-3 mb-4 sidebar-col">
+        <div class="card h-100">
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center" style="cursor:pointer;" (click)="showSidebar = false">
+            <span><i class="fas fa-star"></i> Suggested Movies</span>
+            <i class="fas fa-chevron-left" style="cursor:pointer;"></i>
           </div>
-          <div class="card-footer bg-white border-0 p-2">
-            <button class="btn btn-primary w-100 rounded-pill font-weight-bold" (click)="goToMovieDetails(movie)">Select
-              Movie</button>
+          <ul class="list-group list-group-flush">
+            <li *ngFor="let movie of topRatedMovies" class="list-group-item d-flex justify-content-between align-items-center">
+              <span>
+                <strong>{{ movie.title }}</strong>
+              </span>
+              <button class="btn btn-sm btn-primary" (click)="goToMovieDetails(movie)">View</button>
+            </li>
+            <li *ngIf="topRatedMovies.length === 0" class="list-group-item text-muted">
+              No suggested movies found.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-container>
+    <!-- Sidebar Toggle Button (when sidebar is hidden) -->
+    <ng-container *ngIf="!showSidebar">
+      <div class="col-12 col-md-1 d-flex align-items-start justify-content-start sidebar-toggle-btn" style="min-width:40px;">
+        <button class="btn btn-outline-success mt-2" (click)="showSidebar = true" style="border-radius:50%; width:40px; height:40px;">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </ng-container>
+    <!-- Main Content -->
+    <div [ngClass]="showSidebar ? 'col-12 col-md-9' : 'col-12 col-md-11'">
+      <!-- Search and Filter Bar -->
+      <div class="row mb-4 mt-4 justify-content-center align-items-center">
+        <div class="col-12 col-md-6 col-lg-5 mb-2 d-flex">
+          <div class="input-group shadow-sm rounded-pill flex-grow-1" style="min-width: 0;">
+            <input type="text" class="form-control border-0 rounded-pill"
+              style="border-radius: 50px !important; min-width: 0;"
+              placeholder="Search movies by title, genre, or description..." [(ngModel)]="searchQuery" (input)="onSearch()">
+          </div>
+          <div style="width: 24px;"></div>
+          <div class="input-group shadow-sm rounded-pill" style="width: 180px; min-width: 120px;">
+            <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
+              [(ngModel)]="selectedRating" (change)="onFilterChange()">
+              <option value="0">All Ratings</option>
+              <option *ngFor="let r of [5,4,3,2,1]" [value]="r">{{r}}+ stars</option>
+            </select>
           </div>
         </div>
       </div>
-    </div>
-    <ng-template #noMovies>
-      <div class="text-center p-5 bg-white rounded shadow-sm mt-5">
-        <h3 class="text-muted">No movies found.</h3>
-        <p>Try adjusting your search or filter criteria.</p>
-      </div>
-    </ng-template>
-  </div>
 
+      <!-- All Movies Grid -->
+      <div class="mb-5">
+        <h2 class="mb-4 text-primary font-weight-bold text-center">All Movies</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 m-auto row-cols-lg-4 row-cols-xl-5 g-4"
+          *ngIf="filteredMovies.length > 0; else noMovies">
+          <div class="col" *ngFor="let movie of filteredMovies; trackBy: trackBymovieId">
+            <div class="card h-100 shadow-lg border-0 movie-card-hover position-relative overflow-hidden">
+              <img [src]="movie.posterBase64 ? ('data:image/jpeg;base64,' + movie.posterBase64) : ''" class="card-img-top movie-poster-img" [alt]="movie.title"
+                (click)="goToMovieDetails(movie)">
+              <div class="card-body bg-white">
+                <h5 class="card-title text-truncate font-weight-bold mb-1">{{ movie.title }}</h5>
+                <p class="card-text text-muted mb-2">{{ movie.genre }}</p>
+                <div class="d-flex justify-content-between align-items-center text-muted small mb-2">
+                  <span><i class="fas fa-clock me-1"></i>{{ movie.durationMins }} mins</span>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                  <i class="fas fa-star text-warning mr-1"></i>
+                  <span class="font-weight-bold rating-badge">
+                    {{ (movie.averageRatingRounded !== undefined && movie.averageRatingRounded > 0) ?
+                    (movie.averageRatingRounded + '/5') : 'No ratings' }}
+                  </span>
+                </div>
+              </div>
+              <div class="card-footer bg-white border-0 p-2">
+                <button class="btn btn-primary w-100 rounded-pill font-weight-bold" (click)="goToMovieDetails(movie)">Select
+                  Movie</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noMovies>
+          <div class="text-center p-5 bg-white rounded shadow-sm mt-5">
+            <h3 class="text-muted">No movies found.</h3>
+            <p>Try adjusting your search or filter criteria.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Booking Modal -->
@@ -102,5 +135,13 @@
     font-size: 1rem;
     display: inline-block;
     margin-left: 0.5rem;
+  }
+
+  .sidebar-toggle-btn {
+    position: relative;
+    z-index: 10;
+  }
+  @media (max-width: 767px) {
+    .sidebar-col, .sidebar-toggle-btn { width: 100% !important; min-width: 0 !important; }
   }
 </style>

@@ -33,6 +33,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   genres: string[] = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Thriller', 'Sci-Fi'];
   languages: string[] = ['English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada'];
 
+  // Sidebar
+  showSidebar: boolean = true;
+
   constructor(
     private movieService: MovieService,
     private authService: AuthService,
@@ -229,6 +232,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   getStarArray(rating: number): number[] {
     const fullStars = Math.floor(rating / 2);
     return Array(fullStars).fill(0);
+  }
+
+  // List of movies with 4+ rating
+  get topRatedMovies(): (Movie & { averageRatingRounded?: number })[] {
+    return this.movies.filter(m => (m.averageRatingRounded ?? 0) >= 4);
   }
 
   getEmptyStarArray(rating: number): number[] {

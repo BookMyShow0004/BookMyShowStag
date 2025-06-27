@@ -229,14 +229,25 @@ export class MyBookingsComponent implements OnInit {
   }
 
   goToRescheduleShows(booking: Booking) {
-    // Assuming booking has movieId and theatreId, if not, fetch them
-    const movieId = (booking as any).movieId || this.getMovieIdFromBooking(booking);
-    const theatreId = (booking as any).theatreId || this.getTheatreIdFromBooking(booking);
-    if (movieId && theatreId) {
-      this.router.navigate(['/shows', movieId, theatreId]);
-    } else {
+    // Call cancel API, then redirect to shows page using movieId and theatreId from booking
+    if (!booking.movieId || !booking.theatreId) {
       alert('Movie or Theatre information missing for this booking.');
+      return;
     }
+    this.isProcessing = true;
+    this.movieService.cancelBooking(booking.bookingId).subscribe({
+      next: () => {
+        this.isProcessing = false;
+        this.successMessage = 'Booking cancelled successfully.';
+        this.router.navigate(['/shows', booking.movieId, booking.theatreId]);
+      },
+      error: (err) => {
+        this.isProcessing = false;
+        this.errorMessage = 'Failed to cancel booking, but redirecting to reschedule page.';
+        this.router.navigate(['/shows', booking.movieId, booking.theatreId]);
+        console.error('Cancel booking error:', err);
+      }
+    });
   }
 
   // Helper methods if needed

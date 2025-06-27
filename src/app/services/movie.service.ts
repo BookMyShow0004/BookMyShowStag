@@ -39,6 +39,9 @@ export interface MovieComment {
 export interface Booking {
   bookingId: number;
   userFullName: string;
+  showId: number;
+  movieId: number;
+  theatreId: number;
   movieTitle: string;
   theatreName: string;
   showTime: string;
@@ -171,14 +174,6 @@ export class MovieService {
 
   createBooking(booking: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/Bookings`, booking);
-  }
-
-  updateBooking(id: number, booking: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/Bookings/${id}`, booking);
-  }
-
-  deleteBooking(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/Bookings/${id}`);
   }
 
   getTheatresByMovieId(movieId: number): Observable<any[]> {
