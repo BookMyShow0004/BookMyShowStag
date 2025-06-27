@@ -39,6 +39,8 @@ export class ProfileComponent implements OnInit {
   showNewPassword: boolean = false;
   showConfirmPassword: boolean = false;
 
+  passwordErrors: string[] = [];
+
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -199,27 +201,35 @@ export class ProfileComponent implements OnInit {
   }
 
   validatePasswordForm(): boolean {
+    this.passwordErrors = [];
     if (!this.passwordData.currentPassword) {
-      this.errorMessage = 'Current password is required';
+      this.passwordErrors.push('Current password is required');
       return false;
     }
-
-    if (!this.passwordData.newPassword) {
-      this.errorMessage = 'New password is required';
+    const password = this.passwordData.newPassword;
+    if (!password) {
+      this.passwordErrors.push('New password is required');
       return false;
     }
-
-    if (this.passwordData.newPassword.length < 6) {
-      this.errorMessage = 'New password must be at least 6 characters long';
-      return false;
+    if (password.length < 8) {
+      this.passwordErrors.push('At least 8 characters');
     }
-
+    if (!/[A-Z]/.test(password)) {
+      this.passwordErrors.push('At least one uppercase letter');
+    }
+    if (!/[a-z]/.test(password)) {
+      this.passwordErrors.push('At least one lowercase letter');
+    }
+    if (!/[0-9]/.test(password)) {
+      this.passwordErrors.push('At least one number');
+    }
+    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+      this.passwordErrors.push('At least one special character');
+    }
     if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-      this.errorMessage = 'New passwords do not match';
-      return false;
+      this.passwordErrors.push('New passwords do not match');
     }
-
-    return true;
+    return this.passwordErrors.length === 0;
   }
 
   togglePasswordVisibility(field: 'current' | 'new' | 'confirm'): void {

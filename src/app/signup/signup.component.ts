@@ -24,6 +24,11 @@ export class SignupComponent implements OnInit {
 
   cities : City[] = [];
 
+  showPassword = false;
+  showConfirmPassword = false;
+
+  passwordErrors: string[] = [];
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -46,10 +51,12 @@ export class SignupComponent implements OnInit {
   }
 
   onRegister(): void {
-    this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
-
+    if (!this.validateForm()) {
+      return;
+    }
+    this.isLoading = true;
     this.authService.register(this.registerData).subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -72,6 +79,8 @@ export class SignupComponent implements OnInit {
   }
 
   validateForm(): boolean {
+    this.passwordErrors = [];
+
     if (!this.registerData.fullName.trim()) {
       this.errorMessage = 'Name is required';
       this.alertService.showAlert(this.errorMessage);
@@ -85,26 +94,35 @@ export class SignupComponent implements OnInit {
     }
 
     if (!this.registerData.password) {
-      this.errorMessage = 'Password is required';
-      this.alertService.showAlert(this.errorMessage);
+      this.passwordErrors.push('Password is required');
       return false;
     }
-
-    if (this.registerData.password.length < 6) {
-      this.errorMessage = 'Password must be at least 6 characters long';
-      this.alertService.showAlert(this.errorMessage);
+    const password = this.registerData.password;
+    if (password.length < 8) {
+      this.passwordErrors.push('At least 8 characters');
+    }
+    if (!/[A-Z]/.test(password)) {
+      this.passwordErrors.push('At least one uppercase letter');
+    }
+    if (!/[a-z]/.test(password)) {
+      this.passwordErrors.push('At least one lowercase letter');
+    }
+    if (!/[0-9]/.test(password)) {
+      this.passwordErrors.push('At least one number');
+    }
+    if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+      this.passwordErrors.push('At least one special character');
+    }
+    if (this.passwordErrors.length > 0) {
       return false;
     }
-
     if (this.registerData.password !== this.registerData.confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
-      this.alertService.showAlert(this.errorMessage);
+      this.passwordErrors.push('Passwords do not match');
       return false;
     }
 
     if (!this.registerData.cityId) {
       this.errorMessage = 'Please select a city';
-      this.alertService.showAlert(this.errorMessage);
       return false;
     }
 

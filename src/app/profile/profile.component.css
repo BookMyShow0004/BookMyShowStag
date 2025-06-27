@@ -115,6 +115,35 @@
   margin-top: 1rem;
 }
 
+/* Password field with toggle button alignment fix */
+.form-group.position-relative {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.form-group.position-relative input.form-control {
+  padding-right: 2.5rem;
+}
+.form-group.position-relative button.btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 2rem;
+  width: 2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  z-index: 2;
+  border: none;
+}
+.form-group.position-relative button.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 /* Buttons */
 .btn {
   padding: 0.75rem 1.5rem;
