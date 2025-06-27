@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MovieService, Theatre, Seat } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AlertService } from '../shared/alert.service';
 
 @Component({
   selector: 'app-theatres',
@@ -39,17 +38,26 @@ export class TheatresComponent implements OnInit {
   showSeats: Seat[] = [];
   showSeatPrices: { [seatId: number]: number } = {};
 
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'info' = 'info';
+  showToast = false;
+
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
-    private alertService: AlertService,
     private authService: AuthService,
     private router: Router
   ) { }
 
+  showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 3000);
+  }
+
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    // Get movieId from route params
     this.movieId = Number(this.route.snapshot.paramMap.get('id'));
     if (this.movieId) {
       this.movieService.getMovieById(this.movieId).subscribe({
@@ -58,6 +66,7 @@ export class TheatresComponent implements OnInit {
         },
         error: () => {
           this.movieTitle = null;
+          this.showToastMessage('Failed to load movie details.', 'error');
         }
       });
     }
@@ -67,12 +76,9 @@ export class TheatresComponent implements OnInit {
   loadTheatres(): void {
     this.isLoading = true;
     this.errorMessage = '';
-
-    // Get movieId from route params
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
     this.movieService.getTheatresByMovieId(movieId).subscribe({
       next: (theatres: Theatre[]) => {
-        // For each theatre, fetch showtimes and attach to theatre.showTimes
         let loadedCount = 0;
         if (theatres.length === 0) {
           this.theatres = [];
@@ -83,7 +89,6 @@ export class TheatresComponent implements OnInit {
         theatres.forEach((theatre, idx) => {
           this.movieService.getShowTimeByMovieAndTheatre(movieId, theatre.theatreId).subscribe({
             next: (shows: any[]) => {
-              // Map showDateTime to formatted time string (e.g., '10:00 AM')
               theatre.showTimes = shows.map(show => new Date(show.showDateTime).toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
               loadedCount++;
               if (loadedCount === theatres.length) {
@@ -100,6 +105,7 @@ export class TheatresComponent implements OnInit {
                 this.filteredTheatres = theatres;
                 this.isLoading = false;
               }
+              this.showToastMessage('Failed to load showtimes.', 'error');
             }
           });
         });
@@ -107,7 +113,7 @@ export class TheatresComponent implements OnInit {
       error: (error: any) => {
         this.errorMessage = 'Failed to load theatres';
         this.isLoading = false;
-        console.error('Error loading theatres:', error);
+        this.showToastMessage(this.errorMessage, 'error');
       }
     });
   }
@@ -259,10 +265,6 @@ export class TheatresComponent implements OnInit {
   goToShowList(theatre: any): void {
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
     this.router.navigate(['/shows', movieId, theatre.theatreId]);
-  }
-
-  handleError(message: string): void {
-    this.alertService.showAlert(message);
   }
 
   goBack() {

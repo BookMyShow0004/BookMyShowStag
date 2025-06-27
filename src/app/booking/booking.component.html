@@ -4,6 +4,11 @@
       <h4 class="mb-0">Booking Summary</h4>
     </div>
     <div class="card-body">
+      <app-toast-notification
+        [message]="toastMessage"
+        [type]="toastType"
+        [show]="showToast">
+      </app-toast-notification>
       <div *ngIf="bookingData">
         <p><strong>Movie:</strong> {{ bookingData.movieTitle }}</p>
         <p><strong>Theatre:</strong> {{ bookingData.theatreName }}</p>

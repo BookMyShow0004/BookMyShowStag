@@ -19,6 +19,7 @@ import { SeatSelectionComponent } from './seat-selection/seat-selection.componen
 import { TheatresComponent } from './theatres/theatres.component';
 import { BookingComponent } from './booking/booking.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     HttpClientModule,
     RecaptchaModule,
     RecaptchaFormsModule,
-    CommonModule
+    CommonModule,
+    SharedModule
   ],
   providers: [
     {

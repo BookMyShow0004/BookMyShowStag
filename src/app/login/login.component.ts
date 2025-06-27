@@ -21,6 +21,9 @@ export class LoginComponent implements OnInit {
   private openBookingFor: string | null = null;
   captchaToken: string | null = null;
   captchaError: boolean = false;
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'info' = 'info';
+  showToast = false;
 
   constructor(
     private authService: AuthService,
@@ -30,6 +33,23 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    // Redirect if already logged in
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        if (user && user.role === 'Admin') {
+          this.router.navigate(['/admin']);
+          return;
+        } else if (user) {
+          this.router.navigate(['/dashboard']);
+          return;
+        }
+      } catch (e) {
+        // Invalid user data, ignore
+      }
+    }
+
     this.route.queryParams.subscribe(params => {
       this.returnUrl = params['returnUrl'] || '/dashboard';
       this.openBookingFor = params['openBookingFor'] || null;
@@ -41,10 +61,16 @@ export class LoginComponent implements OnInit {
   this.captchaError = !token;
 }
 
+  showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 3000);
+  }
+
   onLogin(form: NgForm) {
     if (form.invalid || !this.captchaToken) {
-      this.errorMessage = 'Please fill in all required fields.';
-      this.errorMessage = 'Please complete all fields and solve the captcha.';
+      this.showToastMessage('Please complete all fields and solve the captcha.', 'error');
       this.captchaError = !this.captchaToken;
       return;
     }
@@ -67,12 +93,12 @@ export class LoginComponent implements OnInit {
           const queryParams = this.openBookingFor ? { openBookingFor: this.openBookingFor } : {};
           this.router.navigate([targetUrl], { queryParams });
         } else {
-          this.errorMessage = response.message;
+          this.showToastMessage(response.message, 'error');
         }
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = 'An unexpected error occurred. Please try again.';
+        this.showToastMessage('An unexpected error occurred. Please try again.', 'error');
         console.error('Login error:', err);
       }
     });

@@ -1,4 +1,9 @@
 <div class="show-list-container">
+  <app-toast-notification
+    [message]="toastMessage"
+    [type]="toastType"
+    [show]="showToast">
+  </app-toast-notification>
   <div class="d-flex align-items-center mb-3">
     <div *ngIf="shows.length > 0" class="mr-4">
       <span class="movie-title font-weight-bold"

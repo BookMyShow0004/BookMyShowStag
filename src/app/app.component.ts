@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -9,10 +9,11 @@ import { AuthService, User } from './services/auth.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   currentUser$!: Observable<User | null>;
   isDropdownOpen = false;
   showHeader = true;
+  private focusHandler = () => this.authService.refreshUserState();
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -29,6 +30,14 @@ export class AppComponent implements OnInit {
         this.showHeader = true;
       }
     });
+
+    // Refresh user state when window gains focus (user returns to tab)
+    window.addEventListener('focus', this.focusHandler);
+  }
+
+  ngOnDestroy(): void {
+    // Cleanup event listener
+    window.removeEventListener('focus', this.focusHandler);
   }
 
   getInitials(name: string): string {

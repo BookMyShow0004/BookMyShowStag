@@ -1,3 +1,10 @@
+<app-toast-notification
+  [message]="toastMessage"
+  [type]="toastType"
+  [show]="showToast">
+</app-toast-notification>
+
+<!-- Main login form -->
 <div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
   <div class="card shadow-sm" style="width: 100%; max-width: 450px;">
     <div class="card-body p-4 p-md-5">
@@ -8,11 +15,6 @@
       </div>
 
       <form (ngSubmit)="onLogin(loginForm)" #loginForm="ngForm">
-        <!-- Error Message -->
-        <div *ngIf="errorMessage" class="alert alert-danger">
-          {{ errorMessage }}
-        </div>
-
         <!-- Email Field -->
         <div class="form-floating mb-3">
           <input

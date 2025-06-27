@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService, Movie, MovieReview, MovieComment } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
-import { AlertService } from '../shared/alert.service';
 
 @Component({
   selector: 'app-movie-details',
@@ -50,13 +49,23 @@ export class MovieDetailsComponent implements OnInit {
   reviewError: string = '';
   reviewSuccess: string = '';
 
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'info' = 'info';
+  showToast = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private movieService: MovieService,
-    private authService: AuthService,
-    private alertService: AlertService
+    private authService: AuthService
   ) { }
+
+  showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 3000);
+  }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
@@ -178,12 +187,12 @@ export class MovieDetailsComponent implements OnInit {
 
   submitComment(): void {
     if (!this.movie || !this.currentUser) {
-      this.alertService.showAlert('Please login to comment on this movie');
+      this.showToastMessage('Please login to comment on this movie');
       return;
     }
 
     if (!this.newComment.trim()) {
-      this.alertService.showAlert('Please enter a comment');
+      this.showToastMessage('Please enter a comment');
       return;
     }
 
@@ -192,7 +201,7 @@ export class MovieDetailsComponent implements OnInit {
       c => c.userId === this.currentUser.userId
     );
     if (alreadyCommented) {
-      this.alertService.showAlert('You have already commented on this movie.');
+      this.showToastMessage('You have already commented on this movie.');
       return;
     }
 
@@ -209,7 +218,7 @@ export class MovieDetailsComponent implements OnInit {
       next: (response: any) => {
         this.isSubmittingComment = false;
         if (response?.success === false) {
-          this.alertService.showAlert(response.message || 'Failed to add comment');
+          this.showToastMessage(response.message || 'Failed to add comment');
         } else {
           this.showCommentForm = false;
           this.newComment = '';
@@ -218,7 +227,7 @@ export class MovieDetailsComponent implements OnInit {
       },
       error: (error: any) => {
         this.isSubmittingComment = false;
-        this.alertService.showAlert('Failed to add comment');
+        this.showToastMessage('Failed to add comment');
         console.error('Error submitting comment:', error);
       }
     });
@@ -274,11 +283,11 @@ export class MovieDetailsComponent implements OnInit {
         this.movieService.getTotalLikes(this.movie!.movieId).subscribe(count => {
           this.totalLikes = count;
         });
-        this.alertService.showAlert('You liked this movie!');
+        this.showToastMessage('You liked this movie!');
       },
       error: (error: any) => {
         console.log(error);
-        this.alertService.showAlert(error.error);
+        this.showToastMessage(error.error);
         this.isSubmittingLike = false;
       }
     });

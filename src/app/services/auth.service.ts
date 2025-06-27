@@ -74,10 +74,32 @@ export class AuthService {
   private checkStoredAuth(): void {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
-      const user = JSON.parse(storedUser);
-      this.currentUserSubject.next(user);
-      this.isAuthenticatedSubject.next(true);
+      try {
+        const user = JSON.parse(storedUser);
+        if (user && user.userId && user.role) {
+          this.currentUserSubject.next(user);
+          this.isAuthenticatedSubject.next(true);
+        } else {
+          // Invalid user data, remove it
+          localStorage.removeItem('currentUser');
+        }
+      } catch (error) {
+        // Invalid JSON, remove it
+        localStorage.removeItem('currentUser');
+      }
     }
+  }
+
+  // Method to ensure user state is properly initialized
+  public ensureUserState(): void {
+    if (!this.currentUserSubject.value) {
+      this.checkStoredAuth();
+    }
+  }
+
+  // Method to refresh user state from localStorage
+  public refreshUserState(): void {
+    this.checkStoredAuth();
   }
 
   login(

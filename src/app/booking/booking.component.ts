@@ -13,11 +13,22 @@ export class BookingComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'info' = 'info';
+  showToast = false;
+
   constructor(
     private route: ActivatedRoute,
     public router: Router,
     private bookingService: BookingService
   ) {}
+
+  showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 3000);
+  }
 
   ngOnInit(): void {
     // Retrieve booking data from navigation state (use history.state for reliability)
@@ -27,6 +38,7 @@ export class BookingComponent implements OnInit {
   confirmBooking(): void {
     if (!this.bookingData || !this.bookingData.seatIds || !this.bookingData.showId) {
       this.errorMessage = 'Missing booking information.';
+      this.showToastMessage(this.errorMessage, 'error');
       return;
     }
     this.isLoading = true;
@@ -36,12 +48,13 @@ export class BookingComponent implements OnInit {
       seatIds: this.bookingData.seatIds
     }).subscribe({
       next: () => {
-        alert('Booking successful!');
+        this.showToastMessage('Booking successful!', 'success');
         this.isLoading = false;
-        this.router.navigate(['/my-bookings']);
+        setTimeout(() => this.router.navigate(['/my-bookings']), 1000);
       },
       error: (err) => {
         this.errorMessage = 'Booking failed. Please try again.';
+        this.showToastMessage(this.errorMessage, 'error');
         this.isLoading = false;
       }
     });

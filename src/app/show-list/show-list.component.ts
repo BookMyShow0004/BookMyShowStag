@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService } from '../services/movie.service';
-import { AlertService } from '../shared/alert.service';
 
 @Component({
   selector: 'app-show-list',
@@ -19,12 +18,22 @@ export class ShowListComponent implements OnInit, OnDestroy {
   minDate: string = '';
   maxDate: string = '';
 
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'info' = 'info';
+  showToast = false;
+
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
-    private router: Router,
-    private alertService: AlertService
+    private router: Router
   ) { }
+
+  showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 3000);
+  }
 
   ngOnInit(): void {
     const movieId = Number(this.route.snapshot.paramMap.get('movieId'));
@@ -37,7 +46,7 @@ export class ShowListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       },
       error: () => {
-        this.handleError('Failed to load shows.');
+        this.showToastMessage('Failed to load shows.', 'error');
         this.isLoading = false;
       }
     });
@@ -106,7 +115,7 @@ export class ShowListComponent implements OnInit, OnDestroy {
   }
 
   handleError(message: string): void {
-    this.alertService.showAlert(message);
+    this.showToastMessage(message, 'error');
   }
 
   isShowStarted(show: any): boolean {

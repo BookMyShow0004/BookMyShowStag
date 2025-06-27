@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, City, RegisterRequest } from '../services/auth.service';
-import { AlertService } from '../shared/alert.service';
 
 @Component({
   selector: 'app-signup',
@@ -29,11 +28,21 @@ export class SignupComponent implements OnInit {
 
   passwordErrors: string[] = [];
 
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'info' = 'info';
+  showToast = false;
+
   constructor(
     private authService: AuthService,
-    private router: Router,
-    private alertService: AlertService
+    private router: Router
   ) {}
+
+  showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 3000);
+  }
 
   ngOnInit(): void {
     this.getCities();
@@ -42,10 +51,10 @@ export class SignupComponent implements OnInit {
   getCities(): void {
     this.authService.getcityData().subscribe({
       next: (response) => {
-        this.cities = response; // Correct way: assign the whole array
+        this.cities = response;
       },
       error: (err) => {
-        console.error('Failed to load cities:', err);
+        this.showToastMessage('Failed to load cities.', 'error');
       },
     });
   }
@@ -62,18 +71,17 @@ export class SignupComponent implements OnInit {
         this.isLoading = false;
         if (response.success) {
           this.successMessage = response.message;
-          this.alertService.showAlert(this.successMessage);
+          this.showToastMessage(this.successMessage, 'success');
           setTimeout(() => this.router.navigate(['/login']), 2000);
         } else {
           this.errorMessage = response.message;
-          this.alertService.showAlert(this.errorMessage);
+          this.showToastMessage(this.errorMessage, 'error');
         }
       },
       error: (error) => {
         this.isLoading = false;
         this.errorMessage = 'Registration failed. Please try again.';
-        this.alertService.showAlert(this.errorMessage);
-        console.error('Registration error:', error);
+        this.showToastMessage(this.errorMessage, 'error');
       },
     });
   }
@@ -83,18 +91,19 @@ export class SignupComponent implements OnInit {
 
     if (!this.registerData.fullName.trim()) {
       this.errorMessage = 'Name is required';
-      this.alertService.showAlert(this.errorMessage);
+      this.showToastMessage(this.errorMessage, 'error');
       return false;
     }
 
     if (!this.registerData.email.trim()) {
       this.errorMessage = 'Email is required';
-      this.alertService.showAlert(this.errorMessage);
+      this.showToastMessage(this.errorMessage, 'error');
       return false;
     }
 
     if (!this.registerData.password) {
       this.passwordErrors.push('Password is required');
+      this.showToastMessage('Password is required', 'error');
       return false;
     }
     const password = this.registerData.password;
@@ -114,15 +123,18 @@ export class SignupComponent implements OnInit {
       this.passwordErrors.push('At least one special character');
     }
     if (this.passwordErrors.length > 0) {
+      this.showToastMessage(this.passwordErrors.join(', '), 'error');
       return false;
     }
     if (this.registerData.password !== this.registerData.confirmPassword) {
       this.passwordErrors.push('Passwords do not match');
+      this.showToastMessage('Passwords do not match', 'error');
       return false;
     }
 
     if (!this.registerData.cityId) {
       this.errorMessage = 'Please select a city';
+      this.showToastMessage(this.errorMessage, 'error');
       return false;
     }
 

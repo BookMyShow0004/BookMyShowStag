@@ -15,6 +15,7 @@ import { TheatreManagementComponent } from './theatre-management/theatre-managem
 import { BookingManagementComponent } from './booking-management/booking-management.component';
 import { CityManagementComponent } from './city-management/city-management.component';
 import { UserManagementComponent } from './user-management/user-management.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { UserManagementComponent } from './user-management/user-management.compo
     CommonModule,
     AdminRoutingModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    SharedModule
   ]
 })
 export class AdminModule { }

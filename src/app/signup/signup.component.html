@@ -8,6 +8,12 @@
 
       <p class="text-muted">Welcome back! Please enter your details.</p>
 
+      <app-toast-notification
+        [message]="toastMessage"
+        [type]="toastType"
+        [show]="showToast">
+      </app-toast-notification>
+
       <form (ngSubmit)="onRegister()" #signupForm="ngForm">
         <!-- Error/Success Messages -->
         <div *ngIf="errorMessage" class="alert alert-danger">

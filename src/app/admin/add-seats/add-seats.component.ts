@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MovieService, Theatre } from '../../services/movie.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SeatService, Seat } from '../../services/seat.service';
-import { AlertService } from '../../shared/alert.service';
 
 @Component({
   selector: 'app-add-seats',
@@ -16,12 +15,27 @@ export class AddSeatsComponent implements OnInit {
   allSeats: Seat[] = [];
   editingSeat: Seat | null = null;
 
-  constructor(private movieService: MovieService, private fb: FormBuilder, private seatService: SeatService, private alertService: AlertService) {
+  toastMessage = '';
+  toastType: 'success' | 'error' | 'info' = 'info';
+  showToast = false;
+
+  constructor(
+    private movieService: MovieService,
+    private fb: FormBuilder,
+    private seatService: SeatService
+  ) {
     this.addSeatForm = this.fb.group({
       theatreId: ['', Validators.required],
       seatNumber: ['', Validators.required],
       seatType: ['', Validators.required]
     });
+  }
+
+  showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+    setTimeout(() => this.showToast = false, 3000);
   }
 
   ngOnInit(): void {
@@ -30,7 +44,7 @@ export class AddSeatsComponent implements OnInit {
         this.theatres = theatres;
       },
       error: () => {
-        this.alertService.showAlert('Failed to load theatres.');
+        this.showToastMessage('Failed to load theatres.', 'error');
       }
     });
     this.loadAllSeats();
@@ -42,7 +56,7 @@ export class AddSeatsComponent implements OnInit {
         this.allSeats = seats;
       },
       error: (err) => {
-        this.alertService.showAlert('Failed to fetch seats.');
+        this.showToastMessage('Failed to fetch seats.', 'error');
       }
     });
   }
@@ -54,7 +68,7 @@ export class AddSeatsComponent implements OnInit {
       const updatedSeat = { ...this.editingSeat, ...this.addSeatForm.value };
       this.seatService.updateSeat(updatedSeat).subscribe({
         next: () => {
-          this.alertService.showAlert('Seat updated successfully!');
+          this.showToastMessage('Seat updated successfully!', 'success');
           this.addSeatForm.reset();
           this.isSubmitting = false;
           this.editingSeat = null;
@@ -62,19 +76,19 @@ export class AddSeatsComponent implements OnInit {
         },
         error: (error) => {
           if (error.status === 200 && error.statusText === 'OK') {
-            this.alertService.showAlert('Seat updated successfully!');
+            this.showToastMessage('Seat updated successfully!', 'success');
             this.addSeatForm.reset();
             this.isSubmitting = false;
             this.editingSeat = null;
             this.loadAllSeats();
           } else if (typeof error.error === 'string' && error.error.includes('Seat updated')) {
-            this.alertService.showAlert('Seat updated successfully!');
+            this.showToastMessage('Seat updated successfully!', 'success');
             this.addSeatForm.reset();
             this.isSubmitting = false;
             this.editingSeat = null;
             this.loadAllSeats();
           } else {
-            this.alertService.showAlert('Failed to update seat.');
+            this.showToastMessage('Failed to update seat.', 'error');
             this.isSubmitting = false;
           }
         }
@@ -82,22 +96,22 @@ export class AddSeatsComponent implements OnInit {
     } else {
       this.movieService.addSeat(this.addSeatForm.value).subscribe({
         next: () => {
-          this.alertService.showAlert('Seat added successfully!');
+          this.showToastMessage('Seat added successfully!', 'success');
           this.addSeatForm.reset();
           this.isSubmitting = false;
           this.loadAllSeats();
         },
         error: (error) => {
           if (error.status === 200 && error.statusText === 'OK') {
-            this.alertService.showAlert('Seat added successfully!');
+            this.showToastMessage('Seat added successfully!', 'success');
             this.addSeatForm.reset();
             this.loadAllSeats();
           } else if (typeof error.error === 'string' && error.error.includes('Seat created')) {
-            this.alertService.showAlert('Seat added successfully!');
+            this.showToastMessage('Seat added successfully!', 'success');
             this.addSeatForm.reset();
             this.loadAllSeats();
           } else {
-            this.alertService.showAlert('Failed to add seat.');
+            this.showToastMessage('Failed to add seat.', 'error');
           }
           this.isSubmitting = false;
         }
@@ -118,11 +132,11 @@ export class AddSeatsComponent implements OnInit {
     if (confirm('Are you sure you want to delete seat ' + seat.seatNumber + '?')) {
       this.seatService.deleteSeat(seat.seatId).subscribe({
         next: () => {
-          this.alertService.showAlert('Seat deleted successfully!');
+          this.showToastMessage('Seat deleted successfully!', 'success');
           this.loadAllSeats();
         },
         error: () => {
-          this.alertService.showAlert('Failed to delete seat.');
+          this.showToastMessage('Failed to delete seat.', 'error');
         }
       });
     }
