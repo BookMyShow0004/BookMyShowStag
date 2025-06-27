@@ -4,7 +4,7 @@
     <ng-container *ngIf="showSidebar">
       <div class="col-12 col-md-3 mb-4 sidebar-col">
         <div class="card h-100">
-          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center" style="cursor:pointer;" (click)="showSidebar = false">
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center" style="cursor:pointer; color: #ff4d4f; background: #fff; border-bottom: 2px solid #ff4d4f;" (click)="showSidebar = false">
             <span><i class="fas fa-star"></i> Suggested Movies</span>
             <i class="fas fa-chevron-left" style="cursor:pointer;"></i>
           </div>
@@ -35,10 +35,10 @@
       <!-- Search and Filter Bar -->
       <div class="row mb-4 mt-4 justify-content-center align-items-center">
         <div class="col-12 col-md-6 col-lg-5 mb-2 d-flex">
-          <div class="input-group shadow-sm rounded-pill flex-grow-1" style="min-width: 0;">
+          <div class="input-group shadow-sm rounded-pill flex-grow-1" style="width: 900px;min-width: 0;">
             <input type="text" class="form-control border-0 rounded-pill"
               style="border-radius: 50px !important; min-width: 0;"
-              placeholder="Search movies by title, genre, or description..." [(ngModel)]="searchQuery" (input)="onSearch()">
+              placeholder="Search movies by Title or Description" [(ngModel)]="searchQuery" (input)="onSearch()">
           </div>
           <div style="width: 24px;"></div>
           <div class="input-group shadow-sm rounded-pill" style="width: 180px; min-width: 120px;">
@@ -48,12 +48,26 @@
               <option *ngFor="let r of [5,4,3,2,1]" [value]="r">{{r}}+ stars</option>
             </select>
           </div>
+          <div style="width: 24px;"></div>
+          <div class="input-group shadow-sm rounded-pill" style="width: 180px; min-width: 120px; margin-right: 12px;">
+            <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
+              [(ngModel)]="selectedGenre" (change)="onFilterChange()">
+              <option value="">All Genres</option>
+              <option *ngFor="let g of genres" [value]="g">{{g}}</option>
+            </select>
+          </div>
+          <div class="input-group shadow-sm rounded-pill" style="width: 400px; min-width: 120px; margin-right: 12px;">
+            <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
+              [(ngModel)]="selectedLanguage" (change)="onFilterChange()">
+              <option value="">All Languages</option>
+              <option *ngFor="let l of languages" [value]="l">{{l}}</option>
+            </select>
+          </div>
         </div>
       </div>
 
       <!-- All Movies Grid -->
       <div class="mb-5">
-        <h2 class="mb-4 text-primary font-weight-bold text-center">All Movies</h2>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 m-auto row-cols-lg-4 row-cols-xl-5 g-4"
           *ngIf="filteredMovies.length > 0; else noMovies">
           <div class="col" *ngFor="let movie of filteredMovies; trackBy: trackBymovieId">
@@ -75,8 +89,7 @@
                 </div>
               </div>
               <div class="card-footer bg-white border-0 p-2">
-                <button class="btn btn-primary w-100 rounded-pill font-weight-bold" (click)="goToMovieDetails(movie)">Select
-                  Movie</button>
+                <button class="btn btn-primary w-100 rounded-pill font-weight-bold" (click)="goToMovieDetails(movie)">Select Movie</button>
               </div>
             </div>
           </div>
@@ -113,11 +126,14 @@
 <style>
   .movie-card-hover {
     transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(255, 0, 0, 0.15), 0 1.5px 6px rgba(0,0,0,0.08);
+    border: 1.5px solid #ff4d4f;
   }
 
   .movie-card-hover:hover {
     transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 32px rgba(255, 0, 0, 0.25), 0 4px 16px rgba(0,0,0,0.12);
+    border-color: #ff4d4f;
   }
 
   .movie-poster-img {
@@ -128,13 +144,15 @@
   }
 
   .rating-badge {
-    background: #f8f9fa;
+    background: #fff1f0;
     border-radius: 50rem;
     padding: 0.25rem 0.75rem;
     font-weight: 600;
     font-size: 1rem;
     display: inline-block;
     margin-left: 0.5rem;
+    color: #ff4d4f;
+    border: 1px solid #ff4d4f;
   }
 
   .sidebar-toggle-btn {
@@ -143,5 +161,31 @@
   }
   @media (max-width: 767px) {
     .sidebar-col, .sidebar-toggle-btn { width: 100% !important; min-width: 0 !important; }
+  }
+
+  .btn-primary, .bg-primary, .text-primary {
+    background-color: #ff4d4f !important;
+    border-color: #ff4d4f !important;
+    color: #fff !important;
+  }
+  .btn-primary:hover, .btn-primary:focus {
+    background-color: #d9363e !important;
+    border-color: #d9363e !important;
+    color: #fff !important;
+  }
+  .text-primary {
+    color: #ff4d4f !important;
+  }
+  .card-header.bg-primary, .modal-header.bg-primary {
+    background: linear-gradient(90deg, #ff4d4f 0%, #ff7875 100%) !important;
+    color: #fff !important;
+  }
+  .form-control:focus {
+    border-color: #ff4d4f;
+    box-shadow: 0 0 0 0.2rem rgba(255,77,79,.15);
+  }
+  /* User profile icon in red */
+  .fa-user, .fa-user-circle, .fa-user-alt {
+    color: #ff4d4f !important;
   }
 </style>

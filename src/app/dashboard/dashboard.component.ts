@@ -20,6 +20,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Search and Filter
   searchQuery: string = '';
   selectedGenre: string = '';
+  selectedGenres: string[] = [];
   selectedLanguage: string = '';
   selectedRating: number = 0;
   sortBy: 'name' | 'rating' | 'releaseDate' | 'price' = 'name';
@@ -119,8 +120,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(movie =>
         movie.title.toLowerCase().includes(query) ||
-        movie.description.toLowerCase().includes(query) ||
-        movie.genre.toLowerCase().includes(query)
+        movie.description.toLowerCase().includes(query)
+      );
+    }
+
+    // Genre filter (pattern match: static genre in any part of movie.genre string)
+    if (this.selectedGenre) {
+      const genrePattern = this.selectedGenre.toLowerCase();
+      filtered = filtered.filter(movie =>
+        movie.genre && movie.genre.toLowerCase().includes(genrePattern)
+      );
+    }
+
+    // Language filter (single select)
+    if (this.selectedLanguage) {
+      filtered = filtered.filter(movie =>
+        movie.language && movie.language === this.selectedLanguage
       );
     }
 
@@ -155,6 +170,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   clearFilters(): void {
     this.searchQuery = '';
     this.selectedGenre = '';
+    this.selectedGenres = [];
     this.selectedLanguage = '';
     this.selectedRating = 0;
     this.filteredMovies = [...this.movies];
@@ -247,5 +263,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   goToMovieDetails(movie: Movie): void {
     this.router.navigate(['/movie', movie.movieId]);
+  }
+
+  get allGenres(): string[] {
+    return this.genres;
+  }
+
+  toggleAllGenres(event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) {
+      this.selectedGenres = [];
+    }
+    this.applyFilters();
+  }
+
+  toggleGenre(genre: string, event: Event): void {
+    const checked = (event.target as HTMLInputElement).checked;
+    if (checked) {
+      if (!this.selectedGenres.includes(genre)) {
+        this.selectedGenres.push(genre);
+      }
+    } else {
+      this.selectedGenres = this.selectedGenres.filter(g => g !== genre);
+    }
+    this.applyFilters();
   }
 }

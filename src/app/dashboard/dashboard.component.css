@@ -13,6 +13,10 @@
   font-weight: 700;
 }
 
+.movie-poster-img{
+  height: 230px !important;
+}
+
 .user-menu {
   position: relative;
   cursor: pointer;
