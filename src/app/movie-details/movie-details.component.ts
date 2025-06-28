@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService, Movie, MovieReview, MovieComment } from '../services/movie.service';
 import { AuthService } from '../services/auth.service';
+import { CityService } from '../services/city.service'; // Import CityService
 
 @Component({
   selector: 'app-movie-details',
@@ -55,6 +56,10 @@ export class MovieDetailsComponent implements OnInit {
   // Add this property to control the comment modal
   showCommentModal = false;
 
+  // Cities
+  cities: any[] = [];
+  selectedCityId: number | null = null;
+
   toastMessage = '';
   toastType: 'success' | 'error' | 'info' = 'info';
   showToast = false;
@@ -63,7 +68,8 @@ export class MovieDetailsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private movieService: MovieService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cityService: CityService // Inject CityService
   ) { }
 
   showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
@@ -76,6 +82,15 @@ export class MovieDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.loadMovieDetails();
+    this.getAllCities(); // Fetch cities on init
+  }
+
+  getAllCities() {
+    // Replace with your actual city service call
+    this.cityService.getCities().subscribe({
+      next: (cities) => { this.cities = cities; },
+      error: () => { /* handle error if needed */ }
+    });
   }
 
   loadMovieDetails(): void {
@@ -318,7 +333,12 @@ export class MovieDetailsComponent implements OnInit {
 
   goToTheatres(): void {
     const movieId = Number(this.route.snapshot.paramMap.get('id'));
-    this.router.navigate(['/theatres', movieId]);
+    // Pass both movieId and cityId as route params: /theatres/:movieId/:cityId
+    if (this.selectedCityId) {
+      this.router.navigate(['/theatres', movieId, this.selectedCityId]);
+    } else {
+      this.router.navigate(['/theatres', movieId]);
+    }
   }
 
   goToDashboard(): void {

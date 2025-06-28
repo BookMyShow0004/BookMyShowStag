@@ -176,8 +176,8 @@ export class MovieService {
     return this.http.post(`${this.apiUrl}/Bookings`, booking);
   }
 
-  getTheatresByMovieId(movieId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/Theatres/ByMovie/${movieId}`);
+  getTheatresByMovieId(movieId: number, cityId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/Theatres/ByMovieAndCity/${movieId}/${cityId}`);
   }
 
   getSeatsForShow(movieId: number, theatreId: number, showTime: string): Observable<Seat[]> {

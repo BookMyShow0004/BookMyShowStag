@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 })
 export class BookTicketsComponent implements OnInit {
   @Input() movie: Movie | null = null;
+  @Input() cityId: number | null = null;
   @Output() bookingComplete = new EventEmitter<void>();
 
   theatres: Theatre[] = [];
@@ -26,8 +27,8 @@ export class BookTicketsComponent implements OnInit {
   constructor(private movieService: MovieService, private seatService: SeatService, private router: Router) {}
 
   ngOnInit(): void {
-    if (this.movie) {
-      this.movieService.getTheatresByMovieId(this.movie.movieId).subscribe((theatres: Theatre[]) => {
+    if (this.movie && this.cityId) {
+      this.movieService.getTheatresByMovieId(this.movie.movieId, this.cityId).subscribe((theatres: Theatre[]) => {
         this.theatres = theatres;
       });
     }

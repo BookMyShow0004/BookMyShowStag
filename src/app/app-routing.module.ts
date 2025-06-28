@@ -21,6 +21,7 @@ const routes: Routes = [
   { path: 'movie/:id', component: MovieDetailsComponent },
   { path: 'theatres', component: TheatresComponent },
   { path: 'theatres/:id', component: TheatresComponent },
+  { path: 'theatres/:id/:cityId', component: TheatresComponent },
   { path: 'my-bookings', component: MyBookingsComponent },
   { path: 'shows/:movieId/:theatreId', component: ShowListComponent },
   { path: 'seat-selection/:showId', component: SeatSelectionComponent },

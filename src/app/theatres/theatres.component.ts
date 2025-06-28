@@ -15,6 +15,7 @@ export class TheatresComponent implements OnInit {
   errorMessage: string = '';
   currentUser: any = null;
   movieId: number | null = null;
+  cityId: number | null = null;
   movieTitle: string | null = null;
 
   // Search and Filter
@@ -59,6 +60,7 @@ export class TheatresComponent implements OnInit {
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
     this.movieId = Number(this.route.snapshot.paramMap.get('id'));
+    this.cityId = this.route.snapshot.paramMap.get('cityId') ? Number(this.route.snapshot.paramMap.get('cityId')) : null;
     if (this.movieId) {
       this.movieService.getMovieById(this.movieId).subscribe({
         next: (movie) => {
@@ -76,46 +78,53 @@ export class TheatresComponent implements OnInit {
   loadTheatres(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    const movieId = Number(this.route.snapshot.paramMap.get('id'));
-    this.movieService.getTheatresByMovieId(movieId).subscribe({
-      next: (theatres: Theatre[]) => {
-        let loadedCount = 0;
-        if (theatres.length === 0) {
-          this.theatres = [];
-          this.filteredTheatres = [];
-          this.isLoading = false;
-          return;
-        }
-        theatres.forEach((theatre, idx) => {
-          this.movieService.getShowTimeByMovieAndTheatre(movieId, theatre.theatreId).subscribe({
-            next: (shows: any[]) => {
-              theatre.showTimes = shows.map(show => new Date(show.showDateTime).toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
-              loadedCount++;
-              if (loadedCount === theatres.length) {
-                this.theatres = theatres;
-                this.filteredTheatres = theatres;
-                this.isLoading = false;
+    const movieId = this.movieId;
+    const cityId = this.cityId;
+    if (movieId && cityId) {
+      this.movieService.getTheatresByMovieId(movieId, cityId).subscribe({
+        next: (theatres: Theatre[]) => {
+          let loadedCount = 0;
+          if (theatres.length === 0) {
+            this.theatres = [];
+            this.filteredTheatres = [];
+            this.isLoading = false;
+            return;
+          }
+          theatres.forEach((theatre, idx) => {
+            this.movieService.getShowTimeByMovieAndTheatre(movieId, theatre.theatreId).subscribe({
+              next: (shows: any[]) => {
+                theatre.showTimes = shows.map(show => new Date(show.showDateTime).toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: true }));
+                loadedCount++;
+                if (loadedCount === theatres.length) {
+                  this.theatres = theatres;
+                  this.filteredTheatres = theatres;
+                  this.isLoading = false;
+                }
+              },
+              error: () => {
+                theatre.showTimes = [];
+                loadedCount++;
+                if (loadedCount === theatres.length) {
+                  this.theatres = theatres;
+                  this.filteredTheatres = theatres;
+                  this.isLoading = false;
+                }
+                this.showToastMessage('Failed to load showtimes.', 'error');
               }
-            },
-            error: () => {
-              theatre.showTimes = [];
-              loadedCount++;
-              if (loadedCount === theatres.length) {
-                this.theatres = theatres;
-                this.filteredTheatres = theatres;
-                this.isLoading = false;
-              }
-              this.showToastMessage('Failed to load showtimes.', 'error');
-            }
+            });
           });
-        });
-      },
-      error: (error: any) => {
-        this.errorMessage = 'Failed to load theatres';
-        this.isLoading = false;
-        this.showToastMessage(this.errorMessage, 'error');
-      }
-    });
+        },
+        error: (error: any) => {
+          this.errorMessage = 'Failed to load theatres';
+          this.isLoading = false;
+          this.showToastMessage(this.errorMessage, 'error');
+        }
+      });
+    } else {
+      this.errorMessage = 'Movie and City are required to load theatres.';
+      this.isLoading = false;
+      this.showToastMessage(this.errorMessage, 'error');
+    }
   }
 
   onSearch(): void {

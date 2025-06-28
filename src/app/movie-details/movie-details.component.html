@@ -178,6 +178,14 @@
         </div>
       </div>
 
+      <!-- City Dropdown Section -->
+      <div class="info-section">
+        <label for="cityDropdown" class="form-label">Select City</label>
+        <select id="cityDropdown" class="form-select mb-3" [(ngModel)]="selectedCityId">
+          <option *ngFor="let city of cities" [value]="city.cityId">{{ city.cityName }}</option>
+        </select>
+      </div>
+
       <div class="action-buttons">
         <button class="btn btn-primary" (click)="goToTheatres()">
           <i class="fas fa-ticket-alt"></i> Book Tickets
