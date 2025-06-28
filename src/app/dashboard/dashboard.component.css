@@ -119,3 +119,41 @@
 * {
   box-sizing: border-box;
 }
+
+
+@media(max-width: 768px) {
+  /* .movie-card-hover {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  
+  .card-img-top {
+    height: 200px;
+  }
+  
+  .movie-overlay {
+    padding: 0.5rem;
+  }
+  
+  .movie-rating {
+    top: 10px;
+    right: 10px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  } */
+   .mob-view{
+    display: flex !important;
+    flex-direction: column;
+    padding-right: 0;
+    padding-left: 33px;
+   }
+
+   .mob-search-view{
+    margin-top: 10px;
+width: 92% !important;
+   }
+
+   .mob-width-fix{
+    width: 92% !important;
+   }
+}

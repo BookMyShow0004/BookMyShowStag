@@ -259,4 +259,29 @@ export class MyBookingsComponent implements OnInit {
   getTheatreIdFromBooking(booking: Booking): number | null {
     return (booking as any).theatreId || null;
   }
+
+  confirmCancel(bookingId: number, event: Event): void {
+    event.stopPropagation();
+    this.selectedBooking = this.bookings.find(b => b.bookingId === bookingId) || null;
+    this.showCancelModal = true;
+  }
+
+  confirmReschedule(booking: any): void {
+    this.selectedBooking = booking;
+    this.showRescheduleModal = true;
+  }
+
+  onCancelModalConfirm(): void {
+    if (this.selectedBooking) {
+      this.cancelBooking(this.selectedBooking.bookingId);
+    }
+    this.closeCancelModal();
+  }
+
+  onRescheduleModalConfirm(): void {
+    if (this.selectedBooking) {
+      this.goToRescheduleShows(this.selectedBooking);
+    }
+    this.closeRescheduleModal();
+  }
 }

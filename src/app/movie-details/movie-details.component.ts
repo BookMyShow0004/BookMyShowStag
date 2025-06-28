@@ -49,6 +49,12 @@ export class MovieDetailsComponent implements OnInit {
   reviewError: string = '';
   reviewSuccess: string = '';
 
+  // Add this property to hold the last submitted review
+  lastSubmittedReview: any = null;
+
+  // Add this property to control the comment modal
+  showCommentModal = false;
+
   toastMessage = '';
   toastType: 'success' | 'error' | 'info' = 'info';
   showToast = false;
@@ -360,6 +366,13 @@ export class MovieDetailsComponent implements OnInit {
     };
     this.movieService.addReview(review).subscribe({
       next: () => {
+        // Set lastSubmittedReview so it appears in the comment section
+        this.lastSubmittedReview = {
+          userName: this.currentUser?.fullName || 'You',
+          content: this.reviewComment,
+          createdAt: new Date(),
+          // Add other fields if needed
+        };
         this.reviewSuccess = 'Review submitted successfully!';
         this.reviewSubmitting = false;
         this.showReviewModal = false;

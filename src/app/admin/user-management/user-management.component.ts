@@ -32,13 +32,15 @@ export class UserManagementComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.fetchUsers();
-   this.fetchCities();
+    this.fetchCitiesAndUsers();
   }
 
-  fetchCities() {
-     this.cityService.getCities().subscribe({
-      next: (cities) => { this.cities = cities; },
+  fetchCitiesAndUsers() {
+    this.cityService.getCities().subscribe({
+      next: (cities) => {
+        this.cities = cities;
+        this.fetchUsers(); // Fetch users only after cities are loaded
+      },
       error: () => { this.error = 'Failed to load cities'; }
     });
   }
@@ -47,20 +49,11 @@ export class UserManagementComponent implements OnInit {
     this.isLoading = true;
     this.userService.getUsers().subscribe({
       next: (data) => {
-        // The API returns city as a string, not cityId
-        
-        console.log(this.cities);
-        this.users = data.map(u => {
-          // console.log(data)
-          // Try to map city string to cityId if possible
-          const cityObj = this.cities.find(c => c.cityName === u.city);
-
-          return {
-            ...u,
-            cityId: cityObj ? cityObj.cityId : 0, // fallback to 0 if not found
-            city: u.city // always keep city string for display
-          };
-        });
+        this.users = data.map(u => ({
+          ...u,
+          cityId: u.cityId, // Use cityId directly from API
+          cityName: u.cityName // Use cityName directly from API
+        }));
         this.isLoading = false;
       },
       error: (err) => {

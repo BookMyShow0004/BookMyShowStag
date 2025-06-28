@@ -120,7 +120,7 @@ export class MovieService {
   }
 
   deleteMovie(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/Movies/${id}`);
+    return this.http.delete(`${this.apiUrl}/Movies/${id}`, { responseType: 'text' });
   }
 
   // Reviews

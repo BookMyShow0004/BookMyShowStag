@@ -2,7 +2,7 @@
   <div class="col-md-8">
     <div class="card shadow mb-4">
       <div class="card-header d-flex align-items-center"
-        style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #fff; font-weight: bold; font-size: 1.15rem;">
+        style="background: #ff4d4f; color: #fff; font-weight: bold; font-size: 1.15rem;">
         <i class="fas fa-chair"></i>&nbsp;
         <span>Seat Management</span>
       </div>
@@ -41,7 +41,7 @@
             </button>
           </div>
           <div class="text-right">
-            <button class="btn btn-success" [disabled]="selectedSeats.length === 0" (click)="bookSeats()">Book Selected
+            <button class="btn btn-success" style="background-color: #ff4d4f; border-color: #ff4d4f;" [disabled]="selectedSeats.length === 0" (click)="bookSeats()">Book Selected
               Seats</button>
           </div>
         </div>

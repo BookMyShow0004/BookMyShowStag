@@ -47,7 +47,7 @@
 }
 
 .header-brand h1 i {
-  color: #007bff;
+  color: #ff4d4f;
 }
 
 .header-tagline {
@@ -123,7 +123,7 @@
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: #007bff;
+  background: #ff4d4f;
   color: white;
   display: flex;
   align-items: center;
@@ -212,10 +212,13 @@
 
 @media (max-width: 576px) {
   .app-header {
-    padding: 0 1rem;
   }
   .user-name {
     display: none;
+  }
+  .navbar-fix{
+    display: flex;
+    justify-content: space-around;
   }
   .auth-btn span {
     display: none;

@@ -62,10 +62,10 @@
           </div>
           <div class="mt-2" *ngIf="booking.status !== 'cancelled'">
             <button class="btn btn-danger btn-sm" type="button" [disabled]="isProcessing"
-              (click)="cancelBooking(booking.bookingId, $event)">
+              (click)="confirmCancel(booking.bookingId, $event)">
               <i class="fas fa-times"></i> Cancel Booking
             </button>
-            <button class="btn btn-primary btn-sm ms-2" type="button" (click)="goToRescheduleShows(booking)">
+            <button class="btn btn-primary btn-sm ms-2" type="button" (click)="confirmReschedule(booking)">
               <i class="fas fa-calendar-alt"></i> Reschedule
             </button>
           </div>
@@ -85,5 +85,43 @@
         <a routerLink="/dashboard" class="btn-explore">Explore Movies</a>
       </div>
     </ng-template>
+  </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{display: showCancelModal ? 'block' : 'none', background: 'rgba(0,0,0,0.5)'}" *ngIf="showCancelModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Cancel Booking</h5>
+        <button type="button" class="btn-close" (click)="closeCancelModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>Are you sure you want to cancel this booking?</p>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+          <button class="btn btn-danger" (click)="onCancelModalConfirm()">Yes, Cancel</button>
+          <button class="btn btn-secondary" (click)="closeCancelModal()">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reschedule Confirmation Modal -->
+<div class="modal fade show" tabindex="-1" [ngStyle]="{display: showRescheduleModal ? 'block' : 'none', background: 'rgba(0,0,0,0.5)'}" *ngIf="showRescheduleModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">Reschedule Booking</h5>
+        <button type="button" class="btn-close" (click)="closeRescheduleModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>Are you sure you want to reschedule this booking?</p>
+        <div class="d-flex justify-content-center gap-2 mt-3">
+          <button class="btn btn-primary" (click)="onRescheduleModalConfirm()">Yes, Reschedule</button>
+          <button class="btn btn-secondary" (click)="closeRescheduleModal()">No</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

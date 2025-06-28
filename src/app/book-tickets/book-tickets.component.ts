@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { Movie, Theatre, MovieService } from '../services/movie.service';
 import { Seat, SeatService } from '../services/seat.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-book-tickets',
@@ -19,7 +20,10 @@ export class BookTicketsComponent implements OnInit {
   seats: Seat[] = [];
   selectedSeats: Seat[] = [];
 
-  constructor(private movieService: MovieService, private seatService: SeatService) {}
+  showSuccessModal: boolean = false;
+  bookingDetails: any = null;
+
+  constructor(private movieService: MovieService, private seatService: SeatService, private router: Router) {}
 
   ngOnInit(): void {
     if (this.movie) {
@@ -62,6 +66,11 @@ export class BookTicketsComponent implements OnInit {
     }
   }
 
+  get bookingSeatNumbers(): string {
+    return this.bookingDetails && this.bookingDetails.seats
+      ? this.bookingDetails.seats.map((s: any) => s.seatNumber).join(', ')
+      : '';
+  }
 
   confirmBooking(): void {
     if (!this.selectedTheatre || !this.selectedShowtime || this.selectedSeats.length === 0) return;
@@ -80,9 +89,25 @@ export class BookTicketsComponent implements OnInit {
     };
     console.log('Booking payload:', booking);
     this.movieService.createBooking(booking).subscribe(response => {
-      // Handle booking confirmation (success/failure)
-      this.bookingComplete.emit();
+      // Save booking details for modal
+      this.bookingDetails = {
+        movie: this.movie,
+        theatre: this.selectedTheatre,
+        showtime: this.selectedShowtime,
+        seats: [...this.selectedSeats]
+      };
+      this.showSuccessModal = true;
+      // Do NOT emit bookingComplete here to prevent parent navigation
       this.resetState();
     });
+  }
+
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
+  }
+
+  goToDashboard(): void {
+    this.showSuccessModal = false;
+    this.router.navigate(['/dashboard']);
   }
 }

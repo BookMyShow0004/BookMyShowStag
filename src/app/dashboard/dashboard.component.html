@@ -4,7 +4,7 @@
     <ng-container *ngIf="showSidebar">
       <div class="col-12 col-md-3 mb-4 sidebar-col">
         <div class="card h-100">
-          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center" style="cursor:pointer; color: #ff4d4f; background: #fff; border-bottom: 2px solid #ff4d4f;" (click)="showSidebar = false">
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center" style="cursor:pointer; color: #ff4d4f; background: #ff4d4f !important; border-bottom: 2px solid #ff4d4f;" (click)="showSidebar = false">
             <span><i class="fas fa-star"></i> Suggested Movies</span>
             <i class="fas fa-chevron-left" style="cursor:pointer;"></i>
           </div>
@@ -25,7 +25,7 @@
     <!-- Sidebar Toggle Button (when sidebar is hidden) -->
     <ng-container *ngIf="!showSidebar">
       <div class="col-12 col-md-1 d-flex align-items-start justify-content-start sidebar-toggle-btn" style="min-width:40px;">
-        <button class="btn btn-outline-success mt-2" (click)="showSidebar = true" style="border-radius:50%; width:40px; height:40px;">
+        <button class="btn mt-2 " (click)="showSidebar = true" style=" color:#ff4d4f; border-radius:50%; width:40px; height:40px;">
           <i class="fas fa-chevron-right"></i>
         </button>
       </div>
@@ -34,14 +34,14 @@
     <div [ngClass]="showSidebar ? 'col-12 col-md-9' : 'col-12 col-md-11'">
       <!-- Search and Filter Bar -->
       <div class="row mb-4 mt-4 justify-content-center align-items-center">
-        <div class="col-12 col-md-6 col-lg-5 mb-2 d-flex">
-          <div class="input-group shadow-sm rounded-pill flex-grow-1" style="width: 900px;min-width: 0;">
+        <div class="col-12 col-md-6 col-lg-5 mb-2 d-flex mob-view">
+          <div class="input-group shadow-sm rounded-pill flex-grow-1 mob-search-view" style="width: 900px;min-width: 0;">
             <input type="text" class="form-control border-0 rounded-pill"
               style="border-radius: 50px !important; min-width: 0;"
               placeholder="Search movies by Title or Description" [(ngModel)]="searchQuery" (input)="onSearch()">
           </div>
           <div style="width: 24px;"></div>
-          <div class="input-group shadow-sm rounded-pill" style="width: 180px; min-width: 120px;">
+          <div class="input-group shadow-sm rounded-pill mob-search-view" style="width: 180px; min-width: 120px;">
             <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
               [(ngModel)]="selectedRating" (change)="onFilterChange()">
               <option value="0">All Ratings</option>
@@ -49,14 +49,14 @@
             </select>
           </div>
           <div style="width: 24px;"></div>
-          <div class="input-group shadow-sm rounded-pill" style="width: 180px; min-width: 120px; margin-right: 12px;">
+          <div class="input-group shadow-sm rounded-pill mob-search-view" style="width: 180px; min-width: 120px; margin-right: 12px;">
             <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
               [(ngModel)]="selectedGenre" (change)="onFilterChange()">
               <option value="">All Genres</option>
               <option *ngFor="let g of genres" [value]="g">{{g}}</option>
             </select>
           </div>
-          <div class="input-group shadow-sm rounded-pill" style="width: 400px; min-width: 120px; margin-right: 12px;">
+          <div class="input-group shadow-sm rounded-pill mob-search-view" style="width: 400px; min-width: 120px; margin-right: 12px;">
             <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
               [(ngModel)]="selectedLanguage" (change)="onFilterChange()">
               <option value="">All Languages</option>
@@ -64,7 +64,7 @@
             </select>
           </div>
           <!-- Sort Button -->
-          <div class="input-group shadow-sm rounded-pill" style="width: 200px; min-width: 120px; margin-right: 12px;">
+          <div class="input-group shadow-sm rounded-pill mob-search-view" style="width: 200px; min-width: 120px; margin-right: 12px;">
             <select class="form-control border-0 rounded-pill" style="border-radius: 50px !important;"
               [(ngModel)]="sortBy" (change)="onSortChange()">
               <option value="">Sort: Default</option>
@@ -80,7 +80,7 @@
 
       <!-- All Movies Grid -->
       <div class="mb-5">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 m-auto row-cols-lg-4 row-cols-xl-5 g-4"
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 m-auto row-cols-lg-4 row-cols-xl-5 g-4 mob-width-fix"
           *ngIf="filteredMovies.length > 0; else noMovies">
           <div class="col" *ngFor="let movie of filteredMovies; trackBy: trackBymovieId">
             <div class="card h-100 shadow-lg border-0 movie-card-hover position-relative overflow-hidden">
@@ -172,7 +172,10 @@
     z-index: 10;
   }
   @media (max-width: 767px) {
-    .sidebar-col, .sidebar-toggle-btn { width: 100% !important; min-width: 0 !important; }
+    .sidebar-col, .sidebar-toggle-btn { width: 92% !important; min-width: 0 !important;
+    padding-right: 0;
+    padding-left: 30px;
+    }
   }
 
   .btn-primary, .bg-primary, .text-primary {

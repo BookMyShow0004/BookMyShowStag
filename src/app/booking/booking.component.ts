@@ -16,6 +16,7 @@ export class BookingComponent implements OnInit {
   toastMessage = '';
   toastType: 'success' | 'error' | 'info' = 'info';
   showToast = false;
+  showSuccessModal = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -50,7 +51,7 @@ export class BookingComponent implements OnInit {
       next: () => {
         this.showToastMessage('Booking successful!', 'success');
         this.isLoading = false;
-        setTimeout(() => this.router.navigate(['/my-bookings']), 1000);
+        this.showSuccessModal = true;
       },
       error: (err) => {
         this.errorMessage = 'Booking failed. Please try again.';
@@ -58,5 +59,10 @@ export class BookingComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  goToDashboard(): void {
+    this.showSuccessModal = false;
+    this.router.navigate(['/dashboard']);
   }
 }
