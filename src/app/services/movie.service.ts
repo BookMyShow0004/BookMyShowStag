@@ -29,7 +29,7 @@ export interface MovieReview {
 
 export interface MovieComment {
   commentId: number;
-  userId: number; // <-- Add this line
+  userId: number; 
   userName: string;
   movieTitle: string;
   content: string;
@@ -48,7 +48,7 @@ export interface Booking {
   bookingTime: string;
   totalAmount: number;
   seatNumbers: string[];
-  status?: string; // Optional status property for cancellation state
+  status?: string; 
 }
 
 export interface Theatre {
@@ -89,9 +89,8 @@ export interface Show {
   theatreId: number;
   showDateTime: string;
   ticketPrice: string;
-  theatreName?: string; // Optional, can be fetched separately
-  movieTitle?: string; // Optional, can be fetched separately
-  // Add other fields as needed
+  theatreName?: string; 
+  movieTitle?: string; 
 }
 
 @Injectable({
@@ -102,7 +101,6 @@ export class MovieService {
 
   constructor(private http: HttpClient) { }
 
-  // Movies
   getMovies(): Observable<Movie[]> {
     return this.http.get<Movie[]>(`${this.apiUrl}/Movies`);
   }
@@ -123,7 +121,6 @@ export class MovieService {
     return this.http.delete(`${this.apiUrl}/Movies/${id}`, { responseType: 'text' });
   }
 
-  // Reviews
   getMovieReviews(movieId: number): Observable<MovieReview[]> {
     return this.http.get<MovieReview[]>(`${this.apiUrl}/Reviews?movieId=${movieId}`);
   }
@@ -140,12 +137,11 @@ export class MovieService {
     return this.http.delete(`${this.apiUrl}/Reviews/${id}`);
   }
 
-  // Add this method to fetch all reviews
   getAllReviews(): Observable<MovieReview[]> {
     return this.http.get<MovieReview[]>(`${this.apiUrl}/Reviews`);
   }
 
-  // Comments
+  
   getMovieComments(movieId: number): Observable<MovieComment[]> {
     return this.http.get<MovieComment[]>(`${this.apiUrl}/Comments/ByMovie/${movieId}`);
   }
@@ -155,7 +151,6 @@ export class MovieService {
   }
 
   addComment(comment: any): Observable<any> {
-    // Set responseType: 'text' to handle plain text backend responses
     return this.http.post(`${this.apiUrl}/Comments`, comment, { responseType: 'text' });
   }
 
@@ -163,7 +158,6 @@ export class MovieService {
     return this.http.delete(`${this.apiUrl}/Comments/${id}`);
   }
 
-  // Bookings
   getBookings(): Observable<Booking[]> {
     return this.http.get<Booking[]>(`${this.apiUrl}/Bookings`);
   }
@@ -240,12 +234,15 @@ export class MovieService {
     return this.http.get<Booking[]>(`${this.apiUrl}/Bookings/ByUser/${userId}`);
   }
 
-  // Likes
   addLike(movieId: number, userId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/Likes`, { movieId, userId }, { responseType: 'text' });
   }
 
   getTotalLikes(movieId: number): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/Likes/count/${movieId}`);
+  }
+
+  deleteTheatre(theatreId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/Theatres/ByCity/${theatreId}`);
   }
 }

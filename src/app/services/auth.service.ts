@@ -9,7 +9,6 @@ export interface User {
   email: string;
   role: 'Admin' | 'User';
   cityId: number;
-  // Optional fields that may be part of the profile but not login response
   phone?: string;
   city?: string;
   avatar?: string;
@@ -42,7 +41,7 @@ export interface RegisterRequest {
 export interface ChangePasswordRequest {
   currentPassword: string;
   newPassword: string;
-  confirmPassword?: string; // Used only for UI validation
+  confirmPassword?: string; 
 }
 
 export interface UpdateProfileRequest {
@@ -52,7 +51,7 @@ export interface UpdateProfileRequest {
   dateOfBirth?: string;
   gender?: string;
   avatar?: string;
-  email?: string; // Optional, used for profile update
+  email?: string; 
 }
 
 @Injectable({
@@ -80,24 +79,20 @@ export class AuthService {
           this.currentUserSubject.next(user);
           this.isAuthenticatedSubject.next(true);
         } else {
-          // Invalid user data, remove it
           localStorage.removeItem('currentUser');
         }
       } catch (error) {
-        // Invalid JSON, remove it
         localStorage.removeItem('currentUser');
       }
     }
   }
 
-  // Method to ensure user state is properly initialized
   public ensureUserState(): void {
     if (!this.currentUserSubject.value) {
       this.checkStoredAuth();
     }
   }
 
-  // Method to refresh user state from localStorage
   public refreshUserState(): void {
     this.checkStoredAuth();
   }
@@ -107,7 +102,7 @@ export class AuthService {
   ): Observable<{ success: boolean; message: string; user?: User }> {
     return this.http
       .post<User>(`${this.apiUrl}/Users/Login`, request, {
-        headers: new HttpHeaders({ 'Content-Type': 'application/json' }), // Important!
+        headers: new HttpHeaders({ 'Content-Type': 'application/json' }), 
       })
       .pipe(
         map((user) => {
@@ -192,13 +187,12 @@ export class AuthService {
       newPassword: request.newPassword,
     };
 
-    // ✅ Set responseType to 'text'
     return this.http
       .post(
         `${this.apiUrl}/Users/ChangePassword?userId=${currentUser.userId}`,
         body,
         {
-          responseType: 'text', // 👈 This prevents the JSON parsing error
+          responseType: 'text', 
         }
       )
       .pipe(
@@ -223,7 +217,6 @@ export class AuthService {
     if (!currentUser) {
       return of({ success: false, message: 'User not authenticated' });
     }
-    // Use the new backend API to update the user profile
     const body = {
       userId: currentUser.userId,
       fullName: request.name,
@@ -268,7 +261,6 @@ export class AuthService {
   getCurrentUser(): User | null {
     const currentUser = this.currentUserSubject.value;
     if (!currentUser) return null;
-    // Fetch the latest user data from the backend using userId
     this.http.get<User>(`${this.apiUrl}/Users/${currentUser.userId}`).subscribe({
       next: (user) => {
         this.currentUserSubject.next(user);
@@ -276,7 +268,6 @@ export class AuthService {
         sessionStorage.setItem('currentUser', JSON.stringify(user));
       },
       error: (err) => {
-        // Optionally handle error, fallback to cached user
       }
     });
     return currentUser;

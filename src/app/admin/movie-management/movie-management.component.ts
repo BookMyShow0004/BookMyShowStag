@@ -30,7 +30,6 @@ export class MovieManagementComponent implements OnInit {
       genre: ['', Validators.required],
       language: ['', Validators.required],
       releaseDate: ['', Validators.required]
-      // posterFile removed from form group
     });
   }
 
@@ -49,7 +48,6 @@ export class MovieManagementComponent implements OnInit {
     this.editMode = false;
     this.movieForm.reset();
     this.isFormVisible = true;
-    // Explicitly clear file input
     this.clearFileInput();
   }
 
@@ -71,7 +69,6 @@ export class MovieManagementComponent implements OnInit {
       releaseDate: movie.releaseDate
     });
     this.selectedPosterFile = null;
-    // Do NOT clear file input here; let user select a file if they want to update image
   }
 
   deleteMovie(id: number): void {
@@ -91,9 +88,8 @@ export class MovieManagementComponent implements OnInit {
   onFileChange(event: any) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-      // Validate file type (JPEG/PNG) and size (max 2MB)
       const validTypes = ['image/jpeg', 'image/png'];
-      const maxSize = 2 * 1024 * 1024; // 2MB
+      const maxSize = 2 * 1024 * 1024; 
       if (!validTypes.includes(file.type)) {
         this.alertService.showAlert('Only JPEG and PNG images are allowed.');
         this.clearFileInput();
@@ -109,7 +105,7 @@ export class MovieManagementComponent implements OnInit {
   }
 
   async onFormSubmit(): Promise<void> {
-    // For add: require posterFile, for edit: optional
+    
     if (
       this.movieForm.invalid ||
       (!this.editMode && !this.selectedPosterFile)
@@ -128,12 +124,9 @@ export class MovieManagementComponent implements OnInit {
       formData.append('PosterFile', this.selectedPosterFile);
       console.log('Appending file:', this.selectedPosterFile);
     }
-    // Set createdByUserId from localStorage
     const currentUser = localStorage.getItem('currentUser');
     const userId = currentUser ? JSON.parse(currentUser).userId : null;
     formData.append('createdByUserId', userId);
-    // Debug: log all FormData entries
-    // @ts-ignore
     for (const pair of (formData as any).entries()) {
       console.log('FormData:', pair[0], pair[1]);
     }
@@ -164,7 +157,6 @@ export class MovieManagementComponent implements OnInit {
   }
 
   base64ToBlob(base64: string, mime: string): Blob {
-    // Remove data URL prefix if present
     const base64Data = base64.split(',')[1] || base64;
     const byteCharacters = atob(base64Data);
     const byteNumbers = new Array(byteCharacters.length);
@@ -184,7 +176,6 @@ export class MovieManagementComponent implements OnInit {
   }
 
   clearFileInput(): void {
-    // Clear the file input manually (if you use a template ref, e.g. #fileInput)
     const fileInput = document.getElementById('posterFile') as HTMLInputElement;
     if (fileInput) fileInput.value = '';
   }

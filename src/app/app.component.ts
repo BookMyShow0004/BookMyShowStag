@@ -23,7 +23,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
-      // Hide header on login and signup pages
       if (event.url.startsWith('/login') || event.url.startsWith('/signup')) {
         this.showHeader = false;
       } else {
@@ -31,12 +30,10 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Refresh user state when window gains focus (user returns to tab)
     window.addEventListener('focus', this.focusHandler);
   }
 
   ngOnDestroy(): void {
-    // Cleanup event listener
     window.removeEventListener('focus', this.focusHandler);
   }
 

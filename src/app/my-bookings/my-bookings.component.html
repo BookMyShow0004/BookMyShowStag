@@ -3,26 +3,23 @@
     <h1 class="header-title">My Bookings</h1>
   </header>
 
-  <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-state">
     <i class="fas fa-spinner fa-spin"></i>
     <p>Loading your bookings...</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage && !isLoading" class="error-state">
     <i class="fas fa-exclamation-triangle"></i>
     <p>{{ errorMessage }}</p>
   </div>
 
-  <!-- Success State -->
   <div *ngIf="successMessage && !isLoading" class="success-state">
     <i class="fas fa-check-circle"></i>
     <p>{{ successMessage }}</p>
   </div>
 
   <div *ngIf="!isLoading && !errorMessage">
-    <!-- Tabs -->
+
     <nav class="tabs-nav">
       <button class="tab-btn" [class.active]="activeTab === 'upcoming'" (click)="setActiveTab('upcoming')">
         Upcoming
@@ -32,7 +29,6 @@
       </button>
     </nav>
 
-    <!-- Bookings Grid -->
     <div *ngIf="getActiveBookings().length > 0; else noBookings" class="bookings-grid">
       <div class="booking-card" *ngFor="let booking of getActiveBookings()">
         <div class="booking-card-header">
@@ -76,7 +72,6 @@
       </div>
     </div>
 
-    <!-- Empty State -->
     <ng-template #noBookings>
       <div class="empty-state">
         <i class="fas fa-ticket-alt"></i>
@@ -88,7 +83,6 @@
   </div>
 </div>
 
-<!-- Cancel Confirmation Modal -->
 <div class="modal fade show" tabindex="-1" [ngStyle]="{display: showCancelModal ? 'block' : 'none', background: 'rgba(0,0,0,0.5)'}" *ngIf="showCancelModal">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -107,7 +101,6 @@
   </div>
 </div>
 
-<!-- Reschedule Confirmation Modal -->
 <div class="modal fade show" tabindex="-1" [ngStyle]="{display: showRescheduleModal ? 'block' : 'none', background: 'rgba(0,0,0,0.5)'}" *ngIf="showRescheduleModal">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">

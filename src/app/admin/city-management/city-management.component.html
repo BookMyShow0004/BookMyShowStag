@@ -1,6 +1,6 @@
 <div class="city-management">
   <div class="container-fluid">
-    <!-- Header -->
+    
     <div class="row mb-4">
       <div class="col-12">
         <h2 class="page-title">
@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <!-- Error/Success Messages -->
+    
     <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
       {{ errorMessage }}
       <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
@@ -22,7 +22,7 @@
     </div>
 
     <div class="row">
-      <!-- Add/Edit City Form -->
+      
       <div class="col-lg-4">
         <div class="card shadow-sm">
           <div class="card-header">
@@ -33,7 +33,7 @@
           </div>
           <div class="card-body">
             <form (ngSubmit)="onSubmit()" #cityForm="ngForm">
-              <!-- City Name -->
+          
               <div class="mb-3">
                 <label for="cityName" class="form-label">City Name</label>
                 <input 
@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <!-- City List Table -->
+    
       <div class="col-lg-8">
         <div class="card shadow-sm">
           <div class="card-header">
@@ -81,7 +81,6 @@
                   <td>{{ city.cityName }}</td>
                   <td>
                     <button class="btn btn-sm btn-info me-2" (click)="onEdit(city)"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-sm btn-danger" (click)="onDelete(city)"><i class="fas fa-trash"></i></button>
                   </td>
                 </tr>
               </tbody>

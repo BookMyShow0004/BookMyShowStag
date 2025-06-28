@@ -55,7 +55,6 @@ export class ShowSeatManagementComponent implements OnInit {
     this.movieService.getTheatres('').subscribe({
       next: (theatres) => { this.theatres = theatres; }
     });
-    // Use switchMap to handle rapid showId changes and avoid race conditions
     this.seatForm.get('showId')?.valueChanges.pipe(
       tap(() => {
         this.filteredSeats = [];
@@ -110,23 +109,21 @@ export class ShowSeatManagementComponent implements OnInit {
 
   editShowSeat(seat: any): void {
     this.editingSeatId = seat.showSeatId;
-    // Patch both showId and seatId immediately
+
     this.seatForm.patchValue({
       showId: seat.showId,
       seatId: seat.seatId
     });
-    // Find the show and theatreId
+    
     const show = this.shows.find(s => s.showId == seat.showId);
     let theatreId = show?.theatreId;
     if (!theatreId && show?.theatreName) {
       const theatre = this.theatres.find(t => t.name === show.theatreName);
       theatreId = theatre?.theatreId;
     }
-    // If the seat is already in the dropdown, do nothing more
     if (this.filteredSeats.some(s => s.seatId === seat.seatId)) {
       return;
     }
-    // Otherwise, fetch the seats for the show and patch seatId after loading
     if (theatreId) {
       this.isSeatsLoading = true;
       this.seatForm.get('seatId')?.disable();
@@ -136,7 +133,6 @@ export class ShowSeatManagementComponent implements OnInit {
           this.seatTypes = Array.from(new Set(seats.map((s: any) => s.seatType)));
           this.isSeatsLoading = false;
           this.seatForm.get('seatId')?.enable();
-          // Patch seatId again after seats are loaded
           this.seatForm.patchValue({ seatId: seat.seatId });
         },
         error: () => {
@@ -166,13 +162,11 @@ export class ShowSeatManagementComponent implements OnInit {
 
   createShowSeat(): void {
     if (this.seatForm.invalid) return;
-    // Only pass showId and seatId to the API
     const seatData = {
       showId: this.seatForm.value.showId,
       seatId: this.seatForm.value.seatId
     };
     if (this.editingSeatId) {
-      // Update existing seat
       this.showSeatService.updateShowSeat(this.editingSeatId, seatData).subscribe({
         next: () => {
           this.alertService.showAlert('Show seat updated successfully!');
@@ -185,7 +179,6 @@ export class ShowSeatManagementComponent implements OnInit {
         }
       });
     } else {
-      // Create new seat
       this.showSeatService.createShowSeat(seatData).subscribe({
         next: () => {
           this.alertService.showAlert('Show seat created successfully!');
@@ -200,7 +193,6 @@ export class ShowSeatManagementComponent implements OnInit {
     }
   }
 
-  // Remove seat fetching logic from onShowChange, keep only patchValue and logs
   onShowChange(): void {
     const showId = this.seatForm.value.showId;
     const show = this.shows.find(s => s.showId == showId);
@@ -212,7 +204,7 @@ export class ShowSeatManagementComponent implements OnInit {
       console.log('Looked up theatreId from theatreName:', theatreId);
     }
     console.log('TheatreId:', theatreId);
-    this.seatForm.patchValue({ seatId: '' }); // Reset seat selection
+    this.seatForm.patchValue({ seatId: '' }); 
   }
 
   getMovieTitleByShow(show: any): string {
@@ -225,14 +217,12 @@ export class ShowSeatManagementComponent implements OnInit {
   }
 
   getTheatreNameByShow(show: any): string {
-    // Try to get theatreId from show, fallback to theatreName
     let theatreId = show.theatreId;
     let theatreName = show.theatreName;
     if (!theatreName && theatreId) {
       const theatre = this.theatres.find(t => t.theatreId === theatreId);
       theatreName = theatre ? theatre.name : '';
     }
-    // If still not found, try to match by show.showId in shows array
     if (!theatreName && show.showId) {
       const showObj = this.shows.find(s => s.showId === show.showId);
       if (showObj) {
@@ -251,7 +241,6 @@ export class ShowSeatManagementComponent implements OnInit {
     const details: string[] = [];
     if (seat.seatNumber) details.push(`Number: ${seat.seatNumber}`);
     if (seat.seatType) details.push(`Type: ${seat.seatType}`);
-    // Add theatre name or theatreId
     let theatreName = '';
     if (seat.theatreId || seat.theatreId) {
       const tid = seat.theatreId || seat.theatreId;

@@ -25,7 +25,7 @@
   font-family: 'Poppins', sans-serif;
   font-size: 2rem;
   font-weight: 700;
-  color: #007bff; /* Fuchsia */
+  color: #007bff; 
   margin-bottom: 0.5rem;
 }
 
@@ -61,7 +61,7 @@
 
 .form-control {
   width: 100%;
-  padding: 0.875rem 2.5rem 0.875rem 0.875rem; /* Right padding for icon */
+  padding: 0.875rem 2.5rem 0.875rem 0.875rem; 
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   background-color: #f9fafb;
@@ -71,7 +71,7 @@
 
 .form-control:focus {
   outline: none;
-  border-color: #a855f7; /* Purple */
+  border-color: #a855f7; 
   box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
 }
 
@@ -159,16 +159,16 @@
   font-family: 'Poppins', sans-serif;
   font-size: 2.25rem;
   font-weight: 700;
-  color: #0d6efd; /* Bootstrap primary blue */
+  color: #0d6efd; 
   margin-bottom: 0.5rem;
 }
 
 .logo-text span {
   font-weight: 400;
-  color: #343a40; /* Bootstrap dark gray */
+  color: #343a40; 
 }
 
-/* Ensure the floating label isn't overlapped by the password icon button */
+
 .input-group .form-floating {
   flex-grow: 1;
 }

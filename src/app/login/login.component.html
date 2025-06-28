@@ -4,7 +4,6 @@
   [show]="showToast">
 </app-toast-notification>
 
-<!-- Main login form -->
 <div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
   <div class="card shadow-sm" style="width: 100%; max-width: 450px;">
     <div class="card-body p-4 p-md-5">
@@ -15,7 +14,7 @@
       </div>
 
       <form (ngSubmit)="onLogin(loginForm)" #loginForm="ngForm">
-        <!-- Email Field -->
+
         <div class="form-floating mb-3">
           <input
             type="email"
@@ -31,7 +30,6 @@
           <label for="email">Email address</label>
         </div>
 
-        <!-- Password Field -->
         <div class="input-group mb-3">
           <div class="form-floating">
             <input
@@ -65,7 +63,6 @@
         </div>
       </div>
         
-        <!-- Login Options -->
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="form-check">
             <input
@@ -82,7 +79,6 @@
           </a>
         </div>
 
-        <!-- Submit Button -->
         <button type="submit" class="btn btn-primary w-100 btn-lg" [disabled]="isLoading">
           <span *ngIf="!isLoading">Sign In</span>
           <span *ngIf="isLoading">

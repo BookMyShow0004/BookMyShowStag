@@ -47,7 +47,6 @@ export class ShowManagementComponent implements OnInit {
   loadShows(): void {
     this.showService.getAllShows().subscribe({
       next: (shows) => {
-        // Filter out shows that do not have showId or showDateTime
         this.shows = (shows || []).filter(s => s.showId && s.showDateTime);
       },
       error: () => { this.errorMessage = 'Failed to load shows.'; }
@@ -60,7 +59,7 @@ export class ShowManagementComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
     if (this.editingShow) {
-      // Update show
+      
       this.showService.updateShow(this.editingShow.showId!, this.showData).subscribe({
         next: () => {
           this.isLoading = false;
@@ -95,7 +94,6 @@ export class ShowManagementComponent implements OnInit {
   }
 
   editShow(show: ShowApi): void {
-    // Wait for movies and theatres to be loaded before setting showData
     if (!this.movies.length || !this.theatres.length) {
       Promise.all([
         new Promise<void>(resolve => this.showService.getMovies().subscribe(movies => { this.movies = movies; resolve(); })),
@@ -109,7 +107,6 @@ export class ShowManagementComponent implements OnInit {
   }
 
   setShowDataForEdit(show: ShowApi): void {
-    // Fallback: find movieId/theatreId from title/name if missing
     let movieId = show.movieId;
     if (!movieId && show.movieTitle) {
       const movie = this.movies.find(m => m.title === show.movieTitle);
@@ -140,7 +137,6 @@ export class ShowManagementComponent implements OnInit {
   }
 
   formatDateTimeForInput(dateTime: string): string {
-    // Converts ISO string or date string to yyyy-MM-ddTHH:mm for input[type=datetime-local]
     const date = new Date(dateTime);
     const pad = (n: number) => n.toString().padStart(2, '0');
     const yyyy = date.getFullYear();
@@ -157,9 +153,7 @@ export class ShowManagementComponent implements OnInit {
     this.showService.deleteShow(show.showId).subscribe({
       next: () => {
         this.successMessage = 'Show deleted successfully!';
-        // Remove the deleted show from the local array immediately
         this.shows = this.shows.filter(s => s.showId !== show.showId);
-        // Optionally, reload from server for consistency
         setTimeout(() => this.loadShows(), 500);
       },
       error: () => {

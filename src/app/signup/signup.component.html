@@ -15,7 +15,6 @@
       </app-toast-notification>
 
       <form (ngSubmit)="onRegister()" #signupForm="ngForm">
-        <!-- Error/Success Messages -->
         <div *ngIf="errorMessage" class="alert alert-danger">
           {{ errorMessage }}
         </div>
@@ -24,7 +23,6 @@
         </div>
 
         <div class="row g-3">
-          <!-- Full Name -->
           <div class="col-md-6">
             <div class="form-floating">
               <input type="text" id="fullName" name="fullName" [(ngModel)]="registerData.fullName" required class="form-control" placeholder="John Doe">
@@ -32,7 +30,6 @@
             </div>
           </div>
 
-          <!-- Email -->
           <div class="col-md-6">
             <div class="form-floating">
               <input type="email" id="email" name="email" [(ngModel)]="registerData.email" required email class="form-control" placeholder="john.doe@example.com">
@@ -40,7 +37,6 @@
             </div>
           </div>
 
-          <!-- Password -->
           <div class="col-md-6">
             <div class="form-floating position-relative">
               <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="registerData.password" required class="form-control" placeholder="Password">
@@ -56,7 +52,6 @@
             </div>
           </div>
 
-          <!-- Confirm Password -->
           <div class="col-md-6">
             <div class="form-floating position-relative">
               <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" name="confirmPassword" [(ngModel)]="registerData.confirmPassword" required class="form-control" placeholder="Confirm Password">
@@ -67,7 +62,6 @@
             </div>
           </div>
 
-          <!-- City -->
           <div class="col-md-6">
             <div class="form-floating">
               <select id="city" name="city" [(ngModel)]="registerData.cityId" required class="form-select">
@@ -79,7 +73,6 @@
           </div>
         </div>
 
-        <!-- Actions -->
         <div class="form-group">
           <button type="submit" class="btn btn-primary w-100 btn-lg mt-4" [disabled]="isLoading || !signupForm.valid">
             <span *ngIf="!isLoading">Create Account</span>

@@ -1,6 +1,6 @@
 <div class="theatre-management">
   <div class="container-fluid">
-    <!-- Header -->
+    
     <div class="row mb-4">
       <div class="col-12">
         <h2 class="page-title">
@@ -11,7 +11,6 @@
       </div>
     </div>
 
-    <!-- Error/Success Messages -->
     <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
       {{ errorMessage }}
       <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
@@ -22,7 +21,6 @@
     </div>
 
     <div class="row">
-      <!-- Add Theatre Form -->
       <div class="col-lg-4">
         <div class="card shadow-sm">
           <div class="card-header">
@@ -33,7 +31,6 @@
           </div>
           <div class="card-body">
             <form (ngSubmit)="onSubmit()" #theatreForm="ngForm">
-              <!-- Theatre Name -->
               <div class="mb-3">
                 <label for="theatreName" class="form-label">Theatre Name</label>
                 <input 
@@ -46,7 +43,6 @@
                   placeholder="Enter theatre name">
               </div>
 
-              <!-- Theatre Address -->
               <div class="mb-3">
                 <label for="theatreAddress" class="form-label">Address</label>
                 <textarea 
@@ -59,7 +55,6 @@
                   placeholder="Enter theatre address"></textarea>
               </div>
 
-              <!-- City Selection -->
               <div class="mb-3">
                 <label for="city" class="form-label">City</label>
                 <select 
@@ -75,7 +70,6 @@
                 </select>
               </div>
 
-              <!-- Submit Button -->
               <div class="d-grid">
                 <button 
                   type="submit" 
@@ -96,7 +90,6 @@
         </div>
       </div>
 
-      <!-- Theatres List -->
       <div class="col-lg-8">
         <div class="card shadow-sm">
           <div class="card-header">
@@ -133,10 +126,10 @@
                       <span class="badge bg-info">{{ getCityName(theatre.cityId) }}</span>
                     </td>
                     <td>
-                      <button class="btn btn-sm btn-outline-primary me-2" title="Edit">
+                      <button class="btn btn-sm btn-outline-primary me-2" title="Edit" (click)="onEdit(theatre)">
                         <i class="fas fa-edit"></i>
                       </button>
-                      <button class="btn btn-sm btn-outline-danger" title="Delete">
+                      <button class="btn btn-sm btn-outline-danger" title="Delete" (click)="onDelete(theatre)">
                         <i class="fas fa-trash"></i>
                       </button>
                     </td>
@@ -149,4 +142,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>

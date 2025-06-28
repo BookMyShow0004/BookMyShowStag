@@ -133,7 +133,6 @@
   }
 }
 
-/* Modal Styles */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -169,7 +168,6 @@
   border-top: 1px solid #e9ecef;
 }
 
-/* Star Rating Styles */
 .fa-star {
   transition: color 0.2s;
 }

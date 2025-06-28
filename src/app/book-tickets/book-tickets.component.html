@@ -1,5 +1,4 @@
 <div class="container-fluid">
-  <!-- Theatre and Showtime Selection -->
   <section *ngIf="currentStep === 1">
     <h4 class="section-title">Step 1: Select Theatre & Show Time</h4>
     <div class="theatre-buttons mb-4">
@@ -22,7 +21,6 @@
     </div>
   </section>
 
-  <!-- Seat Selection -->
   <section *ngIf="currentStep === 2">
     <h4 class="section-title">Step 2: Select Seats</h4>
     <div class="screen">Screen</div>
@@ -39,14 +37,12 @@
     </button>
   </section>
 
-  <!-- Summary and Actions -->
   <section class="mt-4 text-center">
     <div *ngIf="selectedSeats.length > 0" class="mb-3">
         <strong>Total: ₹{{ selectedSeats.length * 0 }}</strong>
     </div>
   </section>
 
-  <!-- Success Modal -->
   <div class="modal fade show" tabindex="-1" [ngStyle]="{display: showSuccessModal ? 'block' : 'none', background: 'rgba(0,0,0,0.5)'}" *ngIf="showSuccessModal">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">

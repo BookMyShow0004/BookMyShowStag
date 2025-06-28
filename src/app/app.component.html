@@ -1,22 +1,3 @@
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * Delete the template below * * * * * * * * * * -->
-<!-- * * * * * * * to get started with your project! * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
-
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
 <header class="app-header" *ngIf="showHeader">
   <div class="header-content navbar-fix">
     <a routerLink="/" class="header-brand">
@@ -25,7 +6,6 @@
     <span class="header-tagline">Your Ticket to Entertainment</span>
 
     <div class="header-actions">
-      <!-- Logged Out State -->
       <ng-container *ngIf="!(currentUser$ | async)">
         <div class="auth-buttons">
           <a routerLink="/login" class="auth-btn login-btn">
@@ -39,7 +19,6 @@
         </div>
       </ng-container>
 
-      <!-- Logged In State -->
       <ng-container *ngIf="currentUser$ | async as user">
         <div class="user-menu" (mouseenter)="isDropdownOpen = true" (mouseleave)="isDropdownOpen = false">
           <div class="user-info">

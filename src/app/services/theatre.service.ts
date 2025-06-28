@@ -52,4 +52,8 @@ export class TheatreService {
   getTheatres(): Observable<Theatre[]> {
     return this.http.get<Theatre[]>(`${this.apiUrl}/Theatres`);
   }
+
+  deleteTheatre(theatreId: number) {
+    return this.http.delete(`${this.apiUrl}/Theatres/${theatreId}`, { responseType: 'text' as 'json' });
+  }
 }

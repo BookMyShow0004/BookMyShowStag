@@ -17,22 +17,18 @@ export class MyBookingsComponent implements OnInit {
   successMessage: string = '';
   currentUser: any = localStorage.getItem('currentUser');
 
-  // Filter and Search
   searchQuery: string = '';
   selectedStatus: string = '';
   selectedDate: string = '';
 
-  // UI States
   showCancelModal: boolean = false;
   showRescheduleModal: boolean = false;
   selectedBooking: Booking | null = null;
   isProcessing: boolean = false;
 
-  // Reschedule form
   newShowTime: string = '';
   newDate: string = '';
 
-  // Filter options
   statusOptions: string[] = ['confirmed', 'cancelled', 'completed'];
   dateOptions: string[] = ['today', 'tomorrow', 'this-week', 'next-week'];
 
@@ -43,7 +39,6 @@ export class MyBookingsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // this.currentUser = this.authService.getCurrentUser();
     this.loadBookings();
     console.log(this.currentUser);
   }
@@ -92,7 +87,6 @@ export class MyBookingsComponent implements OnInit {
 
   applyFilters(): void {
     let filtered = [...this.bookings];
-    // Search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(booking =>
@@ -101,7 +95,6 @@ export class MyBookingsComponent implements OnInit {
         booking.bookingId.toString().toLowerCase().includes(query)
       );
     }
-    // Date filter
     if (this.selectedDate) {
       const today = new Date();
       const tomorrow = new Date(today);
@@ -229,7 +222,6 @@ export class MyBookingsComponent implements OnInit {
   }
 
   goToRescheduleShows(booking: Booking) {
-    // Call cancel API, then redirect to shows page using movieId and theatreId from booking
     if (!booking.movieId || !booking.theatreId) {
       alert('Movie or Theatre information missing for this booking.');
       return;
@@ -250,10 +242,7 @@ export class MyBookingsComponent implements OnInit {
     });
   }
 
-  // Helper methods if needed
   getMovieIdFromBooking(booking: Booking): number | null {
-    // If booking.movieId is not present, try to map from movieTitle
-    // You may need to implement a lookup if only movieTitle is present
     return (booking as any).movieId || null;
   }
   getTheatreIdFromBooking(booking: Booking): number | null {

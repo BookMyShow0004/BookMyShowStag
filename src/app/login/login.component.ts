@@ -33,7 +33,6 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Redirect if already logged in
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       try {
@@ -46,7 +45,6 @@ export class LoginComponent implements OnInit {
           return;
         }
       } catch (e) {
-        // Invalid user data, ignore
       }
     }
 
@@ -88,7 +86,6 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         this.isLoading = false;
         if (response.success && response.user) {
-          // Check user role for redirection
           const targetUrl = response.user.role === 'Admin' ? '/admin' : this.returnUrl;
           const queryParams = this.openBookingFor ? { openBookingFor: this.openBookingFor } : {};
           this.router.navigate([targetUrl], { queryParams });
@@ -110,12 +107,10 @@ export class LoginComponent implements OnInit {
 
   onSocialLogin(provider: string) {
     console.log(`Logging in with ${provider}`);
-    // Add your social login logic here
   }
 
   onForgotPassword() {
     console.log('Forgot password clicked');
-    // Add your forgot password logic here
   }
 }
 

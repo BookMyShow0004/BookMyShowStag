@@ -16,7 +16,6 @@ export interface Booking {
   bookingTime: string;
   seatNumbers: string[];
   totalAmount: number;
-  // Add other booking fields as needed
 }
 
 @Injectable({ providedIn: 'root' })

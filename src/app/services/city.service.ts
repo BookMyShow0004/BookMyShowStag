@@ -29,3 +29,6 @@ export class CityService {
     return this.http.delete(`${this.baseUrl}/${cityId}`, {responseType:'text' as 'json'});
   }
 }
+
+//Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=bookmyshowdb;Integrated Security=True;
+//https://vb7dqrjl-5069.inc1.devtunnels.ms/

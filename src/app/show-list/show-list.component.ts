@@ -50,12 +50,10 @@ export class ShowListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       }
     });
-    // Set currentISTDate to IST at component init
     this.updateCurrentISTDate();
   }
 
   ngOnDestroy(): void {
-    // Removed timer cleanup as timer is not used
   }
 
   updateCurrentISTDate(): void {
@@ -66,7 +64,6 @@ export class ShowListComponent implements OnInit, OnDestroy {
   }
 
   generateDateFilters(): void {
-    // Only include unique dates from today to next 8 days in local time (no UTC/IST conversion)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const lastDay = new Date(today);
@@ -110,7 +107,6 @@ export class ShowListComponent implements OnInit, OnDestroy {
   }
 
   selectShow(show: any): void {
-    // Navigate to seat selection page for this show
     this.router.navigate(['/seat-selection', show.showId]);
   }
 
@@ -119,7 +115,6 @@ export class ShowListComponent implements OnInit, OnDestroy {
   }
 
   isShowStarted(show: any): boolean {
-    // Disable if current time is greater than show time (local time)
     const showDate = new Date(show.showDateTime);
     const now = new Date();
     return now > showDate;

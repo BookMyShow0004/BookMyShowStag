@@ -32,7 +32,6 @@ export class BookingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Retrieve booking data from navigation state (use history.state for reliability)
     this.bookingData = history.state || {};
   }
 

@@ -96,7 +96,6 @@
   }
 }
 
-/* Force dropdown and option text color to black and background to white */
 .form-select, .form-select option, select, select option {
   color: #222 !important;
   background: #fff !important;

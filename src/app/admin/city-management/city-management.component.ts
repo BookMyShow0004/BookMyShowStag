@@ -36,7 +36,7 @@ export class CityManagementComponent implements OnInit {
 
   onSubmit(): void {
     if (this.editingCity) {
-      // Update
+     
       this.cityService.updateCity({ ...this.editingCity, ...this.cityData } as City).subscribe({
         next: () => {
           this.successMessage = 'City updated successfully!';
@@ -49,7 +49,7 @@ export class CityManagementComponent implements OnInit {
         }
       });
     } else {
-      // Add
+      
       this.cityService.addCity(this.cityData).subscribe({
         next: () => {
           this.successMessage = 'City added successfully!';

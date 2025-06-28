@@ -75,7 +75,7 @@
 
 .main-content {
   flex-grow: 1;
-  background-color: #f7fafc; /* Light gray background */
+  background-color: #f7fafc; 
   padding: 2.5rem;
   overflow-y: auto;
 }

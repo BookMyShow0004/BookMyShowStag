@@ -1,6 +1,5 @@
 <div class="profile-container">
   <div class="profile-layout">
-    <!-- Left Column: Profile Header -->
     <aside class="profile-header-container">
       <div class="card profile-header">
         <div class="avatar-circle">
@@ -15,9 +14,8 @@
       </div>
     </aside>
 
-    <!-- Right Column: Profile Content -->
     <main class="profile-content">
-      <!-- Error/Success Messages -->
+
       <div *ngIf="errorMessage" class="alert alert-danger mb-4">
         {{ errorMessage }}
       </div>
@@ -25,14 +23,12 @@
         {{ successMessage }}
       </div>
 
-      <!-- Profile Information Card -->
       <div class="card mb-4">
         <div class="content-header">
           <i class="fas fa-user-edit"></i>
           Profile Information
         </div>
 
-        <!-- Viewing Profile -->
         <div *ngIf="!isEditingProfile">
           <div class="detail-item">
             <i class="fas fa-user"></i>
@@ -57,7 +53,6 @@
           </div>
         </div>
 
-        <!-- Editing Profile Form -->
         <form *ngIf="isEditingProfile" (ngSubmit)="updateProfile()">
           <div class="form-grid">
             <div class="form-group">
@@ -85,14 +80,12 @@
         </form>
       </div>
 
-      <!-- Security Settings Card -->
       <div class="card mb-4">
         <div class="content-header">
           <i class="fas fa-shield-alt"></i>
           Security Settings
         </div>
 
-        <!-- Viewing Security -->
         <div *ngIf="!isChangingPassword">
             <p>Update your password for enhanced security.</p>
             <div class="form-actions">
@@ -100,7 +93,6 @@
             </div>
         </div>
 
-        <!-- Change Password Form -->
         <form *ngIf="isChangingPassword" (ngSubmit)="changePassword()">
             <div class="form-group position-relative">
               <label for="currentPassword">Current Password</label>
@@ -137,7 +129,6 @@
           </form>
       </div>
 
-      <!-- Account Statistics Card -->
       <div class="card">
         <div class="content-header">
           <i class="fas fa-chart-line"></i>

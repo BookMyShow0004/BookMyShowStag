@@ -30,7 +30,6 @@ const routes: Routes = [
       { path: 'bookings', component: BookingManagementComponent },
       { path: 'cities', component: CityManagementComponent },
       { path: 'users', component: UserManagementComponent },
-      // Future admin components will be added here
     ]
   }
 ];

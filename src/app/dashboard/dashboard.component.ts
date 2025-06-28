@@ -17,7 +17,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   currentUser: User | null = null;
   private userSubscription: Subscription | undefined;
 
-  // Search and Filter
   searchQuery: string = '';
   selectedGenre: string = '';
   selectedGenres: string[] = [];
@@ -26,15 +25,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   sortBy: '' | 'name' | 'nameDesc' | 'rating' | 'releaseDate' | 'releaseDateAsc' | 'price' = '';
   showFilters: boolean = false;
 
-  // Booking Modal
   selectedMovie: Movie | null = null;
   private bookingModal: Modal | undefined;
 
-  // Filter options
   genres: string[] = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Thriller', 'Sci-Fi'];
   languages: string[] = ['English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada'];
 
-  // Sidebar
   showSidebar: boolean = false;
 
   constructor(
@@ -66,21 +62,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   loadMovies(): void {
     this.isLoading = true;
-    // Fetch all movies and all reviews in parallel
     Promise.all([
       this.movieService.getMovies().toPromise(),
       this.movieService.getAllReviews().toPromise()
     ]).then(([movies, reviews]) => {
       if (!movies) return;
       reviews = reviews || [];
-      // Group reviews by movieId
       const reviewsByMovie: { [movieId: number]: { rating: number }[] } = {};
       for (const review of reviews) {
         if (!review) continue;
         if (!reviewsByMovie[review.movieId]) reviewsByMovie[review.movieId] = [];
         reviewsByMovie[review.movieId].push(review);
       }
-      // Attach average rating to each movie
       const moviesWithRatings = (movies || []).map(movie => {
         if (!movie) return movie;
         const movieReviews = reviewsByMovie[movie.movieId] || [];
@@ -115,7 +108,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   applyFilters(): void {
     let filtered = [...this.movies];
 
-    // Search filter
     if (this.searchQuery && this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(movie =>
@@ -124,7 +116,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Genre filter (pattern match: static genre in any part of movie.genre string)
     if (this.selectedGenre) {
       const genrePattern = this.selectedGenre.toLowerCase();
       filtered = filtered.filter(movie =>
@@ -132,14 +123,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       );
     }
 
-    // Language filter (single select)
     if (this.selectedLanguage) {
       filtered = filtered.filter(movie =>
         movie.language && movie.language === this.selectedLanguage
       );
     }
 
-    // Rating filter
     if (this.selectedRating && this.selectedRating > 0) {
       filtered = filtered.filter(movie =>
         movie.averageRatingRounded !== undefined && movie.averageRatingRounded >= this.selectedRating
@@ -169,7 +158,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.filteredMovies.sort((a, b) => new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime());
         break;
       default:
-        // No sorting (default order)
         break;
     }
   }
@@ -190,7 +178,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   openBookingModal(movie: Movie): void {
     if (!this.currentUser) {
-      // Redirect to login if user is not authenticated, passing return URL
       this.router.navigate(['/login'], { queryParams: { returnUrl: this.router.url, openBookingFor: movie.movieId } });
       return;
     }
@@ -208,7 +195,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.bookingModal.hide();
     }
     this.selectedMovie = null;
-    // Clear query params after closing modal
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: { openBookingFor: null },
@@ -218,7 +204,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   onBookingComplete(): void {
     this.closeBookingModal();
-    // Optionally refresh movies or show success message
   }
 
   logout(): void {
@@ -245,7 +230,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private handlePostLoginBooking(movieId: string): void {
     const movieToBook = this.movies.find(m => m.movieId === +movieId);
     if (movieToBook) {
-      // Use a timeout to ensure the view is stable before opening the modal
       setTimeout(() => {
         this.openBookingModal(movieToBook);
       }, 0);
@@ -257,7 +241,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return Array(fullStars).fill(0);
   }
 
-  // List of movies with 4+ rating
   get topRatedMovies(): (Movie & { averageRatingRounded?: number })[] {
     return this.movies.filter(m => (m.averageRatingRounded ?? 0) >= 4);
   }

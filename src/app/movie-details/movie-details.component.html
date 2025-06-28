@@ -1,17 +1,15 @@
 <div class="movie-details-container">
-  <!-- Loading State -->
+
   <div *ngIf="isLoading" class="loading-state">
     <i class="fas fa-spinner fa-spin"></i>
     <p>Loading Details...</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage && !isLoading" class="error-state">
     <i class="fas fa-exclamation-triangle"></i>
     <p>{{ errorMessage }}</p>
   </div>
 
-  <!-- Details Card -->
   <div *ngIf="!isLoading && !errorMessage && movie" class="details-card">
     <div class="mb-3">
       <button class="btn btn-secondary" (click)="goBack()">
@@ -70,7 +68,6 @@
         </div>
       </div>
 
-      <!-- Like/Rate Section -->
       <div class="info-section">
         <h2 class="section-title">Rate this Movie</h2>
         <div class="d-flex align-items-center mb-3">
@@ -82,7 +79,6 @@
         </div>
       </div>
 
-      <!-- Review Modal -->
       <div class="modal-backdrop" *ngIf="showReviewModal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);z-index:1050;"></div>
       <div class="modal d-block" tabindex="-1" *ngIf="showReviewModal" style="z-index:1060;">
         <div class="modal-dialog modal-dialog-centered">
@@ -115,7 +111,6 @@
         </div>
       </div>
 
-      <!-- Reviews Section -->
       <div class="info-section">
         <h2 class="section-title">Reviews</h2>
         <div *ngFor="let review of reviews" class="border rounded p-2 mb-2 position-relative" [ngClass]="{'bg-light': review.userId === currentUser?.userId}">
@@ -131,21 +126,17 @@
           <div *ngIf="review.userId === currentUser?.userId" class="badge bg-warning text-dark position-absolute" style="bottom:8px; right:8px;">Your Review</div>
         </div>
         <div *ngIf="!reviews || reviews.length === 0" class="text-muted">No reviews yet.</div>
-        <!-- Write a Review Button -->
         <button class="btn btn-warning mt-3" *ngIf="currentUser && canSubmitReview()" (click)="openReviewModal()">
           <i class="fas fa-star"></i> Write a Review
         </button>
       </div>
 
-      <!-- Comments Section -->
       <div class="info-section">
         <h2 class="section-title">Comments</h2>
         <div *ngIf="!comments || comments.length === 0" class="text-muted mb-2">No comments yet.</div>
-        <!-- Comment Modal Trigger Button -->
         <button class="btn btn-primary mb-3" *ngIf="!hasAlreadyCommented" (click)="showCommentModal = true">
           <i class="fas fa-comment"></i> Add a Comment
         </button>
-        <!-- Comment Modal -->
         <div class="modal-backdrop" *ngIf="showCommentModal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);z-index:1050;"></div>
         <div class="modal d-block" tabindex="-1" *ngIf="showCommentModal" style="z-index:1060;">
           <div class="modal-dialog modal-dialog-centered">
@@ -178,7 +169,6 @@
         </div>
       </div>
 
-      <!-- City Dropdown Section -->
       <div class="info-section">
         <label for="cityDropdown" class="form-label">Select City</label>
         <select id="cityDropdown" class="form-select mb-3" [(ngModel)]="selectedCityId">

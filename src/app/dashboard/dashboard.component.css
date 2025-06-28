@@ -1,6 +1,3 @@
-/* Minimal custom CSS for Dashboard - Use Bootstrap 4 classes in HTML for layout, grid, cards, buttons, modal, etc. */
-
-/* Avatar and user menu */
 .user-avatar {
   width: 35px;
   height: 35px;
@@ -48,7 +45,6 @@
   transform: translateY(0);
 }
 
-/* Movie overlay effect */
 .movie-overlay {
   position: absolute;
   inset: 0;
@@ -66,7 +62,6 @@
   color: #fff;
 }
 
-/* Movie rating badge */
 .movie-rating {
   position: absolute;
   top: 15px;
@@ -78,7 +73,6 @@
   font-weight: 600;
 }
 
-/* Custom hover for movie card (optional) */
 .movie-card-hover {
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -88,7 +82,6 @@
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
-/* Make movie cards bigger for clearer banners */
 .card.movie-card-hover {
   min-width: 270px;
   max-width: 340px;
@@ -100,7 +93,6 @@
   object-fit: fill !important;
 }
 
-/* Hide scrollbar for horizontal scroll (suggested movies) */
 .suggested-movies-scroll::-webkit-scrollbar {
   display: none;
 }
@@ -110,12 +102,10 @@
   scrollbar-width: none;
 }
 
-/* Minimal modal tweaks (if using Bootstrap modal, most can be removed) */
 .modal-overlay {
   background: rgba(0, 0, 0, 0.5);
 }
 
-/* Utility: Remove default padding from all elements (let Bootstrap handle spacing) */
 * {
   box-sizing: border-box;
 }

@@ -1,13 +1,11 @@
-/* Global Styles */
 .main-container {
-  padding-top: 80px; /* Adjust based on header height */
+  padding-top: 80px;
 }
 
 .main-container.no-header {
   padding-top: 0;
 }
 
-/* App Header */
 .app-header {
   position: fixed;
   top: 0;
@@ -31,7 +29,6 @@
   align-items: center;
 }
 
-/* Brand */
 .header-brand {
   text-decoration: none;
   color: #212529;
@@ -58,7 +55,6 @@
   color: #6c757d;
 }
 
-/* Actions (Auth Buttons & User Menu) */
 .header-actions {
   display: flex;
   align-items: center;
@@ -99,7 +95,6 @@
   background-color: #0056b3;
 }
 
-/* User Menu */
 .user-menu {
   position: relative;
   cursor: pointer;
@@ -203,7 +198,6 @@
   color: #dc3545;
 }
 
-/* Responsive Design */
 @media (max-width: 992px) {
   .header-tagline {
     display: none;
@@ -211,8 +205,6 @@
 }
 
 @media (max-width: 576px) {
-  .app-header {
-  }
   .user-name {
     display: none;
   }

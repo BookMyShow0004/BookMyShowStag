@@ -115,7 +115,6 @@
   height: 1rem;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .theatre-management {
     padding: 15px;
@@ -130,7 +129,6 @@
   }
 }
 
-/* Animation for new theatres */
 .table tbody tr {
   transition: all 0.3s ease;
 }
@@ -140,7 +138,7 @@
   transform: translateX(5px);
 }
 
-/* Empty state styling */
+
 .text-center.py-4 {
   color: #6c757d;
 }

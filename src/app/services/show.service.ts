@@ -20,7 +20,6 @@ export interface ShowResponse {
 export interface Movie {
   movieId: number;
   title: string;
-  // description?: string; // add other properties if needed
 }
 
 export interface Theatre {

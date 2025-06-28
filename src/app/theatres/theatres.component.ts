@@ -18,23 +18,19 @@ export class TheatresComponent implements OnInit {
   cityId: number | null = null;
   movieTitle: string | null = null;
 
-  // Search and Filter
   searchQuery: string = '';
   selectedCity: string = '';
   selectedAmenity: string = '';
   selectedRating: number = 0;
 
-  // Filter options
   cities: string[] = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Pune', 'Hyderabad', 'Ahmedabad'];
   amenities: string[] = ['Dolby Atmos', 'Recliner Seats', 'Food Service', 'Online Booking', 'Dolby Digital', 'Premium Seats', 'Snack Bar'];
   ratingOptions: number[] = [4.5, 4.0, 3.5, 3.0];
 
-  // UI States
   showFilters: boolean = false;
   sortBy: 'name' | 'rating' | 'location' = 'name';
   sortOrder: 'asc' | 'desc' = 'asc';
 
-  // Showtime and Seat selection
   selectedShow: { theatreId: number, showTime: string } | null = null;
   showSeats: Seat[] = [];
   showSeatPrices: { [seatId: number]: number } = {};
@@ -151,9 +147,8 @@ export class TheatresComponent implements OnInit {
       this.movieService.getSeatsForShow(this.movieId, theatre.theatreId, showTime).subscribe({
         next: (seats) => {
           this.showSeats = seats;
-          // If price is available in seat object, map it; else, set a default
           seats.forEach(seat => {
-            this.showSeatPrices[seat.seatId] = (seat as any).price || 200; // Default price if not present
+            this.showSeatPrices[seat.seatId] = (seat as any).price || 200; 
           });
         },
         error: () => {
@@ -166,7 +161,6 @@ export class TheatresComponent implements OnInit {
   applyFilters(): void {
     let filtered = [...this.theatres];
 
-    // Search filter
     if (this.searchQuery.trim()) {
       const query = this.searchQuery.toLowerCase();
       filtered = filtered.filter(theatre =>
@@ -175,14 +169,12 @@ export class TheatresComponent implements OnInit {
       );
     }
 
-    // Amenity filter
     if (this.selectedAmenity) {
       filtered = filtered.filter(theatre =>
         theatre.amenities.includes(this.selectedAmenity)
       );
     }
 
-    // Rating filter
     if (this.selectedRating > 0) {
       filtered = filtered.filter(theatre =>
         theatre.rating >= this.selectedRating
@@ -278,5 +270,25 @@ export class TheatresComponent implements OnInit {
 
   goBack() {
     window.history.back();
+  }
+
+  editTheatre(theatre: any): void {
+    // Example: Navigate to an edit page or open a modal
+    // this.router.navigate(['/admin/theater-management/edit', theatre.theatreId]);
+    this.showToastMessage('Edit theatre feature not implemented yet.', 'info');
+  }
+
+  deleteTheatre(theatre: any): void {
+    if (confirm(`Are you sure you want to delete the theatre: ${theatre.name}?`)) {
+      this.movieService.deleteTheatre(theatre.theatreId).subscribe({
+        next: () => {
+          this.showToastMessage('Theatre deleted successfully!', 'success');
+          this.loadTheatres();
+        },
+        error: () => {
+          this.showToastMessage('Failed to delete theatre.', 'error');
+        }
+      });
+    }
   }
 }

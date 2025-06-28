@@ -45,7 +45,6 @@ export class SeatSelectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.showId = Number(this.route.snapshot.paramMap.get('showId'));
-    // Fetch show details
     this.movieService.getShowDetailsById(this.showId).subscribe({
       next: (show) => {
         this.movieId = show.movieId;

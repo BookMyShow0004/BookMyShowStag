@@ -4,14 +4,12 @@
   min-height: 100vh;
 }
 
-/* Theatres Container */
 .theatres-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-/* Header */
 .theatres-header {
   margin-bottom: 2rem;
 }
@@ -35,7 +33,6 @@
   border-radius: 0.5rem;
 }
 
-/* Loading State */
 .loading-container {
   display: flex;
   justify-content: center;
@@ -58,7 +55,6 @@
   font-weight: 600;
 }
 
-/* Error State */
 .error-container {
   display: flex;
   justify-content: center;
@@ -79,7 +75,6 @@
   gap: 10px;
 }
 
-/* Search and Filters */
 .search-filters-section {
   background-color: #ffffff;
   border-radius: var(--border-radius);
@@ -145,7 +140,6 @@
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
 }
 
-/* Filters Panel */
 .filters-panel {
   border-top: 2px solid rgba(102, 126, 234, 0.1);
   padding-top: 1.5rem;
@@ -236,7 +230,6 @@
   border-color: #adb5bd;
 }
 
-/* Results Summary */
 .results-summary {
   background-color: #ffffff;
   border-radius: 20px;
@@ -266,7 +259,6 @@
   font-weight: 600;
 }
 
-/* Theatres Grid */
 .theatres-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -348,7 +340,6 @@
   background-color: #0056b3;
 }
 
-/* Theatre Actions */
 .theatre-actions {
   display: flex;
   gap: 1rem;
@@ -390,7 +381,6 @@
   box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
 }
 
-/* Empty State */
 .empty-state {
   display: flex;
   justify-content: center;
@@ -430,7 +420,6 @@
   font-size: 1.1rem;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .theatres-container {
     padding: 1rem;

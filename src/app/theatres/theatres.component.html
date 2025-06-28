@@ -1,5 +1,5 @@
 <div class="theatres-container">
-  <!-- Back Button -->
+
   <div class="mb-3">
     <button class="btn btn-secondary" style="background: #e9ecef;
     border-color: #e9ecef;
@@ -19,19 +19,16 @@
     </div>
   </header>
 
-  <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-state">
     <i class="fas fa-spinner fa-spin"></i>
     <p>Loading theatres...</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="errorMessage && !isLoading" class="error-state">
     <i class="fas fa-exclamation-triangle"></i>
     <p>{{ errorMessage }}</p>
   </div>
 
-  <!-- Theatres Grid -->
   <div *ngIf="!isLoading && !errorMessage && filteredTheatres.length > 0; else noTheatres" class="theatres-grid">
     <div class="theatre-card" *ngFor="let theatre of filteredTheatres" (click)="goToShowList(theatre)"
       style="cursor:pointer;">
@@ -40,6 +37,14 @@
         <p class="theatre-location">
           <i class="fas fa-map-marker-alt"></i> {{ theatre.address }}
         </p>
+        <div *ngIf="currentUser?.role === 'admin'" class="theatre-actions" style="position:absolute; top:10px; right:10px; z-index:2;">
+          <button class="btn btn-sm btn-outline-primary mr-2" (click)="$event.stopPropagation(); editTheatre(theatre)">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="btn btn-sm btn-outline-danger" (click)="$event.stopPropagation(); deleteTheatre(theatre)">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
       </div>
       <div class="theatre-card-body">
         <h3 class="section-title">Today's Showtimes</h3>
@@ -53,7 +58,6 @@
     </div>
   </div>
 
-  <!-- Empty State -->
   <ng-template #noTheatres>
     <div class="empty-state" *ngIf="!isLoading">
       <i class="fas fa-video-slash"></i>

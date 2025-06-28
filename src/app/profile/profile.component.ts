@@ -15,7 +15,6 @@ export class ProfileComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
-  // Profile form data
   profileData: UpdateProfileRequest  = {
     name: '',
     phone: '',
@@ -25,7 +24,6 @@ export class ProfileComponent implements OnInit {
     email: ''
   };
 
-  // Password change form data
   passwordData: ChangePasswordRequest = {
     currentPassword: '',
     newPassword: '',
@@ -65,7 +63,7 @@ export class ProfileComponent implements OnInit {
    getCities(): void {
     this.authService.getcityData().subscribe({
       next: (response) => {
-        this.cities = response; // Correct way: assign the whole array
+        this.cities = response; 
       },
       error: (err) => {
         console.error('Failed to load cities:', err);
@@ -81,7 +79,7 @@ export class ProfileComponent implements OnInit {
 
   cancelEditProfile(): void {
     this.isEditingProfile = false;
-    this.loadUserProfile(); // Reset to original values
+    this.loadUserProfile(); 
   }
 
   updateProfile(): void {
@@ -93,7 +91,6 @@ export class ProfileComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Prepare the request body as required by the new API
     const selectedCity = this.cities.find(c => c.cityName === this.profileData.city);
     const cityId = selectedCity ? selectedCity.cityId : null;
     const updateRequest = {
@@ -104,14 +101,12 @@ export class ProfileComponent implements OnInit {
       gender: this.profileData.gender,
       avatar: this.profileData.avatar,
       email: this.profileData.email,
-      // For the API body
       cityId: cityId
     };
 
-    // Call the updated AuthService method
     this.authService.updateProfile({
       ...updateRequest,
-      city: this.profileData.city // keep for local update
+      city: this.profileData.city 
     }).subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -248,7 +243,6 @@ export class ProfileComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
-    // Redirect to login page
     window.location.href = '/login';
   }
 

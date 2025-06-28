@@ -20,6 +20,8 @@ export class TheatreManagementComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  editingTheatre: Theatre | null = null;
+
   constructor(private theatreService: TheatreService) { }
 
   ngOnInit(): void {
@@ -42,7 +44,8 @@ export class TheatreManagementComponent implements OnInit {
   loadTheatres(): void {
     this.theatreService.getTheatres().subscribe({
       next: (theatres) => {
-        this.theatres = theatres;
+        console.log('Loaded theatres:', theatres);
+         this.theatres = [...theatres];
       },
       error: (err) => {
         console.error('Failed to load theatres:', err);
@@ -66,7 +69,7 @@ export class TheatreManagementComponent implements OnInit {
         if (response.success) {
           this.successMessage = 'Theatre added successfully!';
           this.resetForm();
-          this.loadTheatres(); // Refresh the theatres list
+           this.loadTheatres(); 
         } else {
           this.errorMessage = response.message || 'Failed to add theatre';
         }
@@ -77,6 +80,33 @@ export class TheatreManagementComponent implements OnInit {
         console.error('Add theatre error:', error);
       }
     });
+  }
+
+  onEdit(theatre: Theatre): void {
+    this.editingTheatre = { ...theatre };
+    this.theatreData = { ...theatre };
+  }
+
+  onDelete(theatre: Theatre): void {
+    if (confirm(`Are you sure you want to delete the theatre: ${theatre.name}?`)) {
+      this.isLoading = true;
+      this.errorMessage = '';
+      this.successMessage = '';
+      this.theatreService.deleteTheatre(theatre.theatreId!).subscribe({
+        next: (response: any) => {
+          this.isLoading = false;
+          this.loadTheatres();
+         
+            this.successMessage = 'Theatre deleted successfully!';
+      
+            
+        },
+        error: (error: any) => {
+          this.isLoading = false;
+          this.errorMessage = 'Failed to delete theatre. Please try again.';
+        }
+      });
+    }
   }
 
   validateForm(): boolean {
@@ -110,4 +140,4 @@ export class TheatreManagementComponent implements OnInit {
     const city = this.cities.find(c => c.cityId === cityId);
     return city ? city.cityName : 'Unknown City';
   }
-} 
+}

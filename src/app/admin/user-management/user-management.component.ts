@@ -39,7 +39,7 @@ export class UserManagementComponent implements OnInit {
     this.cityService.getCities().subscribe({
       next: (cities) => {
         this.cities = cities;
-        this.fetchUsers(); // Fetch users only after cities are loaded
+        this.fetchUsers(); 
       },
       error: () => { this.error = 'Failed to load cities'; }
     });
@@ -51,8 +51,8 @@ export class UserManagementComponent implements OnInit {
       next: (data) => {
         this.users = data.map(u => ({
           ...u,
-          cityId: u.cityId, // Use cityId directly from API
-          cityName: u.cityName // Use cityName directly from API
+          cityId: u.cityId, 
+          cityName: u.cityName 
         }));
         this.isLoading = false;
       },
@@ -68,7 +68,7 @@ export class UserManagementComponent implements OnInit {
     const formValue = this.userForm.value;
     this.isLoading = true;
     if (this.userEditMode && this.editingUserId !== null) {
-      // Edit existing user
+      
       const updatedUser = {
         userId: this.editingUserId,
         fullName: formValue.fullName,
@@ -79,10 +79,8 @@ export class UserManagementComponent implements OnInit {
       this.userService.adminUpdateUser(updatedUser).subscribe({
         next: (updatedUserFromApi) => {
           const idx = this.users.findIndex(u => u.userId === this.editingUserId);
-          // Find city name for the updated cityId
           const cityObj = this.cities.find(c => c.cityId === updatedUserFromApi.cityId);
           const cityName = cityObj ? cityObj.cityName : '';
-          // Patch the updated user with city string for list display
           const patchedUser = { ...updatedUserFromApi, city: cityName };
           if (idx > -1) this.users[idx] = patchedUser;
           this.hideUserForm();
