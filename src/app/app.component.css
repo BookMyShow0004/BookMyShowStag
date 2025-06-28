@@ -212,6 +212,9 @@
     display: flex;
     justify-content: space-around;
   }
+  .fas{
+    display: none;
+  }
   .auth-btn span {
     display: none;
   }

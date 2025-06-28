@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./layout.component.css']
 })
 export class LayoutComponent {
-
+  sidebarOpen = false;
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
 }

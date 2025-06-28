@@ -79,3 +79,63 @@
   padding: 2.5rem;
   overflow-y: auto;
 }
+
+.hamburger-below-navbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hamburger-below-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    background: transparent;
+    color: #1a202c;
+    border: none;
+    /* border-radius: 50%; */
+    /* box-shadow: 0 2px 8px rgba(0,0,0,0.15); */
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 1200;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .hamburger-below-navbar:hover, .hamburger-below-navbar:focus {
+    background: rgba(26,32,44,0.08);
+    color: #1a202c;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  }
+  .hamburger-below-navbar svg {
+    display: block;
+    width: 28px;
+    height: 28px;
+  }
+  .sidebar {
+    width: 0;
+    min-width: 0;
+    overflow-x: hidden;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    z-index: 1000;
+    transition: width 0.3s;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  }
+  .sidebar.open {
+    width: 200px;
+    min-width: 200px;
+  }
+  .main-content {
+    margin-left: 0 !important;
+    width: 100vw;
+    max-width: 100vw;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+}
