@@ -24,6 +24,9 @@ export class LoginComponent implements OnInit {
   toastMessage = '';
   toastType: 'success' | 'error' | 'info' = 'info';
   showToast = false;
+  showModal = false;
+  modalTitle = '';
+  modalMessage = '';
 
   constructor(
     private authService: AuthService,
@@ -55,9 +58,9 @@ export class LoginComponent implements OnInit {
   }
 
   onCaptchaResolved(token: string | null): void {
-  this.captchaToken = token;
-  this.captchaError = !token;
-}
+    this.captchaToken = token;
+    this.captchaError = !token;
+  }
 
   showToastMessage(message: string, type: 'success' | 'error' | 'info' = 'info') {
     this.toastMessage = message;
@@ -68,7 +71,7 @@ export class LoginComponent implements OnInit {
 
   onLogin(form: NgForm) {
     if (form.invalid || !this.captchaToken) {
-      this.showToastMessage('Please complete all fields and solve the captcha.', 'error');
+      this.openModal('Error', 'Please complete all fields and solve the captcha.');
       this.captchaError = !this.captchaToken;
       return;
     }
@@ -90,15 +93,21 @@ export class LoginComponent implements OnInit {
           const queryParams = this.openBookingFor ? { openBookingFor: this.openBookingFor } : {};
           this.router.navigate([targetUrl], { queryParams });
         } else {
-          this.showToastMessage(response.message, 'error');
+          this.openModal('Login Failed', 'Incorrect email or password. Please try again.');
         }
       },
       error: (err) => {
         this.isLoading = false;
-        this.showToastMessage('An unexpected error occurred. Please try again.', 'error');
+        this.openModal('Login Failed', 'Incorrect email or password. Please try again.');
         console.error('Login error:', err);
       }
     });
+  }
+
+  openModal(title: string, message: string) {
+    this.modalTitle = title;
+    this.modalMessage = message;
+    this.showModal = true;
   }
 
   togglePassword() {

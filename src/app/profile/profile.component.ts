@@ -15,7 +15,7 @@ export class ProfileComponent implements OnInit {
   errorMessage: string = '';
   successMessage: string = '';
 
-  profileData: UpdateProfileRequest  = {
+  profileData: UpdateProfileRequest = {
     name: '',
     phone: '',
     city: '',
@@ -30,7 +30,7 @@ export class ProfileComponent implements OnInit {
     confirmPassword: ''
   };
 
-  cities : City[] = [];
+  cities: City[] = [];
   genders: string[] = ['Male', 'Female', 'Other'];
 
   showCurrentPassword: boolean = false;
@@ -60,10 +60,10 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-   getCities(): void {
+  getCities(): void {
     this.authService.getcityData().subscribe({
       next: (response) => {
-        this.cities = response; 
+        this.cities = response;
       },
       error: (err) => {
         console.error('Failed to load cities:', err);
@@ -79,7 +79,7 @@ export class ProfileComponent implements OnInit {
 
   cancelEditProfile(): void {
     this.isEditingProfile = false;
-    this.loadUserProfile(); 
+    this.loadUserProfile();
   }
 
   updateProfile(): void {
@@ -106,7 +106,7 @@ export class ProfileComponent implements OnInit {
 
     this.authService.updateProfile({
       ...updateRequest,
-      city: this.profileData.city 
+      city: this.profileData.city
     }).subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -147,36 +147,36 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword(): void {
-  if (!this.validatePasswordForm()) {
-    return;
-  }
-
-  this.isLoading = true;
-  this.errorMessage = '';
-  this.successMessage = '';
-
-  this.authService.changePassword(this.passwordData).subscribe({
-    next: (response) => {
-      this.isLoading = false;
-      if (response.success) {
-        this.successMessage = response.message;
-        this.isChangingPassword = false;
-        this.passwordData = {
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-        };
-      } else {
-        this.errorMessage = response.message;
-      }
-    },
-    error: (error) => {
-      this.isLoading = false;
-      this.errorMessage = 'Password change failed. Please try again.';
-      console.error('Password change error:', error);
+    if (!this.validatePasswordForm()) {
+      return;
     }
-  });
-}
+
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.authService.changePassword(this.passwordData).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        if (response.success) {
+          this.successMessage = response.message;
+          this.isChangingPassword = false;
+          this.passwordData = {
+            currentPassword: '',
+            newPassword: '',
+            confirmPassword: ''
+          };
+        } else {
+          this.errorMessage = response.message;
+        }
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.errorMessage = 'Password change failed. Please try again.';
+        console.error('Password change error:', error);
+      }
+    });
+  }
 
 
   validateProfileForm(): boolean {
@@ -258,5 +258,19 @@ export class ProfileComponent implements OnInit {
       });
     }
     return 'N/A';
+  }
+
+  /**
+   * Returns the city name for the current user, using cityId or city string.
+   */
+  getCityName(): string {
+    if (!this.currentUser) return '';
+    // If cityId exists and cities are loaded, find the city name
+    if (this.currentUser.cityId != null && this.cities && this.cities.length > 0) {
+      const cityObj = this.cities.find(c => c.cityId === this.currentUser!.cityId);
+      if (cityObj) return cityObj.cityName;
+    }
+    // Fallback to city string if available
+    return this.currentUser.city || '';
   }
 }

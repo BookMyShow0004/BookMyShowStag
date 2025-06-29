@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastNotificationComponent } from './toast-notification.component';
+import { SimpleModalComponent } from './simple-modal.component';
 
 @NgModule({
-  declarations: [ToastNotificationComponent],
+  declarations: [ToastNotificationComponent, SimpleModalComponent],
   imports: [CommonModule],
-  exports: [ToastNotificationComponent]
+  exports: [ToastNotificationComponent, SimpleModalComponent]
 })
-export class SharedModule {} 
+export class SharedModule { }

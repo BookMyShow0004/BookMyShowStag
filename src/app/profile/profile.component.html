@@ -45,7 +45,7 @@
           <div class="detail-item">
             <i class="fas fa-map-marker-alt"></i>
             <div>
-              <strong>City:</strong> {{ currentUser?.cityId || currentUser?.city }}
+              <strong>City:</strong> {{ getCityName() }}
             </div>
           </div>
           <div class="form-actions">
@@ -87,46 +87,55 @@
         </div>
 
         <div *ngIf="!isChangingPassword">
-            <p>Update your password for enhanced security.</p>
-            <div class="form-actions">
-                <button class="btn btn-primary" (click)="startChangePassword()">Change Password</button>
-            </div>
+          <p>Update your password for enhanced security.</p>
+          <div class="form-actions">
+            <button class="btn btn-primary" (click)="startChangePassword()">Change Password</button>
+          </div>
         </div>
 
         <form *ngIf="isChangingPassword" (ngSubmit)="changePassword()">
-            <div class="form-group position-relative">
-              <label for="currentPassword">Current Password</label>
-              <input [type]="showCurrentPassword ? 'text' : 'password'" id="currentPassword" class="form-control" [(ngModel)]="passwordData.currentPassword" name="currentPassword" required>
-              <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2" style="z-index:2;" (click)="togglePasswordVisibility('current')" tabindex="-1">
-                <i class="fa" [ngClass]="showCurrentPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-              </button>
-            </div>
-            <div class="form-group position-relative">
-              <label for="newPassword">New Password</label>
-              <input [type]="showNewPassword ? 'text' : 'password'" id="newPassword" class="form-control" [(ngModel)]="passwordData.newPassword" name="newPassword" required>
-              <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2" style="z-index:2;" (click)="togglePasswordVisibility('new')" tabindex="-1">
-                <i class="fa" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-              </button>
-            </div>
-            <div class="form-group position-relative">
-              <label for="confirmPassword">Confirm New Password</label>
-              <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" class="form-control" [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" required>
-              <button type="button" class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2" style="z-index:2;" (click)="togglePasswordVisibility('confirm')" tabindex="-1">
-                <i class="fa" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
-              </button>
-            </div>
-            <div *ngIf="passwordErrors.length > 0" class="text-danger mt-1 small">
-              <ul class="mb-0 ps-3">
-                <li *ngFor="let err of passwordErrors">{{ err }}</li>
-              </ul>
-            </div>
-            <div class="form-actions">
-              <button type="button" class="btn btn-secondary" (click)="cancelChangePassword()">Cancel</button>
-              <button type="submit" class="btn btn-primary" [disabled]="isLoading">
-               {{ isLoading ? 'Updating...' : 'Update Password' }}
-              </button>
-            </div>
-          </form>
+          <div class="form-group position-relative">
+            <label for="currentPassword">Current Password</label>
+            <input [type]="showCurrentPassword ? 'text' : 'password'" id="currentPassword" class="form-control"
+              [(ngModel)]="passwordData.currentPassword" name="currentPassword" required>
+            <button type="button"
+              class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+              style="z-index:2;" (click)="togglePasswordVisibility('current')" tabindex="-1">
+              <i class="fa" [ngClass]="showCurrentPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <div class="form-group position-relative">
+            <label for="newPassword">New Password</label>
+            <input [type]="showNewPassword ? 'text' : 'password'" id="newPassword" class="form-control"
+              [(ngModel)]="passwordData.newPassword" name="newPassword" required>
+            <button type="button"
+              class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+              style="z-index:2;" (click)="togglePasswordVisibility('new')" tabindex="-1">
+              <i class="fa" [ngClass]="showNewPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <div class="form-group position-relative">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" class="form-control"
+              [(ngModel)]="passwordData.confirmPassword" name="confirmPassword" required>
+            <button type="button"
+              class="btn btn-sm btn-outline-secondary position-absolute top-50 end-0 translate-middle-y me-2"
+              style="z-index:2;" (click)="togglePasswordVisibility('confirm')" tabindex="-1">
+              <i class="fa" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <div *ngIf="passwordErrors.length > 0" class="text-danger mt-1 small">
+            <ul class="mb-0 ps-3">
+              <li *ngFor="let err of passwordErrors">{{ err }}</li>
+            </ul>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="cancelChangePassword()">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+              {{ isLoading ? 'Updating...' : 'Update Password' }}
+            </button>
+          </div>
+        </form>
       </div>
 
       <div class="card">
@@ -135,11 +144,11 @@
           Account Statistics
         </div>
         <div class="detail-item">
-            <i class="fas fa-ticket-alt"></i>
-            <div>
-              <strong>Total Bookings:</strong> 12
-            </div>
+          <i class="fas fa-ticket-alt"></i>
+          <div>
+            <strong>Total Bookings:</strong> 12
           </div>
+        </div>
       </div>
     </main>
   </div>

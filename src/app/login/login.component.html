@@ -1,7 +1,4 @@
-<app-toast-notification
-  [message]="toastMessage"
-  [type]="toastType"
-  [show]="showToast">
+<app-toast-notification [message]="toastMessage" [type]="toastType" [show]="showToast">
 </app-toast-notification>
 
 <div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
@@ -16,33 +13,17 @@
       <form (ngSubmit)="onLogin(loginForm)" #loginForm="ngForm">
 
         <div class="form-floating mb-3">
-          <input
-            type="email"
-            id="email"
-            name="email"
-            [(ngModel)]="email"
-            required
-            email
-            class="form-control"
+          <input type="email" id="email" name="email" [(ngModel)]="email" required email class="form-control"
             placeholder="name@example.com"
-            [class.is-invalid]="loginForm.submitted && loginForm.controls['email'].invalid"
-          />
+            [class.is-invalid]="loginForm.submitted && loginForm.controls['email'].invalid" />
           <label for="email">Email address</label>
         </div>
 
         <div class="input-group mb-3">
           <div class="form-floating">
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              id="password"
-              name="password"
-              [(ngModel)]="password"
-              required
-              minlength="6"
-              class="form-control"
-              placeholder="Password"
-              [class.is-invalid]="loginForm.submitted && loginForm.controls['password'].invalid"
-            />
+            <input [type]="showPassword ? 'text' : 'password'" id="password" name="password" [(ngModel)]="password"
+              required minlength="6" class="form-control" placeholder="Password"
+              [class.is-invalid]="loginForm.submitted && loginForm.controls['password'].invalid" />
             <label for="password">Password</label>
           </div>
           <button class="btn btn-outline-secondary" type="button" (click)="togglePassword()">
@@ -50,31 +31,22 @@
           </button>
         </div>
         <div class="mb-3">
-        <re-captcha
-          name="recaptcha"
-          [(ngModel)]="captchaToken"
-          (ngModelChange)="onCaptchaResolved($event)"
-          required
-          [class.is-invalid]="captchaError">
-        </re-captcha>
+          <re-captcha name="recaptcha" [(ngModel)]="captchaToken" (ngModelChange)="onCaptchaResolved($event)" required
+            [class.is-invalid]="captchaError">
+          </re-captcha>
 
-        <div *ngIf="captchaError" class="text-danger mt-1 small">
-          Captcha is required.
+          <div *ngIf="captchaError" class="text-danger mt-1 small">
+            Captcha is required.
+          </div>
         </div>
-      </div>
-        
+
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="form-check">
-            <input
-              type="checkbox"
-              id="rememberMe"
-              name="rememberMe"
-              [(ngModel)]="rememberMe"
-              class="form-check-input"
-            />
+            <input type="checkbox" id="rememberMe" name="rememberMe" [(ngModel)]="rememberMe"
+              class="form-check-input" />
             <label class="form-check-label" for="rememberMe">Remember me</label>
           </div>
-          <a routerLink="/reset-password" class="text-decoration-none" >
+          <a routerLink="/reset-password" class="text-decoration-none">
             Forgot Password?
           </a>
         </div>
@@ -89,10 +61,12 @@
         <div class="text-center my-3 text-muted">or</div>
 
         <p class="text-center mb-0">
-          Don't have an account? 
+          Don't have an account?
           <a routerLink="/signup" class="text-decoration-none fw-bold">Sign up here</a>
         </p>
       </form>
     </div>
   </div>
 </div>
+
+<app-simple-modal [show]="showModal" [title]="modalTitle" [message]="modalMessage"></app-simple-modal>

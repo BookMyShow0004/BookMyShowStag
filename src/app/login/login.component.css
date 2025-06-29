@@ -25,7 +25,8 @@
   font-family: 'Poppins', sans-serif;
   font-size: 2rem;
   font-weight: 700;
-  color: #007bff; 
+  color: #d32f2f;
+  /* red */
   margin-bottom: 0.5rem;
 }
 
@@ -61,7 +62,7 @@
 
 .form-control {
   width: 100%;
-  padding: 0.875rem 2.5rem 0.875rem 0.875rem; 
+  padding: 0.875rem 2.5rem 0.875rem 0.875rem;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
   background-color: #f9fafb;
@@ -71,7 +72,7 @@
 
 .form-control:focus {
   outline: none;
-  border-color: #a855f7; 
+  border-color: #a855f7;
   box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
 }
 
@@ -110,6 +111,7 @@
   text-decoration: none;
   font-weight: 500;
 }
+
 .forgot-password-link:hover {
   text-decoration: underline;
 }
@@ -117,9 +119,11 @@
 .btn-login {
   width: 100%;
   padding: 0.875rem;
-  background: #007bff;
+  background: #d32f2f;
+  /* red */
   color: white;
-  border: none;
+  border: 1px solid #b71c1c;
+  /* deeper red border */
   border-radius: 0.5rem;
   font-size: 1rem;
   font-weight: 600;
@@ -128,7 +132,13 @@
 }
 
 .btn-login:hover {
-  box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+  background: #b71c1c;
+  /* deeper red on hover */
+  box-shadow: 0 4px 15px rgba(211, 47, 47, 0.2);
+}
+
+.btn-primary {
+  --bs-btn-bg: red
 }
 
 .btn-login:disabled {
@@ -147,11 +157,15 @@
 }
 
 .signup-link {
-  color: #007bff;
+  color: #d32f2f;
+  /* red */
   font-weight: 600;
   text-decoration: none;
 }
+
 .signup-link:hover {
+  color: #b71c1c;
+  /* deeper red on hover */
   text-decoration: underline;
 }
 
@@ -159,16 +173,23 @@
   font-family: 'Poppins', sans-serif;
   font-size: 2.25rem;
   font-weight: 700;
-  color: #0d6efd; 
+  color: #d32f2f;
+  /* red */
   margin-bottom: 0.5rem;
 }
 
 .logo-text span {
   font-weight: 400;
-  color: #343a40; 
+  color: #343a40;
 }
 
 
 .input-group .form-floating {
   flex-grow: 1;
+}
+
+
+.text-decoration-none {
+  text-decoration: none !important;
+  color: red;
 }
