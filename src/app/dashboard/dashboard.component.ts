@@ -28,8 +28,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedMovie: Movie | null = null;
   private bookingModal: Modal | undefined;
 
-  genres: string[] = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Thriller', 'Sci-Fi'];
-  languages: string[] = ['English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada'];
+  genres: string[] = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Animation','Thriller', 'Sci-Fi','Sports'];
+  languages: string[] = ['English', 'Hindi', 'Telugu', 'Japanese','German','French'];
 
   showSidebar: boolean = false;
 
