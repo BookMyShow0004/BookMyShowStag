@@ -22,11 +22,9 @@
 
     <nav class="tabs-nav">
       <button class="tab-btn" [class.active]="activeTab === 'upcoming'" (click)="setActiveTab('upcoming')">
-        Upcoming
+        Bookings
       </button>
-      <button class="tab-btn" [class.active]="activeTab === 'past'" (click)="setActiveTab('past')">
-        Past Bookings
-      </button>
+      
     </nav>
 
     <div *ngIf="getActiveBookings().length > 0; else noBookings" class="bookings-grid">
